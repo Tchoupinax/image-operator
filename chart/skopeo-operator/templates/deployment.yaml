@@ -6,22 +6,29 @@ metadata:
 spec:
   replicas: 1
   selector:
-    spec:
-      {{- with .Values.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- if .Values.image.pullSecrets }}
-      imagePullSecrets:
-        {{- toYaml .Values.image.pullSecrets | nindent 8 }}
-      {{- end }}
-      containers:
-        image: "{{ .Values.image.repository }}:{{.Values.image.version}}"
-        imagePullPolicy: "{{.Values.image.imagePullPolicy}}"
-        name: skopeo-operator
-        resources:
-          limits:
-            memory: 200Mi
-          requests:
-            cpu: 10m
-            memory: 20Mi
+    matchLabels:
+      kubernetes.io/name: skopeo-operator
+
+    template:
+      metadata:
+        labels:
+          kubernetes.io/name: skopeo-operator
+      spec:
+        {{- with .Values.affinity }}
+        affinity:
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- if .Values.image.pullSecrets }}
+        imagePullSecrets:
+          {{- toYaml .Values.image.pullSecrets | nindent 8 }}
+        {{- end }}
+        containers:
+          image: "{{ .Values.image.repository }}:{{.Values.image.version}}"
+          imagePullPolicy: "{{.Values.image.imagePullPolicy}}"
+          name: skopeo-operator
+          resources:
+            limits:
+              memory: 200Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
