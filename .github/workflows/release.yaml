@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Publish Helm charts
-        uses: stefanprodan/helm-gh-pages@v1.4.1
+        uses: stefanprodan/helm-gh-pages@v1.7.0
         with:
           token: ${{ secrets.CR_TOKEN }}
           charts_dir: chart
