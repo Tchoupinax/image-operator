@@ -25,4 +25,4 @@ monitoring:
     labels: {}
     podMetricsEndpoints:
     - path: "/metrics"
-      port: "web"
+      port: "metrics"

@@ -42,6 +42,10 @@ spec:
             drop:
             - "ALL"
 
+        ports:
+        - containerPort: 8080
+          name: metrics
+
         livenessProbe:
           httpGet:
             path: /healthz
