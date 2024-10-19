@@ -37,7 +37,7 @@ type Mode string
 
 const (
 	ONE_SHOT Mode = "OneShot"
-	RECURENT Mode = "Recurent"
+	RECURENT Mode = "Recurrent"
 )
 
 // ImageSpec defines the desired state of Image
@@ -46,6 +46,7 @@ type ImageSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	Mode        Mode             `json:"mode,omitempty"`
+	Frequency   string           `json:"frequency,omitempty"`
 	Source      ImageSource      `json:"source,omitempty"`
 	Destination ImageDestination `json:"destination,omitempty"`
 }
@@ -62,7 +63,7 @@ type ImageStatus struct {
 
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
-// +kubebuilder:resource:scope=Cluster
+// +kubebuilder:resource:scope=Namespaced
 
 // Image is the Schema for the images API
 type Image struct {
