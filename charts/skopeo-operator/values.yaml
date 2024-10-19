@@ -22,3 +22,7 @@ config:
 monitoring:
   podMonitor:
     enabled: false
+    labels: {}
+    podMetricsEndpoints:
+    - path: "/metrics"
+      port: "web"
