@@ -12,7 +12,7 @@ spec:
     listKind: ImageList
     plural: images
     singular: image
-  scope: Cluster
+  scope: Namespaced
   versions:
   - name: v1alpha1
     schema:
@@ -46,6 +46,8 @@ spec:
                   version:
                     type: string
                 type: object
+              frequency:
+                type: string
               mode:
                 type: string
               source:

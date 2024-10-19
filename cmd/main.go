@@ -37,12 +37,24 @@ import (
 
 	skopeoiov1alpha1 "github.com/Tchoupinax/skopeo.io/api/v1alpha1"
 	"github.com/Tchoupinax/skopeo.io/internal/controller"
+
 	// +kubebuilder:scaffold:imports
+
+	"github.com/prometheus/client_golang/prometheus"
+	"sigs.k8s.io/controller-runtime/pkg/metrics"
 )
 
 var (
 	scheme   = runtime.NewScheme()
 	setupLog = ctrl.Log.WithName("setup")
+
+	prometheusReloadGauge = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "skopeo_operator_reload_total",
+			Help: "Number of reload proccessed",
+		},
+		[]string{"image"},
+	)
 )
 
 func init() {
@@ -50,6 +62,8 @@ func init() {
 
 	utilruntime.Must(skopeoiov1alpha1.AddToScheme(scheme))
 	// +kubebuilder:scaffold:scheme
+
+	metrics.Registry.MustRegister(prometheusReloadGauge)
 }
 
 func main() {
@@ -145,8 +159,9 @@ func main() {
 	}
 
 	if err = (&controller.ImageReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
+		Client:                mgr.GetClient(),
+		Scheme:                mgr.GetScheme(),
+		PrometheusReloadGauge: *prometheusReloadGauge,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Image")
 		os.Exit(1)

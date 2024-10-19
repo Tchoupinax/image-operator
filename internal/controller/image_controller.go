@@ -23,6 +23,7 @@ import (
 	"strings"
 	"time"
 
+	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
@@ -33,12 +34,15 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	skopeoiov1alpha1 "github.com/Tchoupinax/skopeo.io/api/v1alpha1"
+	"github.com/go-logr/logr"
+	"github.com/prometheus/client_golang/prometheus"
 )
 
 // ImageReconciler reconciles a Image object
 type ImageReconciler struct {
 	client.Client
-	Scheme *runtime.Scheme
+	Scheme                *runtime.Scheme
+	PrometheusReloadGauge prometheus.CounterVec
 }
 
 // +kubebuilder:rbac:groups=skopeo.io,resources=images,verbs=get;list;watch;create;update;patch;delete
@@ -55,11 +59,17 @@ type ImageReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.19.0/pkg/reconcile
 func (r *ImageReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
+	logger := log.FromContext(ctx)
 
 	var image skopeoiov1alpha1.Image
-	if err := r.Get(ctx, types.NamespacedName{Name: req.Name, Namespace: req.Namespace}, &image); err != nil {
-		return ctrl.Result{}, err
+	if err := r.Get(ctx, types.NamespacedName{Name: req.Name}, &image); err != nil {
+		fmt.Println(fmt.Printf("%s not found.", req.Name))
+		return ctrl.Result{}, nil
+	}
+
+	parsedFrequency, parsedFrequencyError := time.ParseDuration(image.Spec.Frequency)
+	if parsedFrequencyError != nil {
+		logger.Error(parsedFrequencyError, "Error when parsing the frequency")
 	}
 
 	if len(image.Status.History) == 0 {
@@ -72,13 +82,27 @@ func (r *ImageReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 			fmt.Println(updateError)
 		}
 
-		createSkopeoPod(r, ctx, req, image)
-
+		createSkopeoPod(r, ctx, req, image, logger)
 	} else {
 		lastApplication := image.Status.History[len(image.Status.History)-1].PerformedAt
 		timeDifference := metav1.Now().Sub(lastApplication.Time)
 
-		fmt.Printf("difference %v", timeDifference)
+		if timeDifference > parsedFrequency {
+			logger.Info("Reload image")
+
+			image.Status.History = append(image.Status.History, skopeoiov1alpha1.History{
+				PerformedAt: metav1.Now(),
+			})
+
+			updateError := r.Status().Update(ctx, &image)
+			if updateError != nil {
+				fmt.Println(updateError)
+			}
+
+			createSkopeoPod(r, ctx, req, image, logger)
+
+			return ctrl.Result{}, nil
+		}
 	}
 
 	if image.Spec.Mode == "OneShot" {
@@ -87,7 +111,7 @@ func (r *ImageReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 
 	return ctrl.Result{
 		Requeue:      true,
-		RequeueAfter: 5 * time.Second,
+		RequeueAfter: 10 * time.Second,
 	}, nil
 }
 
@@ -98,8 +122,22 @@ func (r *ImageReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Complete(r)
 }
 
-func createSkopeoPod(r *ImageReconciler, ctx context.Context, req ctrl.Request, image skopeoiov1alpha1.Image) {
-	fmt.Println(fmt.Printf("Create job to copy image %s:%s", image.Spec.Source.ImageName, image.Spec.Source.ImageVersion))
+func int32Ptr(i int32) *int32 {
+	return &i
+}
+
+func createSkopeoPod(
+	r *ImageReconciler,
+	ctx context.Context,
+	req ctrl.Request,
+	image skopeoiov1alpha1.Image,
+	logger logr.Logger,
+) {
+	logger.Info("Create job to copy image", image.Spec.Source.ImageName, image.Spec.Source.ImageVersion)
+
+	r.PrometheusReloadGauge.WithLabelValues(
+		fmt.Sprintf("%s:%s", image.Spec.Source.ImageName, image.Spec.Source.ImageVersion),
+	).Inc()
 
 	arguments := []string{
 		"copy",
@@ -138,23 +176,31 @@ func createSkopeoPod(r *ImageReconciler, ctx context.Context, req ctrl.Request, 
 		skopeoVersion = "v1.16.1"
 	}
 
-	desiredPod := corev1.Pod{
+	desiredJob := batchv1.Job{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      fmt.Sprintf("skopeo-job-copy-%s", strings.ReplaceAll(req.Name, ".", "_")),
 			Namespace: podNamespace,
 		},
-		Spec: corev1.PodSpec{
-			RestartPolicy: "Never",
-			Containers: []corev1.Container{
-				{
-					Image:   fmt.Sprintf("%s:%s", skopeoImage, skopeoVersion),
-					Name:    "skopeo",
-					Command: []string{"skopeo"},
-					Args:    arguments,
+		Spec: batchv1.JobSpec{
+			TTLSecondsAfterFinished: int32Ptr(10),
+			Template: corev1.PodTemplateSpec{
+				Spec: corev1.PodSpec{
+					RestartPolicy: "Never",
+					Containers: []corev1.Container{
+						{
+							Image:   fmt.Sprintf("%s:%s", skopeoImage, skopeoVersion),
+							Name:    "skopeo",
+							Command: []string{"skopeo"},
+							Args:    arguments,
+						},
+					},
 				},
 			},
 		},
 	}
 
-	_ = r.Create(ctx, &desiredPod)
+	creationError := r.Create(ctx, &desiredJob)
+	if creationError != nil {
+		fmt.Println(creationError)
+	}
 }
