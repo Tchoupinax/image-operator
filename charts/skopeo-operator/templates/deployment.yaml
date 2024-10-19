@@ -34,7 +34,7 @@ spec:
         command: ["/manager"]
         args:
           - "--metrics-secure=false"
-          - "--metrics-bind-address=8080"
+          - "--metrics-bind-address=:8080"
 
         securityContext:
           allowPrivilegeEscalation: false
