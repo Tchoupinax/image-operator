@@ -3,11 +3,11 @@ appVersion: v0.0.2
 kubeVersion: ">=1.20.0-0"
 description: A Helm Chart for Skopeo operator
 name: skopeo-operator
-version: 0.0.6
+version: 0.0.7
 home: https://github.com/Tchoupinax/skopeo-operator
 keywords:
-  - docker
-  - skopeo
+- docker
+- skopeo
 maintainers:
-  - name: Tchoupinax
-    url: https://github.com/Tchoupinax/skopeo-operator
+- name: Tchoupinax
+  url: https://github.com/Tchoupinax/skopeo-operator
