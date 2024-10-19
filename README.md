@@ -1,3 +1,5 @@
+![AI generated image showing an octobus manipulating containers](.github/docs/logo.png)
+
 # skopeo-operator
 
 ## Install with Helm Chart
