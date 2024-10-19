@@ -5,3 +5,14 @@ image:
   pullSecrets: []
 
 affinity: {}
+
+config:
+  credentials:
+    destinationUsername: ""
+    destinationPassword: ""
+    sourceUsername: ""
+    sourcePassword: ""
+  pullJobNamespace: "skopeo-operator"
+  skopeo:
+    image: "quay.io/containers/skopeo"
+    version: "v1.16.1"
