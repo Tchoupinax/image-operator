@@ -23,10 +23,37 @@ spec:
       imagePullSecrets:
         {{- toYaml .Values.image.pullSecrets | nindent 8 }}
       {{- end }}
+
+      securityContext:
+        runAsNonRoot: true
+
       containers:
       - image: "{{ .Values.image.repository }}:{{.Values.image.version}}"
         imagePullPolicy: "{{.Values.image.imagePullPolicy}}"
         name: skopeo-operator
+        command: ["manager"]
+        args:
+          - "--metrics-secure=false"
+
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - "ALL"
+
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
+
         resources:
           limits:
             memory: 200Mi
