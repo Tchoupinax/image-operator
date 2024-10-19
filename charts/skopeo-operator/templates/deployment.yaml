@@ -35,13 +35,25 @@ spec:
             memory: 20Mi
         env:
           - name: "CREDS_DESTINATION_USERNAME"
-            value: "{{ .Values.config.credentials.destinationUsername }}"
+            valueFrom:
+              secretKeyRef:
+                name: skopeo-operator
+                key: credentialsDestinationUsername
           - name: "CREDS_DESTINATION_PASSWORD"
-            value: "{{ .Values.config.credentials.destinationPassword }}"
+            valueFrom:
+              secretKeyRef:
+                name: skopeo-operator
+                key: credentialsDestinationPassword
           - name: "CREDS_SOURCE_USERNAME"
-            value: "{{ .Values.config.credentials.sourceUsername }}"
+            valueFrom:
+              secretKeyRef:
+                name: skopeo-operator
+                key: credentialsSourceUsername
           - name: "CREDS_SOURCE_PASSWORD"
-            value: "{{ .Values.config.credentials.sourcePassword }}"
+            valueFrom:
+              secretKeyRef:
+                name: skopeo-operator
+                key: credentialsSourcePassword
           - name: "PULL_JOB_NAMESPACE"
             value: "{{ .Values.config.pullJobNamespace }}"
           - name: "SKOPEO_IMAGE"
