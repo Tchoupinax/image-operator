@@ -8,10 +8,12 @@ affinity: {}
 
 config:
   credentials:
-    destinationUsername: ""
+    createSecret: true
     destinationPassword: ""
-    sourceUsername: ""
+    destinationUsername: ""
+    secretName: "skopeo-operator"
     sourcePassword: ""
+    sourceUsername: ""
   pullJobNamespace: "skopeo-operator"
   skopeo:
     image: "quay.io/containers/skopeo"
