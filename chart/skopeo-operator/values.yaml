@@ -1,0 +1,7 @@
+image:
+  repository: "tchoupinax/skopeo-operator"
+  version: "latest"
+  imagePullPolicy: "IfNotPresent"
+  pullSecrets: []
+
+affinity: {}
