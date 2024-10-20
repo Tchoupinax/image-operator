@@ -39,6 +39,8 @@ spec:
           spec:
             description: ImageSpec defines the desired state of Image
             properties:
+              allowCandidateRelease:
+                type: boolean
               destination:
                 properties:
                   name:

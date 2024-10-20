@@ -13,6 +13,8 @@ helm upgrade --install skopeo-operator skopeo-operator/skopeo-operator
 
 ## Usage
 
+### Reccurent task
+
 ```yaml
 apiVersion: skopeo.io/v1alpha1
 kind: Image
@@ -27,6 +29,29 @@ spec:
   destination:
     name: tchoupinax/nginx/nginx-ingress
     version: 3.7-alpine
+```
+
+### Reccurent task
+
+You can order to copy every images matching a pattern. For exemple, if you want to copy every image like `2.13.1`, `2.13.2`, `2.13.3` etc... you can put version as `2.13.x`.
+Moreover, if you want to include release candidate you can with the option `allowCandidateRelease: true`
+
+It will create a job for each version detected.
+
+```yaml
+apiVersion: skopeo.io/v1alpha1
+kind: Image
+metadata:
+  name: argocd-2-13-rc
+spec:
+  allowCandidateRelease: true
+  mode: OneShot
+  source:
+    name: quay.io/argoproj/argocd
+    version: v2.13.x
+  destination:
+    name: tchoupinax/argoproj/argocd
+    version: v2.13.x
 ```
 
 ## Motivation
