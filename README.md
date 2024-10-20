@@ -98,7 +98,7 @@ Operator exposes a Prometheus route to show basic metrics about operator and how
 
 ![Show Grafana's graph](.github/docs/metrics.png)
 
-## Developement
+## Development
 
 ### Tests
 
