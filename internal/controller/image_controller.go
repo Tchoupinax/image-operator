@@ -148,13 +148,15 @@ func planJobCreation(
 			createSkopeoPod(r, ctx, req, image, logger, tag)
 		}
 
-		image.Status.TagAlreadySynced = append(
-			image.Status.TagAlreadySynced,
-			selectedVersions...,
-		)
-		updateError2 := r.Status().Update(ctx, &image)
-		if updateError2 != nil {
-			fmt.Println(updateError2)
+		if image.Spec.Mode == "OneShot" {
+			image.Status.TagAlreadySynced = append(
+				image.Status.TagAlreadySynced,
+				selectedVersions...,
+			)
+			updateError2 := r.Status().Update(ctx, &image)
+			if updateError2 != nil {
+				fmt.Println(updateError2)
+			}
 		}
 	}
 }
