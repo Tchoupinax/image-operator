@@ -1,0 +1,26 @@
+{
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#d2a98a",
+    "activityBar.background": "#d2a98a",
+    "activityBar.foreground": "#15202b",
+    "activityBar.inactiveForeground": "#15202b99",
+    "activityBarBadge.background": "#2c734b",
+    "activityBarBadge.foreground": "#e7e7e7",
+    "commandCenter.border": "#15202b99",
+    "sash.hoverBorder": "#d2a98a",
+    "statusBar.background": "#c48e65",
+    "statusBar.foreground": "#15202b",
+    "statusBarItem.hoverBackground": "#b27344",
+    "statusBarItem.remoteBackground": "#c48e65",
+    "statusBarItem.remoteForeground": "#15202b",
+    "titleBar.activeBackground": "#c48e65",
+    "titleBar.activeForeground": "#15202b",
+    "titleBar.inactiveBackground": "#c48e6599",
+    "titleBar.inactiveForeground": "#15202b99"
+  },
+  "peacock.color": "#c48e65",
+  "[yaml]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "kennylong.kubernetes-yaml-formatter"
+  }
+}
