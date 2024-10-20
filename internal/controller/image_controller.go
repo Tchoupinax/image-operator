@@ -84,15 +84,10 @@ func (r *ImageReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 		lastApplication := image.Status.History[len(image.Status.History)-1].PerformedAt
 		timeDifference := metav1.Now().Sub(lastApplication.Time)
 
-		if image.Spec.Mode == "Recurrent" && timeDifference > parsedFrequency {
-			logger.Info("Reload image")
+		if timeDifference > parsedFrequency {
 			planJobCreation(r, ctx, req, image, logger)
 			return ctrl.Result{}, nil
 		}
-	}
-
-	if image.Spec.Mode == "OneShot" {
-		return ctrl.Result{}, nil
 	}
 
 	return ctrl.Result{
@@ -123,6 +118,11 @@ func planJobCreation(
 		PerformedAt: metav1.Now(),
 	})
 
+	maxItems := 3
+	if len(image.Status.History) > maxItems {
+		image.Status.History = image.Status.History[len(image.Status.History)-maxItems:]
+	}
+
 	updateError := r.Status().Update(ctx, &image)
 	if updateError != nil {
 		fmt.Println(updateError)
@@ -135,8 +135,27 @@ func planJobCreation(
 		image.Spec.AllowCandidateRelease,
 	)
 
-	for _, tag := range selectedVersions {
-		createSkopeoPod(r, ctx, req, image, logger, tag)
+	if image.Spec.Mode == "OneShot" {
+		selectedVersions = helpers.Filter(selectedVersions, func(tag string) bool {
+			return !helpers.Contains(image.Status.TagAlreadySynced, tag)
+		})
+	}
+
+	if len(selectedVersions) > 0 {
+		logger.Info("Reload image")
+
+		for _, tag := range selectedVersions {
+			createSkopeoPod(r, ctx, req, image, logger, tag)
+		}
+
+		image.Status.TagAlreadySynced = append(
+			image.Status.TagAlreadySynced,
+			selectedVersions...,
+		)
+		updateError2 := r.Status().Update(ctx, &image)
+		if updateError2 != nil {
+			fmt.Println(updateError2)
+		}
 	}
 }
 
