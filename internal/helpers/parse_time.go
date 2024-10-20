@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func converFormat(input string) string {
+func convertFormat(input string) string {
 	// Handle days
 	reDays := regexp.MustCompile(`(\d+)d`)
 	matchesDays := reDays.FindStringSubmatch(input)
@@ -38,7 +38,7 @@ func converFormat(input string) string {
 }
 
 func ParseTime(timeStr string) (time.Duration, error) {
-	parsedFrequency, parsedFrequencyError := time.ParseDuration(converFormat(timeStr))
+	parsedFrequency, parsedFrequencyError := time.ParseDuration(convertFormat(timeStr))
 
 	if parsedFrequencyError != nil {
 		return time.Duration(time.Now().Day()), parsedFrequencyError
