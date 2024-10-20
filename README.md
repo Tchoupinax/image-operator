@@ -97,3 +97,13 @@ You can find an exemple of values [here](charts/skopeo-operator/values.yaml).
 Operator exposes a Prometheus route to show basic metrics about operator and how many reload it has been done.
 
 ![Show Grafana's graph](.github/docs/metrics.png)
+
+## Developement
+
+### Tests
+
+Command to launch a specific test
+
+```bash
+go run github.com/onsi/ginkgo/v2/ginkgo -r --randomize-all --randomize-suites --race --trace -cover internal/helpers/
+```

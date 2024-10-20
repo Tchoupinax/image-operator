@@ -34,6 +34,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	skopeoiov1alpha1 "github.com/Tchoupinax/skopeo.io/api/v1alpha1"
+	"github.com/Tchoupinax/skopeo.io/internal/helpers"
 	"github.com/go-logr/logr"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -67,7 +68,7 @@ func (r *ImageReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 		return ctrl.Result{}, nil
 	}
 
-	parsedFrequency, parsedFrequencyError := time.ParseDuration(image.Spec.Frequency)
+	parsedFrequency, parsedFrequencyError := helpers.ParseTime(image.Spec.Frequency)
 	if parsedFrequencyError != nil {
 		logger.Error(parsedFrequencyError, "Error when parsing the frequency")
 	}
