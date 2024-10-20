@@ -133,6 +133,8 @@ func planJobCreation(
 		image.Spec.Source.ImageName,
 		image.Spec.Source.ImageVersion,
 		image.Spec.AllowCandidateRelease,
+		helpers.DockerHubAuth{},
+		helpers.AWSPublicECR{},
 	)
 
 	if image.Spec.Mode == "OneShot" {
