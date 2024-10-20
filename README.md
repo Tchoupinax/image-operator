@@ -13,6 +13,20 @@ helm upgrade --install skopeo-operator skopeo-operator/skopeo-operator
 
 ## Usage
 
+According the use-case you have, select the good configuration for you:
+
+> I want to sync an image with a specific tag and I want to do only one
+
+Use mode `OneShot` and fill version with you specific tag (e.g. `v1.2.3`).
+
+> I want to sync a version and I want all new version to be synced automatically
+
+Use mode `OneShot` and fill version with a matching pattern (e.g. `v1.2.x`). It will sync current available version and watch for future version to sync them (`>v1.2.0 & <v1.3.0`)
+
+> I want to copy and refresh an image every day
+
+Use mode `Recurrent` and provide the desired version (e.g. `node:22-alpine`)
+
 ### Reccurent task
 
 ```yaml

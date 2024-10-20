@@ -57,9 +57,10 @@ type History struct {
 }
 
 type ImageStatus struct {
-	// +kubebuilder:default:=COMPLETED
-	Phase   string    `json:"phase,omitempty"`
 	History []History `json:"history,omitempty"`
+	// +kubebuilder:default:=COMPLETED
+	Phase            string   `json:"phase,omitempty"`
+	TagAlreadySynced []string `json:"tagAlreadySynced,omitempty"`
 }
 
 // +kubebuilder:object:root=true

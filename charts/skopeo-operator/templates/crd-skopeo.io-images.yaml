@@ -72,6 +72,10 @@ spec:
                 phase:
                   default: COMPLETED
                   type: string
+                tagAlreadySynced:
+                  items:
+                    type: string
+                  type: array
               type: object
           type: object
       served: true
