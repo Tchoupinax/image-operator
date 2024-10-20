@@ -3,9 +3,9 @@ entries:
   skopeo-operator:
   - apiVersion: v2
     appVersion: v0.0.2
-    created: "2024-10-19T12:43:15.828521692Z"
+    created: "2024-10-20T06:51:10.624044965Z"
     description: A Helm Chart for Skopeo operator
-    digest: 4dac1a9d517abbb7b5d27ba99b204e9d5207416bdd65aa57709f585a4ac61c57
+    digest: 53fbe5b99ad90dfb19a4bee69ae5be1362e7e7011796161a3a9f21697248cd97
     home: https://github.com/Tchoupinax/skopeo-operator
     keywords:
     - docker
@@ -256,4 +256,4 @@ entries:
     urls:
     - https://Tchoupinax.github.io/skopeo-operator/skopeo-operator-0.0.1.tgz
     version: 0.0.1
-generated: "2024-10-19T12:43:15.828088308Z"
+generated: "2024-10-20T06:51:10.623616054Z"
