@@ -31,7 +31,7 @@ spec:
     version: 3.7-alpine
 ```
 
-### Reccurent task
+### Tags matching pattern
 
 You can order to copy every images matching a pattern. For exemple, if you want to copy every image like `2.13.1`, `2.13.2`, `2.13.3` etc... you can put version as `2.13.x`.
 Moreover, if you want to include release candidate you can with the option `allowCandidateRelease: true`
@@ -116,6 +116,11 @@ You can find an exemple of values [here](charts/skopeo-operator/values.yaml).
 - [x] Copy images recurrently, frequency is configurable
 - [x] Authentication on Password and Username
 - [x] Basic monitoring and metrics
+- [x] Allow to copy release candidates
+- [x] Allow to target version following a pattern
+  - [x] Quay.io
+  - [ ] Dockerhub
+  - [ ] AWS public ECR
 
 ## Monitoring
 
