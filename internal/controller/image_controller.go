@@ -33,8 +33,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	skopeoiov1alpha1 "github.com/Tchoupinax/skopeo.io/api/v1alpha1"
-	"github.com/Tchoupinax/skopeo.io/internal/helpers"
+	skopeoiov1alpha1 "github.com/Tchoupinax/skopeo-operator/api/v1alpha1"
+	"github.com/Tchoupinax/skopeo-operator/internal/helpers"
 	"github.com/go-logr/logr"
 	"github.com/prometheus/client_golang/prometheus"
 )

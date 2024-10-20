@@ -24,7 +24,7 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"github.com/Tchoupinax/skopeo.io/test/utils"
+	"github.com/Tchoupinax/skopeo-operator/test/utils"
 )
 
 const namespace = "skopeo-operator-system"

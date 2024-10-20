@@ -35,8 +35,8 @@ import (
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
-	skopeoiov1alpha1 "github.com/Tchoupinax/skopeo.io/api/v1alpha1"
-	"github.com/Tchoupinax/skopeo.io/internal/controller"
+	skopeoiov1alpha1 "github.com/Tchoupinax/skopeo-operator/api/v1alpha1"
+	"github.com/Tchoupinax/skopeo-operator/internal/controller"
 
 	// +kubebuilder:scaffold:imports
 

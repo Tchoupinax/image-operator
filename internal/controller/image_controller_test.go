@@ -27,7 +27,7 @@ import (
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	skopeoiov1alpha1 "github.com/Tchoupinax/skopeo.io/api/v1alpha1"
+	skopeoiov1alpha1 "github.com/Tchoupinax/skopeo-operator/api/v1alpha1"
 )
 
 var _ = Describe("Image Controller", func() {
