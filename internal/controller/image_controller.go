@@ -161,6 +161,30 @@ func createSkopeoPod(
 		)
 	}
 
+	if os.Getenv("DISABLE_SRC_TLS_VERIFICATION") == "true" {
+		arguments = append(
+			arguments,
+			"--src-tls-verify=false",
+		)
+	} else {
+		arguments = append(
+			arguments,
+			"--src-tls-verify=true",
+		)
+	}
+
+	if os.Getenv("DISABLE_DEST_TLS_VERIFICATION") == "true" {
+		arguments = append(
+			arguments,
+			"--dest-tls-verify=false",
+		)
+	} else {
+		arguments = append(
+			arguments,
+			"--dest-tls-verify=true",
+		)
+	}
+
 	podNamespace := os.Getenv("PULL_JOB_NAMESPACE")
 	if podNamespace == "" {
 		podNamespace = "skopeo-operator"

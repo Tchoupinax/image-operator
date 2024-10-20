@@ -7,6 +7,11 @@ image:
 affinity: {}
 
 config:
+  source:
+    disabledTlsCheck: false
+  destination:
+    disabledTlsCheck: false
+
   credentials:
     createSecret: true
     destinationPassword: ""

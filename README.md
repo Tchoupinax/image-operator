@@ -79,7 +79,9 @@ You can find an exemple of values [here](charts/skopeo-operator/values.yaml).
 - `CREDS_DESTINATION_USERNAME`: ""
 - `CREDS_SOURCE_PASSWORD`: ""
 - `CREDS_SOURCE_USERNAME`: ""
-- `PULL_JOB_NAMESPACE`: "skopeo-operator" by default
+- `DISABLE_DEST_TLS_VERIFICATION`: "false"
+- `DISABLE_SRC_TLS_VERIFICATION`: "false"
+- `PULL_JOB_NAMESPACE`: "skopeo-operator"
 - `SKOPEO_IMAGE`: "quay.io/containers/skopeo"
 - `SKOPEO_VERSION`: "v1.16.1"
 
