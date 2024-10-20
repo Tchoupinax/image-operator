@@ -11,6 +11,24 @@ helm repo update
 helm upgrade --install skopeo-operator skopeo-operator/skopeo-operator
 ```
 
+## Usage
+
+```yaml
+apiVersion: skopeo.io/v1alpha1
+kind: Image
+metadata:
+  name: nginx-alpine
+spec:
+  frequency: 15m
+  mode: Recurrent # Or OneShot
+  source:
+    name: quay.io/nginx/nginx-ingress
+    version: 3.7-alpine
+  destination:
+    name: tchoupinax/nginx/nginx-ingress
+    version: 3.7-alpine
+```
+
 ## Motivation
 
 We aim to use container images exclusively from our internal registry for various reasons. Among these images, a significant portion consists of "base" images that we did not build ourselves. However, the process of copying these base images presents several challenges:
@@ -26,7 +44,36 @@ How can we industrialize this process? While it’s possible to use CI for this 
 
 The idea of building an operator around Skopeo originates from the desire to leverage the right tool in conjunction with the operator pattern, to benefit from Kubernetes's simplicity and scalability.
 
+## Description
+
+```mermaid
+sequenceDiagram
+actor User
+User->>Kubernetes: Apply Image resource to Kubernetes
+loop Every 5 seconds
+    Kubernetes->>Skopeo Operator: Listen resource's events
+    alt is one shot job
+        Skopeo Operator->>Skopeo Job: Create job
+    else is reccurrent job
+        alt last execution is old than frequency
+            Skopeo Operator->>Skopeo Job: Create job
+        else last execution is newer than frequency
+            Skopeo Operator->>Skopeo Operator: Do nothing
+        end
+    end
+    Skopeo Job->>Skopeo Job: Copy image accross registries
+    Note right of Skopeo Job: Job is performed asyncronaly and<br>has a random duration.<br>Once the pod has finished,<br>it is deleted.
+    Skopeo Operator-->>Kubernetes: If the job is recurrent,<br>ask to recall the loop every 5 seconds
+end
+```
+
 ## Configuration
+
+## Helm chart
+
+You can find an exemple of values [here](charts/skopeo-operator/values.yaml).
+
+### Environment variables list
 
 - `CREDS_DESTINATION_PASSWORD`: ""
 - `CREDS_DESTINATION_USERNAME`: ""
@@ -35,3 +82,16 @@ The idea of building an operator around Skopeo originates from the desire to lev
 - `PULL_JOB_NAMESPACE`: "skopeo-operator" by default
 - `SKOPEO_IMAGE`: "quay.io/containers/skopeo"
 - `SKOPEO_VERSION`: "v1.16.1"
+
+## Features
+
+- [x] Copy images accross registries
+- [x] Copy images recurrently, frequency is configurable
+- [x] Authentication on Password and Username
+- [x] Basic monitoring and metrics
+
+## Monitoring
+
+Operator exposes a Prometheus route to show basic metrics about operator and how many reload it has been done.
+
+![Show Grafana's graph](.github/docs/metrics.png)
