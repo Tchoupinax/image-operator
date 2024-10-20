@@ -63,8 +63,8 @@ func (r *ImageReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 	logger := log.FromContext(ctx)
 
 	var image skopeoiov1alpha1.Image
-	if err := r.Get(ctx, types.NamespacedName{Name: req.Name}, &image); err != nil {
-		fmt.Println(fmt.Printf("%s not found.", req.Name))
+	if err := r.Get(ctx, types.NamespacedName{Name: req.Name, Namespace: req.Namespace}, &image); err != nil {
+		fmt.Println(fmt.Printf("%s not found (%s)", req.Name, req.Namespace))
 		return ctrl.Result{}, nil
 	}
 
