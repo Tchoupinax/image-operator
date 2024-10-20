@@ -12,7 +12,7 @@ spec:
     listKind: ImageList
     plural: images
     singular: image
-  scope: Namespaced
+  scope: Cluster
   versions:
   - name: v1alpha1
     schema:
@@ -39,6 +39,8 @@ spec:
           spec:
             description: ImageSpec defines the desired state of Image
             properties:
+              allowCandidateRelease:
+                type: boolean
               destination:
                 properties:
                   name:

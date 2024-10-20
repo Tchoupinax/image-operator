@@ -3,7 +3,7 @@ FROM golang:1.23.2 AS builder
 ARG TARGETOS
 ARG TARGETARCH
 
-LABEL builtAt 2024-10-20
+LABEL builtAt=2024-10-20
 
 WORKDIR /workspace
 # Copy the Go Modules manifests

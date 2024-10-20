@@ -68,40 +68,25 @@ func (r *ImageReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 		return ctrl.Result{}, nil
 	}
 
-	parsedFrequency, parsedFrequencyError := helpers.ParseTime(image.Spec.Frequency)
-	if parsedFrequencyError != nil {
-		logger.Error(parsedFrequencyError, "Error when parsing the frequency")
+	var parsedFrequency time.Duration
+	if image.Spec.Mode == "Recurrent" {
+		var parsedFrequencyError error
+
+		parsedFrequency, parsedFrequencyError = helpers.ParseTime(image.Spec.Frequency)
+		if parsedFrequencyError != nil {
+			logger.Error(parsedFrequencyError, "Error when parsing the frequency")
+		}
 	}
 
 	if len(image.Status.History) == 0 {
-		image.Status.History = append(image.Status.History, skopeoiov1alpha1.History{
-			PerformedAt: metav1.Now(),
-		})
-
-		updateError := r.Status().Update(ctx, &image)
-		if updateError != nil {
-			fmt.Println(updateError)
-		}
-
-		createSkopeoPod(r, ctx, req, image, logger)
+		planJobCreation(r, ctx, req, image, logger)
 	} else {
 		lastApplication := image.Status.History[len(image.Status.History)-1].PerformedAt
 		timeDifference := metav1.Now().Sub(lastApplication.Time)
 
-		if timeDifference > parsedFrequency {
+		if image.Spec.Mode == "Recurrent" && timeDifference > parsedFrequency {
 			logger.Info("Reload image")
-
-			image.Status.History = append(image.Status.History, skopeoiov1alpha1.History{
-				PerformedAt: metav1.Now(),
-			})
-
-			updateError := r.Status().Update(ctx, &image)
-			if updateError != nil {
-				fmt.Println(updateError)
-			}
-
-			createSkopeoPod(r, ctx, req, image, logger)
-
+			planJobCreation(r, ctx, req, image, logger)
 			return ctrl.Result{}, nil
 		}
 	}
@@ -127,12 +112,41 @@ func int32Ptr(i int32) *int32 {
 	return &i
 }
 
+func planJobCreation(
+	r *ImageReconciler,
+	ctx context.Context,
+	req ctrl.Request,
+	image skopeoiov1alpha1.Image,
+	logger logr.Logger,
+) {
+	image.Status.History = append(image.Status.History, skopeoiov1alpha1.History{
+		PerformedAt: metav1.Now(),
+	})
+
+	updateError := r.Status().Update(ctx, &image)
+	if updateError != nil {
+		fmt.Println(updateError)
+	}
+
+	selectedVersions := helpers.ListVersion(
+		logger,
+		image.Spec.Source.ImageName,
+		image.Spec.Source.ImageVersion,
+		image.Spec.AllowCandidateRelease,
+	)
+
+	for _, tag := range selectedVersions {
+		createSkopeoPod(r, ctx, req, image, logger, tag)
+	}
+}
+
 func createSkopeoPod(
 	r *ImageReconciler,
 	ctx context.Context,
 	req ctrl.Request,
 	image skopeoiov1alpha1.Image,
 	logger logr.Logger,
+	overridenVersion string,
 ) {
 	logger.Info("Create job to copy image", image.Spec.Source.ImageName, image.Spec.Source.ImageVersion)
 
@@ -142,8 +156,8 @@ func createSkopeoPod(
 
 	arguments := []string{
 		"copy",
-		fmt.Sprintf("docker://%s:%s", image.Spec.Source.ImageName, image.Spec.Source.ImageVersion),
-		fmt.Sprintf("docker://%s:%s", image.Spec.Destination.ImageName, image.Spec.Destination.ImageVersion),
+		fmt.Sprintf("docker://%s:%s", image.Spec.Source.ImageName, overridenVersion),
+		fmt.Sprintf("docker://%s:%s", image.Spec.Destination.ImageName, overridenVersion),
 		"--all",
 		"--preserve-digests",
 	}
@@ -203,7 +217,11 @@ func createSkopeoPod(
 
 	desiredJob := batchv1.Job{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      fmt.Sprintf("skopeo-job-copy-%s", strings.ReplaceAll(req.Name, ".", "_")),
+			Name: fmt.Sprintf(
+				"skopeo-job-copy-%s-%s",
+				strings.ReplaceAll(req.Name, ".", ""),
+				strings.ReplaceAll(overridenVersion, ".", ""),
+			),
 			Namespace: podNamespace,
 		},
 		Spec: batchv1.JobSpec{

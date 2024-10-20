@@ -45,10 +45,11 @@ type ImageSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	Mode        Mode             `json:"mode,omitempty"`
-	Frequency   string           `json:"frequency,omitempty"`
-	Source      ImageSource      `json:"source,omitempty"`
-	Destination ImageDestination `json:"destination,omitempty"`
+	AllowCandidateRelease bool             `json:"allowCandidateRelease,omitempty"`
+	Destination           ImageDestination `json:"destination,omitempty"`
+	Frequency             string           `json:"frequency,omitempty"`
+	Mode                  Mode             `json:"mode,omitempty"`
+	Source                ImageSource      `json:"source,omitempty"`
 }
 
 type History struct {
@@ -63,7 +64,7 @@ type ImageStatus struct {
 
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
-// +kubebuilder:resource:scope=Namespaced
+// +kubebuilder:resource:scope=Cluster
 
 // Image is the Schema for the images API
 type Image struct {
