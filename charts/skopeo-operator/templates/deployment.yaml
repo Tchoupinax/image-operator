@@ -86,6 +86,10 @@ spec:
               secretKeyRef:
                 name: skopeo-operator
                 key: credentialsSourcePassword
+          - name: "DISABLE_DEST_TLS_VERIFICATION"
+            value: "{{ .Values.config.destination.disabledTlsCheck }}"
+          - name: "DISABLE_SRC_TLS_VERIFICATION"
+            value: "{{ .Values.config.source.disabledTlsCheck }}"
           - name: "PULL_JOB_NAMESPACE"
             value: "{{ .Values.config.pullJobNamespace }}"
           - name: "SKOPEO_IMAGE"
