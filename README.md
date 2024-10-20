@@ -68,6 +68,28 @@ spec:
     version: v2.13.x
 ```
 
+### Options
+
+This is an exemple of the resource with full options.
+
+```yaml
+apiVersion: skopeo.io/v1alpha1
+kind: Image
+metadata:
+  name: name
+
+spec:
+  allowCandidateRelease: false # Activate if you want release which match *.*.*-rc[O-9]+
+  mode: OneShot # or Reccurrent
+  frequency: "1m" # or [O-9]+h (hour), [O-9]+d (day), [O-9]+w (week)
+  source:
+    name: source/argoproj/argocd
+    version: v2.13.x
+  destination:
+    name: destination/argoproj/argocd
+    version: v2.13.x
+```
+
 ## Motivation
 
 We aim to use container images exclusively from our internal registry for various reasons. Among these images, a significant portion consists of "base" images that we did not build ourselves. However, the process of copying these base images presents several challenges:
