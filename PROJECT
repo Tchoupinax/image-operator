@@ -6,13 +6,13 @@ domain: skopeo.io
 layout:
 - go.kubebuilder.io/v4
 projectName: skopeo-operator
-repo: github.com/Tchoupinax/skopeo.io
+repo: github.com/Tchoupinax/skopeo-operator
 resources:
 - api:
     crdVersion: v1
   controller: true
   domain: skopeo.io
   kind: Image
-  path: github.com/Tchoupinax/skopeo.io/api/v1alpha1
+  path: github.com/Tchoupinax/skopeo-operator/api/v1alpha1
   version: v1alpha1
 version: "3"

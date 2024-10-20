@@ -1,7 +1,9 @@
 # Build the manager binary
-FROM golang:1.23 AS builder
+FROM golang:1.23.2 AS builder
 ARG TARGETOS
 ARG TARGETARCH
+
+LABEL builtAt 2024-10-20
 
 WORKDIR /workspace
 # Copy the Go Modules manifests
@@ -14,7 +16,7 @@ RUN go mod download
 # Copy the go source
 COPY cmd/main.go cmd/main.go
 COPY api/ api/
-COPY internal/controller/ internal/controller/
+COPY internal/ internal/
 
 # Build
 # the GOARCH has not a default value to allow the binary be built according to the host where the command
