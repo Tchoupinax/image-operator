@@ -98,5 +98,7 @@ spec:
             value: "{{ .Values.config.pullJobNamespace }}"
           - name: "SKOPEO_IMAGE"
             value: "{{ .Values.config.skopeo.image }}"
+          - name: "SKOPEO_IMAGE_AWS_IRSA"
+            value: "{{ .Values.config.skopeo.imageAwsIrsa }}"
           - name: "SKOPEO_VERSION"
             value: "{{ .Values.config.skopeo.version }}"

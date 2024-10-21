@@ -23,6 +23,7 @@ config:
   pullJobNamespace: "skopeo-operator"
   skopeo:
     image: "quay.io/containers/skopeo"
+    imageAwsIrsa: "quay.io/containers/skopeo"
     version: "v1.16.1"
 
 monitoring:
