@@ -41,7 +41,8 @@ func ParseTime(timeStr string) (time.Duration, error) {
 	parsedFrequency, parsedFrequencyError := time.ParseDuration(convertFormat(timeStr))
 
 	if parsedFrequencyError != nil {
-		return time.Duration(time.Now().Day()), parsedFrequencyError
+		// By default, we return 5 minutes in case of error.
+		return 5 * time.Minute, parsedFrequencyError
 	}
 
 	return parsedFrequency, nil
