@@ -1,3 +1,4 @@
+---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -44,20 +45,49 @@ spec:
                   properties:
                     name:
                       type: string
+                    useAwsIRSA:
+                      default: "false"
+                      description: |-
+                        With EKS you might want to use IRSA (Iam Roles for Service Accounts)
+                        In this case, additionnal operation have to be done in the job.
+                        This option cares of it
+                      type: boolean
                     version:
                       type: string
+                  required:
+                    - name
+                    - version
                   type: object
                 frequency:
+                  default: 5m
                   type: string
                 mode:
+                  description: Select mode you want to apply to the job
+                  enum:
+                    - OneShot
+                    - Reccurent
                   type: string
                 source:
                   properties:
                     name:
                       type: string
+                    useAwsIRSA:
+                      default: "false"
+                      description: |-
+                        With EKS you might want to use IRSA (Iam Roles for Service Accounts)
+                        In this case, additionnal operation have to be done in the job.
+                        This option cares of it
+                      type: boolean
                     version:
                       type: string
+                  required:
+                    - name
+                    - version
                   type: object
+              required:
+                - destination
+                - mode
+                - source
               type: object
             status:
               properties:
