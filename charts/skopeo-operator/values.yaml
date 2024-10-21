@@ -5,6 +5,7 @@ image:
   pullSecrets: []
 
 affinity: {}
+tolerations: []
 
 config:
   source:
