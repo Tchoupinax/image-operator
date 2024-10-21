@@ -21,16 +21,19 @@ import (
 )
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
+// NOTE: json tags are required.  Any ne"w fields you add must have json tags for the fields to be serialized.
 
-type ImageSource struct {
-	ImageName    string `json:"name,omitempty"`
+type ImageEndpoint struct {
+	// +kubebuilder:validation:Required
+	ImageName string `json:"name,omitempty"`
+	// +kubebuilder:validation:Required
 	ImageVersion string `json:"version,omitempty"`
-}
-
-type ImageDestination struct {
-	ImageName    string `json:"name,omitempty"`
-	ImageVersion string `json:"version,omitempty"`
+	// +kubebuilder:validation:Optional
+	// +kubebuilder:default:=false
+	// With EKS you might want to use IRSA (Iam Roles for Service Accounts)
+	// In this case, additionnal operation have to be done in the job.
+	// This option cares of it
+	UseAwsIRSA bool `json:"useAwsIRSA,omitempty"`
 }
 
 type Mode string
@@ -45,11 +48,18 @@ type ImageSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	AllowCandidateRelease bool             `json:"allowCandidateRelease,omitempty"`
-	Destination           ImageDestination `json:"destination,omitempty"`
-	Frequency             string           `json:"frequency,omitempty"`
-	Mode                  Mode             `json:"mode,omitempty"`
-	Source                ImageSource      `json:"source,omitempty"`
+	AllowCandidateRelease bool `json:"allowCandidateRelease,omitempty"`
+	// +kubebuilder:validation:Required
+	Destination ImageEndpoint `json:"destination,omitempty"`
+	// +kubebuilder:validation:Optional
+	// +kubebuilder:default:="5m"
+	Frequency string `json:"frequency,omitempty"`
+	// +kubebuilder:validation:Required
+	// +kubebuilder:validation:Enum=OneShot;Reccurent
+	// Select mode you want to apply to the job
+	Mode Mode `json:"mode,omitempty"`
+	// +kubebuilder:validation:Required
+	Source ImageEndpoint `json:"source,omitempty"`
 }
 
 type History struct {

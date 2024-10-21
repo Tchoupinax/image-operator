@@ -46,7 +46,7 @@ spec:
                   name:
                     type: string
                   useAwsIRSA:
-                    default: "false"
+                    default: false
                     description: |-
                       With EKS you might want to use IRSA (Iam Roles for Service Accounts)
                       In this case, additionnal operation have to be done in the job.
@@ -72,7 +72,7 @@ spec:
                   name:
                     type: string
                   useAwsIRSA:
-                    default: "false"
+                    default: false
                     description: |-
                       With EKS you might want to use IRSA (Iam Roles for Service Accounts)
                       In this case, additionnal operation have to be done in the job.
