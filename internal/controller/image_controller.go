@@ -19,12 +19,8 @@ package controller
 import (
 	"context"
 	"fmt"
-	"os"
-	"strings"
 	"time"
 
-	batchv1 "k8s.io/api/batch/v1"
-	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 
@@ -35,7 +31,6 @@ import (
 
 	skopeoiov1alpha1 "github.com/Tchoupinax/skopeo-operator/api/v1alpha1"
 	"github.com/Tchoupinax/skopeo-operator/internal/helpers"
-	"github.com/go-logr/logr"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -68,7 +63,7 @@ func (r *ImageReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 		return ctrl.Result{}, nil
 	}
 
-	var parsedFrequency time.Duration
+	var parsedFrequency time.Duration = 5 * time.Minute
 	if image.Spec.Mode == "Recurrent" {
 		var parsedFrequencyError error
 
@@ -101,172 +96,4 @@ func (r *ImageReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&skopeoiov1alpha1.Image{}).
 		Complete(r)
-}
-
-func int32Ptr(i int32) *int32 {
-	return &i
-}
-
-func planJobCreation(
-	r *ImageReconciler,
-	ctx context.Context,
-	req ctrl.Request,
-	image skopeoiov1alpha1.Image,
-	logger logr.Logger,
-) {
-	image.Status.History = append(image.Status.History, skopeoiov1alpha1.History{
-		PerformedAt: metav1.Now(),
-	})
-
-	maxItems := 3
-	if len(image.Status.History) > maxItems {
-		image.Status.History = image.Status.History[len(image.Status.History)-maxItems:]
-	}
-
-	updateError := r.Status().Update(ctx, &image)
-	if updateError != nil {
-		fmt.Println(updateError)
-	}
-
-	selectedVersions := helpers.ListVersion(
-		logger,
-		image.Spec.Source.ImageName,
-		image.Spec.Source.ImageVersion,
-		image.Spec.AllowCandidateRelease,
-		helpers.DockerHubAuth{},
-		helpers.AWSPublicECR{},
-	)
-
-	if image.Spec.Mode == "OneShot" {
-		selectedVersions = helpers.Filter(selectedVersions, func(tag string) bool {
-			return !helpers.Contains(image.Status.TagAlreadySynced, tag)
-		})
-	}
-
-	if len(selectedVersions) > 0 {
-		logger.Info("Reload image")
-
-		for _, tag := range selectedVersions {
-			createSkopeoPod(r, ctx, req, image, logger, tag)
-		}
-
-		if image.Spec.Mode == "OneShot" {
-			image.Status.TagAlreadySynced = append(
-				image.Status.TagAlreadySynced,
-				selectedVersions...,
-			)
-			updateError2 := r.Status().Update(ctx, &image)
-			if updateError2 != nil {
-				fmt.Println(updateError2)
-			}
-		}
-	}
-}
-
-func createSkopeoPod(
-	r *ImageReconciler,
-	ctx context.Context,
-	req ctrl.Request,
-	image skopeoiov1alpha1.Image,
-	logger logr.Logger,
-	overridenVersion string,
-) {
-	logger.Info("Create job to copy image", image.Spec.Source.ImageName, image.Spec.Source.ImageVersion)
-
-	r.PrometheusReloadGauge.WithLabelValues(
-		fmt.Sprintf("%s:%s", image.Spec.Source.ImageName, image.Spec.Source.ImageVersion),
-	).Inc()
-
-	arguments := []string{
-		"copy",
-		fmt.Sprintf("docker://%s:%s", image.Spec.Source.ImageName, overridenVersion),
-		fmt.Sprintf("docker://%s:%s", image.Spec.Destination.ImageName, overridenVersion),
-		"--all",
-		"--preserve-digests",
-	}
-
-	if os.Getenv("CREDS_DESTINATION_USERNAME") != "" && os.Getenv("CREDS_DESTINATION_PASSWORD") != "" {
-		arguments = append(
-			arguments,
-			fmt.Sprintf("--dest-creds=%s:%s", os.Getenv("CREDS_DESTINATION_USERNAME"), os.Getenv("CREDS_DESTINATION_PASSWORD")),
-		)
-	}
-
-	if os.Getenv("CREDS_SOURCE_USERNAME") != "" && os.Getenv("CREDS_SOURCE_PASSWORD") != "" {
-		arguments = append(
-			arguments,
-			fmt.Sprintf("--dest-creds=%s:%s", os.Getenv("CREDS_SOURCE_USERNAME"), os.Getenv("CREDS_SOURCE_PASSWORD")),
-		)
-	}
-
-	if os.Getenv("DISABLE_SRC_TLS_VERIFICATION") == "true" {
-		arguments = append(
-			arguments,
-			"--src-tls-verify=false",
-		)
-	} else {
-		arguments = append(
-			arguments,
-			"--src-tls-verify=true",
-		)
-	}
-
-	if os.Getenv("DISABLE_DEST_TLS_VERIFICATION") == "true" {
-		arguments = append(
-			arguments,
-			"--dest-tls-verify=false",
-		)
-	} else {
-		arguments = append(
-			arguments,
-			"--dest-tls-verify=true",
-		)
-	}
-
-	podNamespace := os.Getenv("PULL_JOB_NAMESPACE")
-	if podNamespace == "" {
-		podNamespace = "skopeo-operator"
-	}
-
-	skopeoImage := os.Getenv("SKOPEO_IMAGE")
-	if skopeoImage == "" {
-		skopeoImage = "quay.io/containers/skopeo"
-	}
-
-	skopeoVersion := os.Getenv("SKOPEO_VERSION")
-	if skopeoVersion == "" {
-		skopeoVersion = "v1.16.1"
-	}
-
-	desiredJob := batchv1.Job{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: fmt.Sprintf(
-				"skopeo-job-copy-%s-%s",
-				strings.ReplaceAll(req.Name, ".", ""),
-				strings.ReplaceAll(overridenVersion, ".", ""),
-			),
-			Namespace: podNamespace,
-		},
-		Spec: batchv1.JobSpec{
-			TTLSecondsAfterFinished: int32Ptr(10),
-			Template: corev1.PodTemplateSpec{
-				Spec: corev1.PodSpec{
-					RestartPolicy: "Never",
-					Containers: []corev1.Container{
-						{
-							Image:   fmt.Sprintf("%s:%s", skopeoImage, skopeoVersion),
-							Name:    "skopeo",
-							Command: []string{"skopeo"},
-							Args:    arguments,
-						},
-					},
-				},
-			},
-		},
-	}
-
-	creationError := r.Create(ctx, &desiredJob)
-	if creationError != nil {
-		fmt.Println(creationError)
-	}
 }
