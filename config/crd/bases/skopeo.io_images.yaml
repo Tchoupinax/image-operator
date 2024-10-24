@@ -65,7 +65,8 @@ spec:
                 description: Select mode you want to apply to the job
                 enum:
                 - OneShot
-                - Reccurent
+                - OnceByTag
+                - Recurrent
                 type: string
               source:
                 properties:

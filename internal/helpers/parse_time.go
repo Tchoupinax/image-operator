@@ -37,13 +37,13 @@ func convertFormat(input string) string {
 	return input
 }
 
-func ParseTime(timeStr string) (time.Duration, error) {
+func ParseTime(timeStr string) time.Duration {
 	parsedFrequency, parsedFrequencyError := time.ParseDuration(convertFormat(timeStr))
 
 	if parsedFrequencyError != nil {
 		// By default, we return 5 minutes in case of error.
-		return 5 * time.Minute, parsedFrequencyError
+		return 5 * time.Minute
 	}
 
-	return parsedFrequency, nil
+	return parsedFrequency
 }

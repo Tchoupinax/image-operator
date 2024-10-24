@@ -18,7 +18,6 @@ package controller
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -57,32 +56,41 @@ type ImageReconciler struct {
 func (r *ImageReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	logger := log.FromContext(ctx)
 
+	// Get Image specs. If the image is not found, handle the error and return.
+	// According operator spec, the key should not be triggered again.
 	var image skopeoiov1alpha1.Image
 	if err := r.Get(ctx, types.NamespacedName{Name: req.Name, Namespace: req.Namespace}, &image); err != nil {
-		fmt.Println(fmt.Printf("%s not found (%s)", req.Name, req.Namespace))
+		logger.Info("Object %s not found (%s)", req.Name, req.Namespace)
 		return ctrl.Result{}, nil
 	}
 
-	var parsedFrequency time.Duration = 5 * time.Minute
-	if image.Spec.Mode == "Recurrent" {
-		var parsedFrequencyError error
+	// Parse the time from the spec. By default, it returns 5 minutes
+	var parsedFrequency time.Duration = helpers.ParseTime(image.Spec.Frequency)
 
-		parsedFrequency, parsedFrequencyError = helpers.ParseTime(image.Spec.Frequency)
-		if parsedFrequencyError != nil {
-			logger.Error(parsedFrequencyError, "Error when parsing the frequency")
+	// If it's the first time, start a job creation
+	if len(image.Status.History) == 0 {
+		planJobCreation(r, ctx, req, image, logger)
+
+		if image.Spec.Mode == skopeoiov1alpha1.ONE_SHOT {
+			return ctrl.Result{}, nil
+		} else {
+			return ctrl.Result{
+				Requeue:      true,
+				RequeueAfter: 10 * time.Second,
+			}, nil
 		}
 	}
 
-	if len(image.Status.History) == 0 {
-		planJobCreation(r, ctx, req, image, logger)
-	} else {
-		lastApplication := image.Status.History[len(image.Status.History)-1].PerformedAt
-		timeDifference := metav1.Now().Sub(lastApplication.Time)
+	// With an history and one-shot mode, it stops
+	if image.Spec.Mode == skopeoiov1alpha1.ONE_SHOT {
+		return ctrl.Result{}, nil
+	}
 
-		if timeDifference > parsedFrequency {
-			planJobCreation(r, ctx, req, image, logger)
-			return ctrl.Result{}, nil
-		}
+	lastApplication := image.Status.History[len(image.Status.History)-1].PerformedAt
+	timeDifference := metav1.Now().Sub(lastApplication.Time)
+	// Start a job if the period defined is expired
+	if timeDifference > parsedFrequency {
+		planJobCreation(r, ctx, req, image, logger)
 	}
 
 	return ctrl.Result{
@@ -91,7 +99,6 @@ func (r *ImageReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 	}, nil
 }
 
-// SetupWithManager sets up the controller with the Manager.
 func (r *ImageReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&skopeoiov1alpha1.Image{}).
