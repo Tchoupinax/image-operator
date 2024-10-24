@@ -2,10 +2,10 @@ name: Build binary
 
 on:
   pull_request:
-    branches:
-    - 'feature/**'
-    #paths:
-    #- "internal/**"
+  #branches:
+  #- 'feature/**'
+  #paths:
+  #- "internal/**"
 
 jobs:
   build-binary:
