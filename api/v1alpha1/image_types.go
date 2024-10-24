@@ -39,8 +39,9 @@ type ImageEndpoint struct {
 type Mode string
 
 const (
-	ONE_SHOT Mode = "OneShot"
-	RECURENT Mode = "Recurrent"
+	ONE_SHOT    Mode = "OneShot"
+	ONCE_BY_TAG Mode = "OnceByTag"
+	RECURRENT   Mode = "Recurrent"
 )
 
 // ImageSpec defines the desired state of Image
@@ -55,7 +56,7 @@ type ImageSpec struct {
 	// +kubebuilder:default:="5m"
 	Frequency string `json:"frequency,omitempty"`
 	// +kubebuilder:validation:Required
-	// +kubebuilder:validation:Enum=OneShot;Reccurent
+	// +kubebuilder:validation:Enum=OneShot;OnceByTag;Recurrent
 	// Select mode you want to apply to the job
 	Mode Mode `json:"mode,omitempty"`
 	// +kubebuilder:validation:Required

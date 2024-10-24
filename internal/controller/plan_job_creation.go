@@ -29,7 +29,7 @@ func planJobCreation(
 		helpers.AWSPublicECR{},
 	)
 
-	if image.Spec.Mode == "OneShot" {
+	if image.Spec.Mode == skopeoiov1alpha1.ONCE_BY_TAG {
 		selectedVersions = helpers.Filter(selectedVersions, func(tag string) bool {
 			return !helpers.Contains(image.Status.TagAlreadySynced, tag)
 		})
@@ -42,7 +42,7 @@ func planJobCreation(
 			CreateSkopeoJob(r, ctx, req, image, logger, tag)
 		}
 
-		if image.Spec.Mode == "OneShot" {
+		if image.Spec.Mode == "OnceByTag" {
 			// This operation should only be done if the job succeeded
 			image.Status.TagAlreadySynced = append(
 				image.Status.TagAlreadySynced,
