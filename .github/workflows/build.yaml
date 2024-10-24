@@ -2,10 +2,10 @@ name: Build binary
 
 on:
   pull_request:
-    branches:
-    - feature/**
-    #paths:
-    #- "internal/**"
+  #branches:
+  #- 'feature/**'
+  #paths:
+  #- "internal/**"
 
 jobs:
   build-binary:
@@ -26,8 +26,5 @@ jobs:
       with:
         go-version: ${{ steps.vars.outputs.go_version }}
 
-    - name: Compile the source
-      uses: goreleaser/goreleaser-action@v6
-      with:
-        version: v2.1.0
-        args: build --snapshot
+    - name: Build
+      run: go build cmd/main.go
