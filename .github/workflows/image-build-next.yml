@@ -1,11 +1,6 @@
 name: build-image-next
 
-on:
-  push:
-    branches:
-    - feature/**
-    paths:
-    - "internal/**"
+on: workflow_dispatch
 
 jobs:
   docker:
