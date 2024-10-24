@@ -55,18 +55,22 @@ func ListVersion(
 		} else if isAWSPublicECR {
 			url = "https://api.us-east-1.gallery.ecr.aws/describeImageTags"
 
+			var parts = strings.Split(repository, "/")
+
 			var jsonData string
 			if nextToken != "" {
 				jsonData = fmt.Sprintf(`{
-					"registryAliasName":"docker",
-					"repositoryName":"library/traefik",
-					"nextToken": "%s"
-				}`, nextToken)
+					"registryAliasName":"%s",
+					"repositoryName":"%s",
+					"nextToken": "%s",
+					"maxResults": 1000
+				}`, parts[0], parts[1]+"/"+parts[2], nextToken)
 			} else {
-				jsonData = `{
-					"registryAliasName":"docker",
-					"repositoryName":"library/traefik"
-				}`
+				jsonData = fmt.Sprintf(`{
+					"registryAliasName":"%s",
+					"repositoryName":"%s",
+					"maxResults": 1000
+				}`, parts[0], parts[1]+"/"+parts[2])
 			}
 
 			req, _ = http.NewRequest("POST", url, bytes.NewBuffer([]byte(jsonData)))
@@ -96,6 +100,7 @@ func ListVersion(
 
 		if resp.StatusCode != http.StatusOK {
 			fmt.Printf("Error: received status code %d\n", resp.StatusCode)
+			fmt.Println(resp.Body)
 			break
 		}
 
@@ -130,7 +135,8 @@ func ListVersion(
 				tags = append(tags, tag.Name)
 			}
 		} else if isAWSPublicECR {
-			if page > 10 || len(result.ImageTagDetails) == 0 {
+			// Are made 1000 by 1000
+			if page > 2 || len(result.ImageTagDetails) == 0 {
 				break
 			}
 			for _, image := range result.ImageTagDetails {

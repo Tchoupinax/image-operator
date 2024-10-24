@@ -78,12 +78,13 @@ var _ = Describe("Parse time", func() {
 	})
 
 	Describe("when image is in AWS Public registry", func() {
-		It("should correctly find image for 2.x", func() {
+		It("should correctly find image Node.js 20", func() {
 			var expectedValue = []string{
-				"2.7", "v2.7", "2.11", "v2.11", "v2.5", "2.5", "v2.9", "2.9", "v2.8", "2.8", "2.4", "v2.4", "2.10", "v2.10", "v2.3", "2.3", "v2.6", "2.6",
+				"20",
 			}
-			Expect(helpers.ListVersion(logr.Logger{}, "public.ecr.aws/docker/library/traefik", "2.x", false, helpers.DockerHubAuth{}, helpers.AWSPublicECR{})).To(Equal(expectedValue))
+			Expect(helpers.ListVersion(logr.Logger{}, "public.ecr.aws/docker/library/node", "20", false, helpers.DockerHubAuth{}, helpers.AWSPublicECR{})).To(Equal(expectedValue))
 		})
+
 	})
 
 	It("generate regex", func() {
