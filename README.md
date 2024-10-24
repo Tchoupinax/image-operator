@@ -173,3 +173,9 @@ Command to launch a specific test
 ```bash
 go run github.com/onsi/ginkgo/v2/ginkgo -r --randomize-all --randomize-suites --race --trace -cover internal/helpers/
 ```
+
+Focus a test
+
+```
+go run github.com/onsi/ginkgo/v2/ginkgo run --focus "Node.js" .
+```
