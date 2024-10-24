@@ -2,10 +2,10 @@ name: Build binary
 
 on:
   pull_request:
-  #branches:
-  #- 'feature/**'
-  #paths:
-  #- "internal/**"
+    branches:
+    - 'feature/**'
+    #paths:
+    #- "internal/**"
 
 jobs:
   build-binary:
@@ -18,7 +18,7 @@ jobs:
 
     - id: vars
       run: |
-        echo ::set-output name=go_version::$(cat go.mod | head -3 | tail -1 | cut -d ' ' -f 2)
+        echo "go_version=$(cat go.mod | head -3 | tail -1 | cut -d ' ' -f 2)" >> $GITHUB_OUTPUT
         echo "Using Go version ${{ steps.vars.outputs.go_version }}"
 
     - name: Set up Go
