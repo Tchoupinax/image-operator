@@ -139,6 +139,7 @@ func GenerateSkopeoJob(
 			Namespace: podNamespace,
 		},
 		Spec: batchv1.JobSpec{
+			BackoffLimit:            int32Ptr(0),
 			TTLSecondsAfterFinished: int32Ptr(10),
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
