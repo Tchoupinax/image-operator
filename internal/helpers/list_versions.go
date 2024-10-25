@@ -74,7 +74,6 @@ func ListVersion(
 			}
 
 			req, _ = http.NewRequest("POST", url, bytes.NewBuffer([]byte(jsonData)))
-			// Add headers
 			req.Header.Set("Cache-Control", "no-cache")
 			req.Header.Set("TE", "trailers")
 			req.Header.Set("Content-Type", "application/json")
@@ -162,6 +161,8 @@ func ListVersion(
 
 		page++
 	}
+
+	logger.Info(fmt.Sprintf("%d images detected", len(matchedTags)))
 
 	return matchedTags
 }

@@ -84,7 +84,6 @@ var _ = Describe("Parse time", func() {
 			}
 			Expect(helpers.ListVersion(logr.Logger{}, "public.ecr.aws/docker/library/node", "20", false, helpers.DockerHubAuth{}, helpers.AWSPublicECR{})).To(Equal(expectedValue))
 		})
-
 	})
 
 	It("generate regex", func() {

@@ -177,5 +177,5 @@ go run github.com/onsi/ginkgo/v2/ginkgo -r --randomize-all --randomize-suites --
 Focus a test
 
 ```
-go run github.com/onsi/ginkgo/v2/ginkgo run --focus "Node.js" .
+go run github.com/onsi/ginkgo/v2/ginkgo run --focus "Node.js" internal/helpers/
 ```

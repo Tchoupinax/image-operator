@@ -36,8 +36,9 @@ import (
 // ImageReconciler reconciles a Image object
 type ImageReconciler struct {
 	client.Client
-	Scheme                *runtime.Scheme
-	PrometheusReloadGauge prometheus.CounterVec
+	Scheme                   *runtime.Scheme
+	PrometheusReloadGauge    prometheus.CounterVec
+	LastTimeImageWasReloaded prometheus.GaugeVec
 }
 
 // +kubebuilder:rbac:groups=skopeo.io,resources=images,verbs=get;list;watch;create;update;patch;delete

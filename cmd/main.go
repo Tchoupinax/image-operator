@@ -55,15 +55,21 @@ var (
 		},
 		[]string{"image"},
 	)
+	lastTimeImageWasReloaded = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "skopeo_operator_last_time_image_was_reloaded",
+			Help: "Timestamp of when the image was reloaded for the last time",
+		},
+		[]string{"image"},
+	)
 )
 
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
-
 	utilruntime.Must(skopeoiov1alpha1.AddToScheme(scheme))
 	// +kubebuilder:scaffold:scheme
 
-	metrics.Registry.MustRegister(prometheusReloadGauge)
+	metrics.Registry.MustRegister(prometheusReloadGauge, lastTimeImageWasReloaded)
 }
 
 func main() {
@@ -159,9 +165,10 @@ func main() {
 	}
 
 	if err = (&controller.ImageReconciler{
-		Client:                mgr.GetClient(),
-		Scheme:                mgr.GetScheme(),
-		PrometheusReloadGauge: *prometheusReloadGauge,
+		Client:                   mgr.GetClient(),
+		Scheme:                   mgr.GetScheme(),
+		PrometheusReloadGauge:    *prometheusReloadGauge,
+		LastTimeImageWasReloaded: *lastTimeImageWasReloaded,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Image")
 		os.Exit(1)

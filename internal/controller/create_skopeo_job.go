@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	skopeoiov1alpha1 "github.com/Tchoupinax/skopeo-operator/api/v1alpha1"
+	"github.com/Tchoupinax/skopeo-operator/internal/helpers"
 	"github.com/go-logr/logr"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -34,6 +35,11 @@ func CreateSkopeoJob(
 	creationError := r.Create(ctx, &desiredJob)
 	if creationError != nil {
 		fmt.Println(creationError)
+	} else {
+		// If the creation is a success, increase metrics
+		var imageKey = fmt.Sprintf("%s:%s", image.Spec.Source.ImageName, image.Spec.Source.ImageVersion)
+		r.PrometheusReloadGauge.WithLabelValues(imageKey).Inc()
+		r.LastTimeImageWasReloaded.WithLabelValues(imageKey).Set(helpers.GenerateTimestamp())
 	}
 }
 
@@ -46,11 +52,6 @@ func GenerateSkopeoJob(
 	overridenVersion string,
 ) batchv1.Job {
 	logger.Info("Create job to copy image", image.Spec.Source.ImageName, image.Spec.Source.ImageVersion)
-
-	fmt.Println(r.PrometheusReloadGauge)
-	r.PrometheusReloadGauge.WithLabelValues(
-		fmt.Sprintf("%s:%s", image.Spec.Source.ImageName, image.Spec.Source.ImageVersion),
-	).Inc()
 
 	skopeoCommand := []string{
 		"skopeo",
