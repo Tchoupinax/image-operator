@@ -79,8 +79,6 @@ func init() {
 func main() {
 	go heartBeatDockerhub(setupLog)
 
-	time.Sleep(10 * time.Second)
-
 	var metricsAddr string
 	var enableLeaderElection bool
 	var probeAddr string
