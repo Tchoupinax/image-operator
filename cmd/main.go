@@ -19,7 +19,9 @@ package main
 import (
 	"crypto/tls"
 	"flag"
+	"fmt"
 	"os"
+	"time"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
@@ -37,6 +39,8 @@ import (
 
 	skopeoiov1alpha1 "github.com/Tchoupinax/skopeo-operator/api/v1alpha1"
 	"github.com/Tchoupinax/skopeo-operator/internal/controller"
+	"github.com/Tchoupinax/skopeo-operator/internal/helpers"
+	"github.com/go-logr/logr"
 
 	// +kubebuilder:scaffold:imports
 
@@ -73,6 +77,10 @@ func init() {
 }
 
 func main() {
+	go heartBeatDockerhub(setupLog)
+
+	time.Sleep(10 * time.Second)
+
 	var metricsAddr string
 	var enableLeaderElection bool
 	var probeAddr string
@@ -188,5 +196,14 @@ func main() {
 	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {
 		setupLog.Error(err, "problem running manager")
 		os.Exit(1)
+	}
+}
+
+func heartBeatDockerhub(logger logr.Logger) {
+	for range time.Tick(time.Second * 30) {
+		resultChan := make(chan int)
+		go helpers.GetDockerhubLimit(setupLog, resultChan)
+		result := <-resultChan
+		logger.Info(fmt.Sprintf("Dockerhub rate current rate limit is %d", result))
 	}
 }
