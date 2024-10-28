@@ -66,6 +66,12 @@ var (
 		},
 		[]string{"image"},
 	)
+	dockerhubQuota = prometheus.NewGauge(
+		prometheus.GaugeOpts{
+			Name: "skopeo_operator_dockerhub_quota",
+			Help: "How much pull are available from Docker.io API",
+		},
+	)
 )
 
 func init() {
@@ -73,7 +79,7 @@ func init() {
 	utilruntime.Must(skopeoiov1alpha1.AddToScheme(scheme))
 	// +kubebuilder:scaffold:scheme
 
-	metrics.Registry.MustRegister(prometheusReloadGauge, lastTimeImageWasReloaded)
+	metrics.Registry.MustRegister(prometheusReloadGauge, lastTimeImageWasReloaded, dockerhubQuota)
 }
 
 func main() {
@@ -198,10 +204,12 @@ func main() {
 }
 
 func heartBeatDockerhub(logger logr.Logger) {
-	for range time.Tick(time.Second * 30) {
+	for range time.Tick(time.Second * 60) {
 		resultChan := make(chan int)
 		go helpers.GetDockerhubLimit(setupLog, resultChan)
 		result := <-resultChan
+
 		logger.Info(fmt.Sprintf("Dockerhub rate current rate limit is %d", result))
+		dockerhubQuota.Set(float64(result))
 	}
 }
