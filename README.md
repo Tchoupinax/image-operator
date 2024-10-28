@@ -179,3 +179,9 @@ Focus a test
 ```
 go run github.com/onsi/ginkgo/v2/ginkgo run --focus "Node.js" internal/helpers/
 ```
+
+## Rate limiting
+
+### Dockerhub
+
+[source](https://www.docker.com/blog/checking-your-current-docker-pull-rate-limits-and-status)
