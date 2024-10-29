@@ -70,6 +70,14 @@ spec:
             cpu: 10m
             memory: 20Mi
         env:
+          - name: "BUILDAH_PRIVILEGED_CONTAINER"
+            value: "{{ .Values.config.buildah.dangerUsePrivilegedContainers }}"
+          - name: "BUILDAH_IMAGE"
+            value: "{{ .Values.config.buildah.image }}"
+          - name: "BUILDAH_VERSION"
+            value: "{{ .Values.config.buildah.version }}"
+          - name: "BUILDAH_JOB_NAMESPACE"
+            value: "{{ .Values.config.buildah.jobNamespace }}"
           - name: "CREDS_DESTINATION_USERNAME"
             valueFrom:
               secretKeyRef:
