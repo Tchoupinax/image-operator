@@ -12,6 +12,14 @@ rules:
     resources: ["images/status"]
     verbs: ["update"]
 
+  - apiGroups: ["buildah.io"]
+    resources: ["imagebuilders"]
+    verbs: ["get", "list", "watch", "update"]
+
+  - apiGroups: ["buildah.io"]
+    resources: ["imagebuilders/status"]
+    verbs: ["update"]
+
   - apiGroups: [""]
     resources: ["pods"]
     verbs: ["get", "list", "watch", "create"]
