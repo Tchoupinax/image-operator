@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	skopeoiov1alpha1 "github.com/Tchoupinax/skopeo-operator/api/v1alpha1"
+	skopeoiov1alpha1 "github.com/Tchoupinax/skopeo-operator/api/skopeo.io/v1alpha1"
 	"github.com/Tchoupinax/skopeo-operator/internal/helpers"
 	"github.com/go-logr/logr"
 	batchv1 "k8s.io/api/batch/v1"
@@ -117,11 +117,12 @@ func GenerateSkopeoJob(
 
 	var arguments []string
 	if image.Spec.Destination.UseAwsIRSA || image.Spec.Source.UseAwsIRSA {
+		parts := strings.Split(image.Spec.Destination.ImageName, "/")
 		arguments = []string{
 			"-c",
 			fmt.Sprintf(`yum install -y awscli &&
-			aws ecr get-login-password --region eu-west-1 | skopeo login --username AWS --password-stdin 326954429656.dkr.ecr.eu-west-1.amazonaws.com &&
-			%s`, strings.Join(skopeoCommand, " ")),
+			aws ecr get-login-password --region eu-west-1 | skopeo login --username AWS --password-stdin %s &&
+			%s`, parts[0], strings.Join(skopeoCommand, " ")),
 		}
 	} else {
 		arguments = []string{

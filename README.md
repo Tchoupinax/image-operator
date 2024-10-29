@@ -136,6 +136,10 @@ You can find an exemple of values [here](charts/skopeo-operator/values.yaml).
 
 ### Environment variables list
 
+- `BUILDAH_IMAGE`: "quay.io/containers/buildah"
+- `BUILDAH_PRIVILEGED_CONTAINER`: false
+- `BUILDAH_VERSION`: "v1.37.3"
+- `BUILDAH_JOB_NAMESPACE`: "skopeo-operator"
 - `CREDS_DESTINATION_PASSWORD`: ""
 - `CREDS_DESTINATION_USERNAME`: ""
 - `CREDS_SOURCE_PASSWORD`: ""

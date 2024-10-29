@@ -2,9 +2,9 @@
 # This file is used to track the info used to scaffold your project
 # and allow the plugins properly work.
 # More info: https://book.kubebuilder.io/reference/project-config.html
-domain: skopeo.io
 layout:
 - go.kubebuilder.io/v4
+multigroup: true
 projectName: skopeo-operator
 repo: github.com/Tchoupinax/skopeo-operator
 resources:
@@ -14,5 +14,13 @@ resources:
   domain: skopeo.io
   kind: Image
   path: github.com/Tchoupinax/skopeo-operator/api/v1alpha1
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: buildah.io
+  kind: ImageBuilder
+  path: github.com/Tchoupinax/skopeo-operator/api/buildah.io/v1alpha1
   version: v1alpha1
 version: "3"

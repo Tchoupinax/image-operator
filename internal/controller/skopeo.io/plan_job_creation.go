@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	skopeoiov1alpha1 "github.com/Tchoupinax/skopeo-operator/api/v1alpha1"
+	skopeoiov1alpha1 "github.com/Tchoupinax/skopeo-operator/api/skopeo.io/v1alpha1"
 	"github.com/Tchoupinax/skopeo-operator/internal/helpers"
 	"github.com/go-logr/logr"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
