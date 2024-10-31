@@ -15,6 +15,8 @@ helm upgrade --install skopeo-operator skopeo-operator/skopeo-operator
 
 According the use-case you have, select the good configuration for you:
 
+### Copy raw images (`Image`)
+
 #### I want to sync an image with a specific tag and I want to do only one
 
 Use mode `OneShot` and fill version with you specific tag (e.g. `v1.2.3`).
@@ -27,7 +29,9 @@ Use mode `OneShot` and fill version with a matching pattern (e.g. `v1.2.x`). It 
 
 Use mode `Recurrent` and provide the desired version (e.g. `node:22-alpine`)
 
-### Reccurent task
+#### Example of recurrent task
+
+> I want to copy `quay.io/nginx/nginx-ingress:3.7-alpine` to `tchoupinax/nginx/nginx-ingress:3.7-alpine` every 15 minutes.
 
 ```yaml
 apiVersion: skopeo.io/v1alpha1
@@ -36,7 +40,7 @@ metadata:
   name: nginx-alpine
 spec:
   frequency: 15m
-  mode: Recurrent # Or OneShot
+  mode: Recurrent
   source:
     name: quay.io/nginx/nginx-ingress
     version: 3.7-alpine
@@ -45,12 +49,12 @@ spec:
     version: 3.7-alpine
 ```
 
-### Tags matching pattern
+### Example with tags matching pattern
 
 You can order to copy every images matching a pattern. For exemple, if you want to copy every image like `2.13.1`, `2.13.2`, `2.13.3` etc... you can put version as `2.13.x`.
-Moreover, if you want to include release candidate you can with the option `allowCandidateRelease: true`
+Moreover, if you want to include release candidate you can with the option `allowCandidateRelease: true`. It will create a Kubernetes job for each version detected.
 
-It will create a job for each version detected.
+> I want to copy every image `>=2.13` and `<2.14` and I accept release candidates (tag having `-rc{\d}{1,2}`)
 
 ```yaml
 apiVersion: skopeo.io/v1alpha1
@@ -68,26 +72,46 @@ spec:
     version: v2.13.x
 ```
 
-### Options
-
-This is an exemple of the resource with full options.
+#### Example with full options explained
 
 ```yaml
 apiVersion: skopeo.io/v1alpha1
 kind: Image
 metadata:
   name: name
-
 spec:
   allowCandidateRelease: false # Activate if you want release which match *.*.*-rc[O-9]+
-  mode: OneShot # or Reccurrent
-  frequency: "1m" # or [O-9]+h (hour), [O-9]+d (day), [O-9]+w (week)
+  mode: OneShot # Accepted: OneShot,OnceByTag,Recurrent
+  frequency: "1m" #  Accepted: [O-9]+(s(second),m(minute),h(hour),d(day),(week)
   source:
     name: source/argoproj/argocd
     version: v2.13.x
   destination:
     name: destination/argoproj/argocd
     version: v2.13.x
+```
+
+### Build image (`ImageBuilder`)
+
+#### Example with full options explained
+
+```yaml
+apiVersion: buildah.io/v1alpha1
+kind: ImageBuilder
+metadata:
+  name: name
+spec:
+  architecture: "arm64" # Accepted: arm64;amd64;both
+  image:
+    name: destination/node
+    version: 22-updated
+    useAwsIRSA: false # Accepted: false,true
+  source: |
+    FROM node:22
+    RUN apt update -y && apt upgrade -y
+  resources:
+    limits:
+      memory: 2Gi
 ```
 
 ## Motivation
@@ -159,8 +183,9 @@ You can find an exemple of values [here](charts/skopeo-operator/values.yaml).
 - [x] Allow to copy release candidates
 - [x] Allow to target version following a pattern
   - [x] Quay.io
-  - [ ] Dockerhub
-  - [ ] AWS public ECR
+  - [x] Dockerhub
+  - [x] AWS public ECR
+- [x] Build cross architectures images
 
 ## Monitoring
 
