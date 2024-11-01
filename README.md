@@ -1,16 +1,16 @@
 ![AI generated image showing an octobus manipulating containers](.github/docs/logo.png)
 
-# skopeo-operator
+# image-operator
 
-Skopeo Operator simplifies the process of synchronizing container images across registries and supports both one-time and scheduled tasks. Built around Skopeo, it offers Kubernetes-native orchestration for copying, managing, and monitoring images in your ecosystem.
+Image Operator simplifies the process of synchronizing container images across registries and supports both one-time and scheduled tasks. Built around Skopeo, it offers Kubernetes-native orchestration for copying, managing, and monitoring images in your ecosystem.
 
 ## Install with Helm Chart
 
 ```bash
-helm repo add skopeo-operator https://tchoupinax.github.io/skopeo-operator
+helm repo add image-operator https://tchoupinax.github.io/image-operator
 helm repo update
 
-helm upgrade --install skopeo-operator skopeo-operator/skopeo-operator
+helm upgrade --install image-operator image-operator/image-operator
 ```
 
 ## Usage
@@ -152,19 +152,19 @@ sequenceDiagram
 actor User
 User->>Kubernetes: Apply Image resource to Kubernetes
 loop Every 5 seconds
-    Kubernetes->>Skopeo Operator: Listen resource's events
+    Kubernetes->>Image Operator: Listen resource's events
     alt is one shot job
-        Skopeo Operator->>Skopeo Job: Create job
+        Image Operator->>Skopeo Job: Create job
     else is reccurrent job
         alt last execution is old than frequency
-            Skopeo Operator->>Skopeo Job: Create job
+            Image Operator->>Skopeo Job: Create job
         else last execution is newer than frequency
-            Skopeo Operator->>Skopeo Operator: Do nothing
+            Image Operator->>Image Operator: Do nothing
         end
     end
     Skopeo Job->>Skopeo Job: Copy image accross registries
     Note right of Skopeo Job: Job is performed asyncronaly and<br>has a random duration.<br>Once the pod has finished,<br>it is deleted.
-    Skopeo Operator-->>Kubernetes: If the job is recurrent,<br>ask to recall the loop every 5 seconds
+    Image Operator-->>Kubernetes: If the job is recurrent,<br>ask to recall the loop every 5 seconds
 end
 ```
 
@@ -172,21 +172,21 @@ end
 
 ## Helm chart
 
-You can find an exemple of values [here](charts/skopeo-operator/values.yaml).
+You can find an exemple of values [here](charts/image-operator/values.yaml).
 
 ### Environment variables list
 
 - `BUILDAH_IMAGE`: "quay.io/containers/buildah"
 - `BUILDAH_PRIVILEGED_CONTAINER`: false
 - `BUILDAH_VERSION`: "v1.37.3"
-- `BUILDAH_JOB_NAMESPACE`: "skopeo-operator"
+- `BUILDAH_JOB_NAMESPACE`: "image-operator"
 - `CREDS_DESTINATION_PASSWORD`: ""
 - `CREDS_DESTINATION_USERNAME`: ""
 - `CREDS_SOURCE_PASSWORD`: ""
 - `CREDS_SOURCE_USERNAME`: ""
 - `DISABLE_DEST_TLS_VERIFICATION`: "false"
 - `DISABLE_SRC_TLS_VERIFICATION`: "false"
-- `PULL_JOB_NAMESPACE`: "skopeo-operator"
+- `PULL_JOB_NAMESPACE`: "image-operator"
 - `SKOPEO_IMAGE`: "quay.io/containers/skopeo"
 - `SKOPEO_VERSION`: "v1.16.1"
 

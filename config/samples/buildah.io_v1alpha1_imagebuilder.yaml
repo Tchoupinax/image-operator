@@ -2,7 +2,7 @@ apiVersion: buildah.io/v1alpha1
 kind: ImageBuilder
 metadata:
   labels:
-    app.kubernetes.io/name: skopeo-operator
+    app.kubernetes.io/name: image-operator
     app.kubernetes.io/managed-by: kustomize
   name: imagebuilder-sample
 spec:

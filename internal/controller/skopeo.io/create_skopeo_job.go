@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
-	skopeoiov1alpha1 "github.com/Tchoupinax/skopeo-operator/api/skopeo.io/v1alpha1"
-	"github.com/Tchoupinax/skopeo-operator/internal/helpers"
+	skopeoiov1alpha1 "github.com/Tchoupinax/image-operator/api/skopeo.io/v1alpha1"
+	"github.com/Tchoupinax/image-operator/internal/helpers"
 	"github.com/go-logr/logr"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -102,7 +102,7 @@ func GenerateSkopeoJob(
 
 	podNamespace := os.Getenv("PULL_JOB_NAMESPACE")
 	if podNamespace == "" {
-		podNamespace = "skopeo-operator"
+		podNamespace = "image-operator"
 	}
 
 	skopeoImage := os.Getenv("SKOPEO_IMAGE")

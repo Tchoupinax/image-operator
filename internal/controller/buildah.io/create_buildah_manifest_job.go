@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	buildahiov1alpha1 "github.com/Tchoupinax/skopeo-operator/api/buildah.io/v1alpha1"
+	buildahiov1alpha1 "github.com/Tchoupinax/image-operator/api/buildah.io/v1alpha1"
 	"github.com/go-logr/logr"
 	batchv1 "k8s.io/api/batch/v1"
 	ctrl "sigs.k8s.io/controller-runtime"

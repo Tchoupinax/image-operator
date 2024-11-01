@@ -22,7 +22,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: tchoupinax/skopeo-operator
+        images: tchoupinax/image-operator
         flavor: latest=true
         tags: |
           type=ref,event=branch

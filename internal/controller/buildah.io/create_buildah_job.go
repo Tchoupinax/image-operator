@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	buildahiov1alpha1 "github.com/Tchoupinax/skopeo-operator/api/buildah.io/v1alpha1"
+	buildahiov1alpha1 "github.com/Tchoupinax/image-operator/api/buildah.io/v1alpha1"
 	"github.com/go-logr/logr"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -25,7 +25,7 @@ func CreateBuildahJobs(
 ) (ctrl.Result, error) {
 	jobNamespace := os.Getenv("BUILD_JOB_NAMESPACE")
 	if jobNamespace == "" {
-		jobNamespace = "skopeo-operator"
+		jobNamespace = "image-operator"
 	}
 
 	architectures := []buildahiov1alpha1.Architecture{imageBuilder.Spec.Architecture}

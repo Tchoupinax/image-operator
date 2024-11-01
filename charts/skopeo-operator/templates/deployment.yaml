@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: skopeo-operator
+  name: image-operator
 
 spec:
   replicas: 1
   selector:
     matchLabels:
-      kubernetes.io/name: skopeo-operator
+      kubernetes.io/name: image-operator
 
   template:
     metadata:
       labels:
-        kubernetes.io/name: skopeo-operator
+        kubernetes.io/name: image-operator
 
     spec:
       {{- with .Values.affinity }}
@@ -34,7 +34,7 @@ spec:
       containers:
       - image: "{{ .Values.image.repository }}:{{.Values.image.version}}"
         imagePullPolicy: "{{.Values.image.imagePullPolicy}}"
-        name: skopeo-operator
+        name: image-operator
         command: ["/manager"]
         args:
           - "--metrics-secure=false"
@@ -81,22 +81,22 @@ spec:
           - name: "CREDS_DESTINATION_USERNAME"
             valueFrom:
               secretKeyRef:
-                name: skopeo-operator
+                name: image-operator
                 key: credentialsDestinationUsername
           - name: "CREDS_DESTINATION_PASSWORD"
             valueFrom:
               secretKeyRef:
-                name: skopeo-operator
+                name: image-operator
                 key: credentialsDestinationPassword
           - name: "CREDS_SOURCE_USERNAME"
             valueFrom:
               secretKeyRef:
-                name: skopeo-operator
+                name: image-operator
                 key: credentialsSourceUsername
           - name: "CREDS_SOURCE_PASSWORD"
             valueFrom:
               secretKeyRef:
-                name: skopeo-operator
+                name: image-operator
                 key: credentialsSourcePassword
           - name: "DISABLE_DEST_TLS_VERIFICATION"
             value: "{{ .Values.config.destination.disabledTlsCheck }}"

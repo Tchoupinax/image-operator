@@ -39,12 +39,12 @@ import (
 
 	"github.com/go-logr/logr"
 
-	skopeoiov1alpha1 "github.com/Tchoupinax/skopeo-operator/api/skopeo.io/v1alpha1"
-	controller "github.com/Tchoupinax/skopeo-operator/internal/controller/skopeo.io"
-	"github.com/Tchoupinax/skopeo-operator/internal/helpers"
+	skopeoiov1alpha1 "github.com/Tchoupinax/image-operator/api/skopeo.io/v1alpha1"
+	controller "github.com/Tchoupinax/image-operator/internal/controller/skopeo.io"
+	"github.com/Tchoupinax/image-operator/internal/helpers"
 
-	buildahiov1alpha1 "github.com/Tchoupinax/skopeo-operator/api/buildah.io/v1alpha1"
-	buildahiocontroller "github.com/Tchoupinax/skopeo-operator/internal/controller/buildah.io"
+	buildahiov1alpha1 "github.com/Tchoupinax/image-operator/api/buildah.io/v1alpha1"
+	buildahiocontroller "github.com/Tchoupinax/image-operator/internal/controller/buildah.io"
 
 	// +kubebuilder:scaffold:imports
 

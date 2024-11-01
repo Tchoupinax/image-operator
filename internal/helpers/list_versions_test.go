@@ -1,7 +1,7 @@
 package helpers_test
 
 import (
-	"github.com/Tchoupinax/skopeo-operator/internal/helpers"
+	"github.com/Tchoupinax/image-operator/internal/helpers"
 	"github.com/go-logr/logr"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
