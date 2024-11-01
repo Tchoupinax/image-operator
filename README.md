@@ -2,6 +2,8 @@
 
 # skopeo-operator
 
+Skopeo Operator simplifies the process of synchronizing container images across registries and supports both one-time and scheduled tasks. Built around Skopeo, it offers Kubernetes-native orchestration for copying, managing, and monitoring images in your ecosystem.
+
 ## Install with Helm Chart
 
 ```bash
@@ -15,29 +17,31 @@ helm upgrade --install skopeo-operator skopeo-operator/skopeo-operator
 
 According the use-case you have, select the good configuration for you:
 
-### Copy raw images (`Image`)
+### Image Synchronization (`Image`)
 
-Copying image is used to copy image from one registry to another. It works with every registries (public like private). Discovery features for versions is available for these public registries:
+The `Image` resource allows you to copy container images across registries, supporting both public and private registries. Supported public registries include:
 
 - `AWS public ECR`: https://gallery.ecr.aws
 - `DockerHub`: https://hub.docker.com
 - `Quay.io`: https://quay.io/search
 
-#### I want to sync an image with a specific tag and I want to do only one
+#### Use Cases
 
-Use mode `OneShot` and fill version with you specific tag (e.g. `v1.2.3`).
+1. One-time sync of a specific tag
 
-#### I want to sync a version and I want all new version to be synced automatically
+For a one-time sync of a specific version, use `OneShot` mode and specify the desired tag (e.g., v1.2.3).
 
-Use mode `OneShot` and fill version with a matching pattern (e.g. `v1.2.x`). It will sync current available version and watch for future version to sync them (`>v1.2.0 & <v1.3.0`)
+2. Automatic sync of new versions matching a pattern
 
-#### I want to copy and refresh an image every day
+To auto-sync a specific version pattern (e.g., `v1.2.x`), use `OnceByTag` mode. This will sync the current and future matching versions (e.g., `>v1.2.0` & `<v1.3.0`).
 
-Use mode `Recurrent` and provide the desired version (e.g. `node:22-alpine`)
+3. Regular image refresh
+
+For periodic syncing (e.g., daily), use Recurrent mode and specify the version tag (e.g., node:22-alpine).
 
 #### Example of recurrent task
 
-> I want to copy `quay.io/nginx/nginx-ingress:3.7-alpine` to `tchoupinax/nginx/nginx-ingress:3.7-alpine` every 15 minutes.
+> Copy `quay.io/nginx/nginx-ingress:3.7-alpine` to `tchoupinax/nginx/nginx-ingress:3.7-alpine` every 15 minutes.
 
 ```yaml
 apiVersion: skopeo.io/v1alpha1
@@ -55,7 +59,7 @@ spec:
     version: 3.7-alpine
 ```
 
-### Example with tags matching pattern
+### Sync by tag pattern
 
 You can order to copy every images matching a pattern. For exemple, if you want to copy every image like `2.13.1`, `2.13.2`, `2.13.3` etc... you can put version as `2.13.x`.
 Moreover, if you want to include release candidate you can with the option `allowCandidateRelease: true`. It will create a Kubernetes job for each version detected.
@@ -98,6 +102,8 @@ spec:
 ```
 
 ### Build image (`ImageBuilder`)
+
+The `ImageBuilder` resource allows you to build images from a Dockerfile source. It uses Buildah under the hood to offer cross architectures builds.
 
 #### Example with full options explained
 
