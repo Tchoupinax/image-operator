@@ -1,5 +1,5 @@
 image:
-  repository: "tchoupinax/skopeo-operator"
+  repository: "tchoupinax/image-operator"
   version: "v1.8.0"
   imagePullPolicy: "IfNotPresent"
   pullSecrets: []
@@ -17,10 +17,10 @@ config:
     createSecret: true
     destinationPassword: ""
     destinationUsername: ""
-    secretName: "skopeo-operator"
+    secretName: "image-operator"
     sourcePassword: ""
     sourceUsername: ""
-  pullJobNamespace: "skopeo-operator"
+  pullJobNamespace: "image-operator"
   skopeo:
     image: "quay.io/containers/skopeo"
     imageAwsIrsa: false
@@ -30,7 +30,7 @@ config:
     image: "quay.io/containers/buildah"
     imageAwsIrsa: false
     version: "v1.37.3"
-    jobNamespace: "skopeo-operator"
+    jobNamespace: "image-operator"
 
 monitoring:
   podMonitor:

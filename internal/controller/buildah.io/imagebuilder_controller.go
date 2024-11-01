@@ -28,7 +28,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	buildahiov1alpha1 "github.com/Tchoupinax/skopeo-operator/api/buildah.io/v1alpha1"
+	buildahiov1alpha1 "github.com/Tchoupinax/image-operator/api/buildah.io/v1alpha1"
 )
 
 // ImageBuilderReconciler reconciles a ImageBuilder object
@@ -64,7 +64,7 @@ func (r *ImageBuilderReconciler) Reconcile(ctx context.Context, req ctrl.Request
 		for _, jobName := range imageBuilder.Status.RanJobs {
 			var job batchv1.Job
 			namespacedName := types.NamespacedName{
-				Namespace: "skopeo-operator",
+				Namespace: "image-operator",
 				Name:      jobName,
 			}
 			getJobError := r.Client.Get(ctx, namespacedName, &job)

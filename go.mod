@@ -1,4 +1,4 @@
-module github.com/Tchoupinax/skopeo-operator
+module github.com/Tchoupinax/image-operator
 
 go 1.23
 

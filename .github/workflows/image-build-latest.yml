@@ -25,4 +25,4 @@ jobs:
       with:
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: tchoupinax/skopeo-operator:latest
+        tags: tchoupinax/image-operator:latest

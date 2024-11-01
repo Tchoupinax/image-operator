@@ -1,4 +1,4 @@
-# skopeo-operator Helm Chart
+# image-operator Helm Chart
 
 ## Credentials
 

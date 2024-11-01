@@ -2,9 +2,9 @@
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
-  name: skopeo-operator
+  name: image-operator
   labels:
-    kubernetes.io/name: skopeo-operator
+    kubernetes.io/name: image-operator
     {{- if .Values.monitoring.podMonitor.labels }}
     {{- toYaml .Values.monitoring.podMonitor.labels | nindent 4 }}
     {{- end }}
@@ -20,5 +20,5 @@ spec:
 
   selector:
     matchLabels:
-      kubernetes.io/name: skopeo-operator
+      kubernetes.io/name: image-operator
 {{- end }}

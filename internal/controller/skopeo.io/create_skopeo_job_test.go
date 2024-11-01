@@ -1,8 +1,8 @@
 package controller_test
 
 import (
-	"github.com/Tchoupinax/skopeo-operator/api/skopeo.io/v1alpha1"
-	controller "github.com/Tchoupinax/skopeo-operator/internal/controller/skopeo.io"
+	"github.com/Tchoupinax/image-operator/api/skopeo.io/v1alpha1"
+	controller "github.com/Tchoupinax/image-operator/internal/controller/skopeo.io"
 	"github.com/go-logr/logr"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"

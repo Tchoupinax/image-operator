@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	skopeoiov1alpha1 "github.com/Tchoupinax/skopeo-operator/api/skopeo.io/v1alpha1"
-	"github.com/Tchoupinax/skopeo-operator/internal/helpers"
+	skopeoiov1alpha1 "github.com/Tchoupinax/image-operator/api/skopeo.io/v1alpha1"
+	"github.com/Tchoupinax/image-operator/internal/helpers"
 	"github.com/go-logr/logr"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	ctrl "sigs.k8s.io/controller-runtime"

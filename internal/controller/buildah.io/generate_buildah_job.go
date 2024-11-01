@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	buildahiov1alpha1 "github.com/Tchoupinax/skopeo-operator/api/buildah.io/v1alpha1"
+	buildahiov1alpha1 "github.com/Tchoupinax/image-operator/api/buildah.io/v1alpha1"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -18,7 +18,7 @@ func GenerateAbtractBuildahJob(
 ) batchv1.Job {
 	jobNamespace := os.Getenv("BUILDAH_JOB_NAMESPACE")
 	if jobNamespace == "" {
-		jobNamespace = "skopeo-operator"
+		jobNamespace = "image-operator"
 	}
 
 	buildahImage := os.Getenv("BUILDAH_IMAGE")
