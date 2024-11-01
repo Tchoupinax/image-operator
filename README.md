@@ -17,6 +17,12 @@ According the use-case you have, select the good configuration for you:
 
 ### Copy raw images (`Image`)
 
+Copying image is used to copy image from one registry to another. It works with every registries (public like private). Discovery features for versions is available for these public registries:
+
+- `AWS public ECR`: https://gallery.ecr.aws
+- `DockerHub`: https://hub.docker.com
+- `Quay.io`: https://quay.io/search
+
 #### I want to sync an image with a specific tag and I want to do only one
 
 Use mode `OneShot` and fill version with you specific tag (e.g. `v1.2.3`).
@@ -106,12 +112,16 @@ spec:
     name: destination/node
     version: 22-updated
     useAwsIRSA: false # Accepted: false,true
-  source: |
+  source: | # This field is a Dockerfile
     FROM node:22
     RUN apt update -y && apt upgrade -y
   resources:
     limits:
+      cpu: 1000m # Decouraged to setup a cpu limit
       memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
 ```
 
 ## Motivation
