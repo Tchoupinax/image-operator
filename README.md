@@ -2,6 +2,8 @@
 
 # skopeo-operator
 
+Skopeo Operator simplifies the process of synchronizing container images across registries and supports both one-time and scheduled tasks. Built around Skopeo, it offers Kubernetes-native orchestration for copying, managing, and monitoring images in your ecosystem.
+
 ## Install with Helm Chart
 
 ```bash
@@ -15,19 +17,31 @@ helm upgrade --install skopeo-operator skopeo-operator/skopeo-operator
 
 According the use-case you have, select the good configuration for you:
 
-#### I want to sync an image with a specific tag and I want to do only one
+### Image Synchronization (`Image`)
 
-Use mode `OneShot` and fill version with you specific tag (e.g. `v1.2.3`).
+The `Image` resource allows you to copy container images across registries, supporting both public and private registries. Supported public registries include:
 
-#### I want to sync a version and I want all new version to be synced automatically
+- `AWS public ECR`: https://gallery.ecr.aws
+- `DockerHub`: https://hub.docker.com
+- `Quay.io`: https://quay.io/search
 
-Use mode `OneShot` and fill version with a matching pattern (e.g. `v1.2.x`). It will sync current available version and watch for future version to sync them (`>v1.2.0 & <v1.3.0`)
+#### Use Cases
 
-#### I want to copy and refresh an image every day
+1. One-time sync of a specific tag
 
-Use mode `Recurrent` and provide the desired version (e.g. `node:22-alpine`)
+For a one-time sync of a specific version, use `OneShot` mode and specify the desired tag (e.g., v1.2.3).
 
-### Reccurent task
+2. Automatic sync of new versions matching a pattern
+
+To auto-sync a specific version pattern (e.g., `v1.2.x`), use `OnceByTag` mode. This will sync the current and future matching versions (e.g., `>v1.2.0` & `<v1.3.0`).
+
+3. Regular image refresh
+
+For periodic syncing (e.g., daily), use Recurrent mode and specify the version tag (e.g., node:22-alpine).
+
+#### Example of recurrent task
+
+> Copy `quay.io/nginx/nginx-ingress:3.7-alpine` to `tchoupinax/nginx/nginx-ingress:3.7-alpine` every 15 minutes.
 
 ```yaml
 apiVersion: skopeo.io/v1alpha1
@@ -36,7 +50,7 @@ metadata:
   name: nginx-alpine
 spec:
   frequency: 15m
-  mode: Recurrent # Or OneShot
+  mode: Recurrent
   source:
     name: quay.io/nginx/nginx-ingress
     version: 3.7-alpine
@@ -45,12 +59,12 @@ spec:
     version: 3.7-alpine
 ```
 
-### Tags matching pattern
+### Sync by tag pattern
 
 You can order to copy every images matching a pattern. For exemple, if you want to copy every image like `2.13.1`, `2.13.2`, `2.13.3` etc... you can put version as `2.13.x`.
-Moreover, if you want to include release candidate you can with the option `allowCandidateRelease: true`
+Moreover, if you want to include release candidate you can with the option `allowCandidateRelease: true`. It will create a Kubernetes job for each version detected.
 
-It will create a job for each version detected.
+> I want to copy every image `>=2.13` and `<2.14` and I accept release candidates (tag having `-rc{\d}{1,2}`)
 
 ```yaml
 apiVersion: skopeo.io/v1alpha1
@@ -68,26 +82,52 @@ spec:
     version: v2.13.x
 ```
 
-### Options
-
-This is an exemple of the resource with full options.
+#### Example with full options explained
 
 ```yaml
 apiVersion: skopeo.io/v1alpha1
 kind: Image
 metadata:
   name: name
-
 spec:
   allowCandidateRelease: false # Activate if you want release which match *.*.*-rc[O-9]+
-  mode: OneShot # or Reccurrent
-  frequency: "1m" # or [O-9]+h (hour), [O-9]+d (day), [O-9]+w (week)
+  mode: OneShot # Accepted: OneShot,OnceByTag,Recurrent
+  frequency: "1m" #  Accepted: [O-9]+(s(second),m(minute),h(hour),d(day),(week)
   source:
     name: source/argoproj/argocd
     version: v2.13.x
   destination:
     name: destination/argoproj/argocd
     version: v2.13.x
+```
+
+### Build image (`ImageBuilder`)
+
+The `ImageBuilder` resource allows you to build images from a Dockerfile source. It uses Buildah under the hood to offer cross architectures builds.
+
+#### Example with full options explained
+
+```yaml
+apiVersion: buildah.io/v1alpha1
+kind: ImageBuilder
+metadata:
+  name: name
+spec:
+  architecture: "arm64" # Accepted: arm64;amd64;both
+  image:
+    name: destination/node
+    version: 22-updated
+    useAwsIRSA: false # Accepted: false,true
+  source: | # This field is a Dockerfile
+    FROM node:22
+    RUN apt update -y && apt upgrade -y
+  resources:
+    limits:
+      cpu: 1000m # Decouraged to setup a cpu limit
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
 ```
 
 ## Motivation
@@ -136,6 +176,10 @@ You can find an exemple of values [here](charts/skopeo-operator/values.yaml).
 
 ### Environment variables list
 
+- `BUILDAH_IMAGE`: "quay.io/containers/buildah"
+- `BUILDAH_PRIVILEGED_CONTAINER`: false
+- `BUILDAH_VERSION`: "v1.37.3"
+- `BUILDAH_JOB_NAMESPACE`: "skopeo-operator"
 - `CREDS_DESTINATION_PASSWORD`: ""
 - `CREDS_DESTINATION_USERNAME`: ""
 - `CREDS_SOURCE_PASSWORD`: ""
@@ -155,8 +199,9 @@ You can find an exemple of values [here](charts/skopeo-operator/values.yaml).
 - [x] Allow to copy release candidates
 - [x] Allow to target version following a pattern
   - [x] Quay.io
-  - [ ] Dockerhub
-  - [ ] AWS public ECR
+  - [x] Dockerhub
+  - [x] AWS public ECR
+- [x] Build cross architectures images
 
 ## Monitoring
 

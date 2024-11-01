@@ -1,8 +1,8 @@
 package controller_test
 
 import (
-	"github.com/Tchoupinax/skopeo-operator/api/v1alpha1"
-	"github.com/Tchoupinax/skopeo-operator/internal/controller"
+	"github.com/Tchoupinax/skopeo-operator/api/skopeo.io/v1alpha1"
+	controller "github.com/Tchoupinax/skopeo-operator/internal/controller/skopeo.io"
 	"github.com/go-logr/logr"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -82,7 +82,7 @@ var _ = Describe("Create Skopeo job", func() {
 			Expect(job.Spec.Template.Spec.Containers[0].Command).To(Equal([]string{"/bin/bash"}))
 			Expect(job.Spec.Template.Spec.Containers[0].Args).To(Equal([]string{
 				"-c",
-				"yum install -y awscli &&\n\t\t\taws ecr get-login-password --region eu-west-1 | skopeo login --username AWS --password-stdin 326954429656.dkr.ecr.eu-west-1.amazonaws.com &&\n\t\t\tskopeo copy docker://repository.source.com:v4.5.6 docker://repository.destination.com:v4.5.6 --all --preserve-digests --src-tls-verify=true --dest-tls-verify=true",
+				"yum install -y awscli &&\n\t\t\taws ecr get-login-password --region eu-west-1 | skopeo login --username AWS --password-stdin xxxxxxxxxxx.dkr.ecr.eu-west-3swa.amazonaws.com &&\n\t\t\tskopeo copy docker://repository.source.com:v4.5.6 docker://repository.destination.com:v4.5.6 --all --preserve-digests --src-tls-verify=true --dest-tls-verify=true",
 			}))
 		})
 	})

@@ -20,9 +20,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any ne"w fields you add must have json tags for the fields to be serialized.
-
 type ImageEndpoint struct {
 	// +kubebuilder:validation:Required
 	ImageName string `json:"name,omitempty"`
@@ -46,9 +43,6 @@ const (
 
 // ImageSpec defines the desired state of Image
 type ImageSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
-
 	AllowCandidateRelease bool `json:"allowCandidateRelease,omitempty"`
 	// +kubebuilder:validation:Required
 	Destination ImageEndpoint `json:"destination,omitempty"`

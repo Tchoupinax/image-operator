@@ -37,10 +37,14 @@ import (
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
-	skopeoiov1alpha1 "github.com/Tchoupinax/skopeo-operator/api/v1alpha1"
-	"github.com/Tchoupinax/skopeo-operator/internal/controller"
-	"github.com/Tchoupinax/skopeo-operator/internal/helpers"
 	"github.com/go-logr/logr"
+
+	skopeoiov1alpha1 "github.com/Tchoupinax/skopeo-operator/api/skopeo.io/v1alpha1"
+	controller "github.com/Tchoupinax/skopeo-operator/internal/controller/skopeo.io"
+	"github.com/Tchoupinax/skopeo-operator/internal/helpers"
+
+	buildahiov1alpha1 "github.com/Tchoupinax/skopeo-operator/api/buildah.io/v1alpha1"
+	buildahiocontroller "github.com/Tchoupinax/skopeo-operator/internal/controller/buildah.io"
 
 	// +kubebuilder:scaffold:imports
 
@@ -77,6 +81,7 @@ var (
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 	utilruntime.Must(skopeoiov1alpha1.AddToScheme(scheme))
+	utilruntime.Must(buildahiov1alpha1.AddToScheme(scheme))
 	// +kubebuilder:scaffold:scheme
 
 	metrics.Registry.MustRegister(prometheusReloadGauge, lastTimeImageWasReloaded, dockerhubQuota)
@@ -183,6 +188,13 @@ func main() {
 		LastTimeImageWasReloaded: *lastTimeImageWasReloaded,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Image")
+		os.Exit(1)
+	}
+	if err = (&buildahiocontroller.ImageBuilderReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "ImageBuilder")
 		os.Exit(1)
 	}
 	// +kubebuilder:scaffold:builder
