@@ -1,6 +1,6 @@
 image:
   repository: "tchoupinax/image-operator"
-  version: "v1.8.0"
+  version: "v2.0.0"
   imagePullPolicy: "IfNotPresent"
   pullSecrets: []
 
@@ -29,7 +29,7 @@ config:
     dangerUsePrivilegedContainers: false
     image: "quay.io/containers/buildah"
     imageAwsIrsa: false
-    version: "v1.37.3"
+    version: "v1.37.5"
     jobNamespace: "image-operator"
 
 monitoring:
