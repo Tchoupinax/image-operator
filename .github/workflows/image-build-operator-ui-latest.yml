@@ -1,6 +1,11 @@
-name: build-image-next
+name: Build image operator latest
 
-on: workflow_dispatch
+on:
+  push:
+    branches:
+    - master
+    paths:
+    - "ui/**"
 
 jobs:
   docker:
@@ -18,6 +23,7 @@ jobs:
     - name: Build and push
       uses: docker/build-push-action@v6
       with:
+        context: "{{defaultContext}}:ui"
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: tchoupinax/image-operator:next
+        tags: tchoupinax/image-operator-ui:latest
