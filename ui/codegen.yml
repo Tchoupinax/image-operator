@@ -1,0 +1,13 @@
+overwrite: true
+
+generates:
+  ./sdk/backend.generated.ts:
+    documents: "./sdk/backend.graphql"
+    schema: "http://localhost:9090/graphql"
+    plugins:
+    - "typescript"
+    - "typescript-document-nodes"
+    - "typescript-graphql-request"
+    - "typescript-operations"
+    config:
+      enumsAsTypes: true

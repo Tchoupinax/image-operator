@@ -1,6 +1,6 @@
 image:
   repository: "tchoupinax/image-operator"
-  version: "v2.0.0"
+  version: "v2.1.0"
   imagePullPolicy: "IfNotPresent"
   pullSecrets: []
 
@@ -38,7 +38,7 @@ config:
     tolerations: []
     image:
       repository: "tchoupinax/image-operator-ui"
-      version: "v0.1.0"
+      version: "v2.1.0"
       imagePullPolicy: "IfNotPresent"
     apiUrl: "http://image-operator.image-operator.svc:9090/graphql"
     ingress:

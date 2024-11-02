@@ -1,11 +1,6 @@
-name: build-image-latest
+name: Build image operator next
 
-on:
-  push:
-    branches:
-    - master
-    paths:
-    - "internal/**"
+on: workflow_dispatch
 
 jobs:
   docker:
@@ -25,4 +20,4 @@ jobs:
       with:
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: tchoupinax/image-operator:latest
+        tags: tchoupinax/image-operator:next

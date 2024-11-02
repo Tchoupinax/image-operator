@@ -1,4 +1,4 @@
-name: build-image-next
+name: Build image operator UI next
 
 on: workflow_dispatch
 
@@ -18,6 +18,8 @@ jobs:
     - name: Build and push
       uses: docker/build-push-action@v6
       with:
+        file: "Dockerfile.all"
+        context: "{{defaultContext}}:ui"
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: tchoupinax/image-operator:next
+        tags: tchoupinax/image-operator-ui:next

@@ -1,0 +1,11 @@
+query fullData {
+  images {
+    name
+    createdAt
+  }
+  imageBuilders {
+    name
+    createdAt
+    architecture
+  }
+}

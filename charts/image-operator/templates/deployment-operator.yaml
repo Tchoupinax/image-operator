@@ -104,6 +104,8 @@ spec:
             value: "{{ .Values.config.destination.disabledTlsCheck }}"
           - name: "DISABLE_SRC_TLS_VERIFICATION"
             value: "{{ .Values.config.source.disabledTlsCheck }}"
+          - name: "GRAPHQL_API_ENABLED"
+            value: "{{ .Values.config.ui.enabled }}"
           - name: "PULL_JOB_NAMESPACE"
             value: "{{ .Values.config.pullJobNamespace }}"
           - name: "SKOPEO_IMAGE"

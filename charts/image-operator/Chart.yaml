@@ -3,7 +3,7 @@ appVersion: 1.0.0
 kubeVersion: ">=1.20.0-0"
 description: A Helm Chart for Image Operator
 name: image-operator
-version: 2.1.0
+version: 2.1.1
 home: https://github.com/Tchoupinax/image-operator
 keywords:
 - docker
