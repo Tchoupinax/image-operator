@@ -49,4 +49,6 @@ spec:
         env:
           - name: "NUXT_PUBLIC_GRAPHQL_API_URL"
             value: "{{ .Values.config.ui.apiUrl }}"
+          - name: "NUXT_PUBLIC_OPERATOR_VERSION"
+            value: "{{ .Values.image.version }}"
 {{- end }}

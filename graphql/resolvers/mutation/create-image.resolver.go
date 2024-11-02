@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/Tchoupinax/image-operator/api/skopeo.io/v1alpha1"
-	"github.com/Tchoupinax/image-operator/graphql/resolvers"
+	resolvers "github.com/Tchoupinax/image-operator/graphql/resolvers/query"
 	"github.com/graphql-go/graphql"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"

@@ -105,9 +105,20 @@ func Images(p graphql.ResolveParams) (interface{}, error) {
 				ImageVersion: "de",
 				UseAwsIRSA:   false,
 			}
+		}
+
+		if source, found, _ := unstructured.NestedMap(item.Object, "spec", "source"); found {
 			img.Source = v1alpha1.ImageEndpoint{
-				ImageName:    "DD",
-				ImageVersion: "de",
+				ImageName:    source["name"].(string),
+				ImageVersion: source["version"].(string),
+				UseAwsIRSA:   false,
+			}
+		}
+
+		if destination, found, _ := unstructured.NestedMap(item.Object, "spec", "destination"); found {
+			img.Destination = v1alpha1.ImageEndpoint{
+				ImageName:    destination["name"].(string),
+				ImageVersion: destination["version"].(string),
 				UseAwsIRSA:   false,
 			}
 		}
