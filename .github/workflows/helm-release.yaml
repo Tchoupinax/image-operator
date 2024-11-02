@@ -4,9 +4,8 @@ on:
   push:
     branches:
     - master
-    - feature/ui
   release:
-    types: [published, created]
+    types: [ published, created ]
 
 jobs:
   release:
