@@ -47,6 +47,6 @@ spec:
             cpu: 10m
             memory: 20Mi
         env:
-          - name: "GRAPHQL_API_URL"
+          - name: "NUXT_PUBLIC_GRAPHQL_API_URL"
             value: "{{ .Values.config.ui.apiUrl }}"
 {{- end }}
