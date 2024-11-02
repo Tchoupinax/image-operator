@@ -1,4 +1,4 @@
-name: Build image operator latest
+name: Build image operator UI latest
 
 on:
   push:

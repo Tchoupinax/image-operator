@@ -1,4 +1,4 @@
-name: Build image operator next
+name: Build image operator UI next
 
 on: workflow_dispatch
 
