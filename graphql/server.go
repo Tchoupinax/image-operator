@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	resolvers "github.com/Tchoupinax/image-operator/graphql/resolvers"
-	mutations "github.com/Tchoupinax/image-operator/graphql/resolvers/mutations"
+	mutations "github.com/Tchoupinax/image-operator/graphql/resolvers/mutation"
+	query "github.com/Tchoupinax/image-operator/graphql/resolvers/query"
 	"github.com/graphql-go/graphql"
 	graphl "github.com/graphql-go/graphql"
 	"github.com/graphql-go/handler"
@@ -30,17 +30,17 @@ var modeEnum = graphql.NewEnum(graphql.EnumConfig{
 func StartGraphqlServer() {
 	fields := graphl.Fields{
 		"images": &graphl.Field{
-			Type:    graphql.NewList(resolvers.ImageType),
-			Resolve: resolvers.Images,
+			Type:    graphql.NewList(query.ImageType),
+			Resolve: query.Images,
 		},
 		"imageBuilders": &graphl.Field{
-			Type:    graphql.NewList(resolvers.ImageBuilderType),
-			Resolve: resolvers.ImageBuilders,
+			Type:    graphql.NewList(query.ImageBuilderType),
+			Resolve: query.ImageBuilders,
 		},
 	}
 	mutations := graphl.Fields{
 		"createImage": &graphl.Field{
-			Type: resolvers.ImageType,
+			Type: query.ImageType,
 			Args: graphql.FieldConfigArgument{
 				"sourceRepositoryName": &graphql.ArgumentConfig{
 					Type: graphql.NewNonNull(graphql.String),

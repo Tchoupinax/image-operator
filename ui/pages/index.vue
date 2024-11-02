@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="max-w-4xl mx-auto mt-8">
-      <h1 class="mb-16 text-4xl font-thin">Image Operator</h1>
+    <div class="max-w-6xl mx-auto mt-8">
+      <h1 class="mb-16 text-4xl font-thin">Image Operator <span v-if="version">({{ version }})</span></h1>
 
       <div class="flex justify-between my-6">
         <div>
@@ -12,7 +12,7 @@
             Builders</button>
         </div>
 
-        <ModalCopyImage @create="createImage" />
+        <ModalCopyImage v-if="displayImages" @create="createImage" />
       </div>
 
       <div v-if="displayImages">
@@ -34,6 +34,7 @@ type Store = {
   images: Array<Image>;
   imageBuilders: Array<ImageBuilder>;
   displayImages: boolean;
+  version: string;
 }
 
 export default {
@@ -41,10 +42,14 @@ export default {
     return {
       displayImages: true,
       images: [],
-      imageBuilders: []
+      imageBuilders: [],
+      version: ''
     }
   },
   async mounted() {
+    const version = await $fetch('/api/version')
+    this.version = version;
+    
     const { images, imageBuilders } = await $fetch("/api/data");
     this.images = images;
     this.imageBuilders = imageBuilders;

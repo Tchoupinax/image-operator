@@ -6,7 +6,7 @@ metadata:
 rules:
   - apiGroups: ["skopeo.io"]
     resources: ["images"]
-    verbs: ["get", "list", "watch", "update"]
+    verbs: ["get", "list", "watch", "create", "update"]
 
   - apiGroups: ["skopeo.io"]
     resources: ["images/status"]
@@ -14,7 +14,7 @@ rules:
 
   - apiGroups: ["buildah.io"]
     resources: ["imagebuilders"]
-    verbs: ["get", "list", "watch", "update"]
+    verbs: ["get", "list", "watch", "create", "update"]
 
   - apiGroups: ["buildah.io"]
     resources: ["imagebuilders/status"]

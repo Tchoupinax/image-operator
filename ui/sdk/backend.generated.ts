@@ -76,6 +76,14 @@ export const FullData = gql`
     name
     createdAt
     status
+    source {
+      name
+      version
+    }
+    destination {
+      name
+      version
+    }
   }
   imageBuilders {
     name
@@ -106,6 +114,14 @@ export const FullDataDocument = gql`
     name
     createdAt
     status
+    source {
+      name
+      version
+    }
+    destination {
+      name
+      version
+    }
   }
   imageBuilders {
     name
@@ -149,7 +165,7 @@ export type Sdk = ReturnType<typeof getSdk>;
 export type FullDataQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FullDataQuery = { __typename?: 'RootQuery', images?: Array<{ __typename?: 'Image', name?: string | null, createdAt?: string | null, status?: string | null } | null> | null, imageBuilders?: Array<{ __typename?: 'ImageBuilder', name?: string | null, createdAt?: string | null, architecture?: string | null } | null> | null };
+export type FullDataQuery = { __typename?: 'RootQuery', images?: Array<{ __typename?: 'Image', name?: string | null, createdAt?: string | null, status?: string | null, source?: { __typename?: 'Source', name?: string | null, version?: string | null } | null, destination?: { __typename?: 'Source', name?: string | null, version?: string | null } | null } | null> | null, imageBuilders?: Array<{ __typename?: 'ImageBuilder', name?: string | null, createdAt?: string | null, architecture?: string | null } | null> | null };
 
 export type CreateImageMutationVariables = Exact<{
   destinationRepositoryName: Scalars['String']['input'];

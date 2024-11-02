@@ -3,6 +3,14 @@ query fullData {
     name
     createdAt
     status
+    source {
+      name
+      version
+    }
+    destination {
+      name
+      version
+    }
   }
   imageBuilders {
     name

@@ -6,6 +6,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       graphqlApiUrl: "http://localhost:9090/graphql",
+      operatorVersion: "v0.0.0"
     }
   },
   // Due to nuxt-build-cache
