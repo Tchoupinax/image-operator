@@ -3,7 +3,7 @@ FROM golang:1.23.2 AS builder
 ARG TARGETOS
 ARG TARGETARCH
 
-LABEL builtAt=2024-10-20
+LABEL builtAt=2024-11-01
 
 WORKDIR /workspace
 # Copy the Go Modules manifests
@@ -17,6 +17,7 @@ RUN go mod download
 COPY cmd/main.go cmd/main.go
 COPY api/ api/
 COPY internal/ internal/
+COPY graphql/ graphql/
 
 # Build
 # the GOARCH has not a default value to allow the binary be built according to the host where the command
