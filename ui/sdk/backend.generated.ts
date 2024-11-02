@@ -25,6 +25,7 @@ export type Image = {
   mode?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   source?: Maybe<Source>;
+  status?: Maybe<Scalars['String']['output']>;
 };
 
 export type ImageBuilder = {
@@ -33,6 +34,26 @@ export type ImageBuilder = {
   createdAt?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   source?: Maybe<Source>;
+};
+
+export type Mode =
+  | 'OnceByTag'
+  | 'OneShot'
+  | 'Recurrent';
+
+export type RootMutation = {
+  __typename?: 'RootMutation';
+  createImage?: Maybe<Image>;
+};
+
+
+export type RootMutationCreateImageArgs = {
+  destinationRepositoryName: Scalars['String']['input'];
+  destinationVersion: Scalars['String']['input'];
+  mode: Mode;
+  name: Scalars['String']['input'];
+  sourceRepositoryName: Scalars['String']['input'];
+  sourceVersion: Scalars['String']['input'];
 };
 
 export type RootQuery = {
@@ -54,11 +75,27 @@ export const FullData = gql`
   images {
     name
     createdAt
+    status
   }
   imageBuilders {
     name
     createdAt
     architecture
+  }
+}
+    `;
+export const CreateImage = gql`
+    mutation createImage($destinationRepositoryName: String!, $destinationVersion: String!, $sourceRepositoryName: String!, $sourceVersion: String!, $mode: Mode!, $name: String!) {
+  createImage(
+    destinationRepositoryName: $destinationRepositoryName
+    destinationVersion: $destinationVersion
+    mode: $mode
+    name: $name
+    sourceRepositoryName: $sourceRepositoryName
+    sourceVersion: $sourceVersion
+  ) {
+    name
+    createdAt
   }
 }
     `;
@@ -68,11 +105,27 @@ export const FullDataDocument = gql`
   images {
     name
     createdAt
+    status
   }
   imageBuilders {
     name
     createdAt
     architecture
+  }
+}
+    `;
+export const CreateImageDocument = gql`
+    mutation createImage($destinationRepositoryName: String!, $destinationVersion: String!, $sourceRepositoryName: String!, $sourceVersion: String!, $mode: Mode!, $name: String!) {
+  createImage(
+    destinationRepositoryName: $destinationRepositoryName
+    destinationVersion: $destinationVersion
+    mode: $mode
+    name: $name
+    sourceRepositoryName: $sourceRepositoryName
+    sourceVersion: $sourceVersion
+  ) {
+    name
+    createdAt
   }
 }
     `;
@@ -86,6 +139,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
   return {
     fullData(variables?: FullDataQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<FullDataQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<FullDataQuery>(FullDataDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'fullData', 'query', variables);
+    },
+    createImage(variables: CreateImageMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<CreateImageMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateImageMutation>(CreateImageDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createImage', 'mutation', variables);
     }
   };
 }
@@ -93,4 +149,16 @@ export type Sdk = ReturnType<typeof getSdk>;
 export type FullDataQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FullDataQuery = { __typename?: 'RootQuery', images?: Array<{ __typename?: 'Image', name?: string | null, createdAt?: string | null } | null> | null, imageBuilders?: Array<{ __typename?: 'ImageBuilder', name?: string | null, createdAt?: string | null, architecture?: string | null } | null> | null };
+export type FullDataQuery = { __typename?: 'RootQuery', images?: Array<{ __typename?: 'Image', name?: string | null, createdAt?: string | null, status?: string | null } | null> | null, imageBuilders?: Array<{ __typename?: 'ImageBuilder', name?: string | null, createdAt?: string | null, architecture?: string | null } | null> | null };
+
+export type CreateImageMutationVariables = Exact<{
+  destinationRepositoryName: Scalars['String']['input'];
+  destinationVersion: Scalars['String']['input'];
+  sourceRepositoryName: Scalars['String']['input'];
+  sourceVersion: Scalars['String']['input'];
+  mode: Mode;
+  name: Scalars['String']['input'];
+}>;
+
+
+export type CreateImageMutation = { __typename?: 'RootMutation', createImage?: { __typename?: 'Image', name?: string | null, createdAt?: string | null } | null };

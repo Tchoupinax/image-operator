@@ -3,12 +3,16 @@
     <div class="max-w-4xl mx-auto mt-8">
       <h1 class="mb-16 text-4xl font-thin">Image Operator</h1>
 
-      <div class="my-6">
-        <button :class="{ 'bg-blue-500': displayImages, 'bg-gray-500': !displayImages }"
-          class="px-4 py-2 mx-2 font-bold text-white rounded" @click="displayImages = true">Images</button>
-        <button :class="{ 'bg-blue-500': !displayImages, 'bg-gray-500': displayImages }"
-          class="px-4 py-2 mx-2 font-bold text-white rounded" @click="displayImages = false">Image
-          Builders</button>
+      <div class="flex justify-between my-6">
+        <div>
+          <button :class="{ 'bg-blue-500': displayImages, 'bg-gray-500': !displayImages }"
+            class="px-4 py-2 mr-2 font-bold text-white rounded" @click="displayImages = true">Images</button>
+          <button :class="{ 'bg-blue-500': !displayImages, 'bg-gray-500': displayImages }"
+            class="px-4 py-2 mx-2 font-bold text-white rounded" @click="displayImages = false">Image
+            Builders</button>
+        </div>
+
+        <ModalCopyImage @create="createImage" />
       </div>
 
       <div v-if="displayImages">
@@ -44,6 +48,11 @@ export default {
     const { images, imageBuilders } = await $fetch("/api/data");
     this.images = images;
     this.imageBuilders = imageBuilders;
+  },
+  methods: {
+    async createImage(form: any) {
+      await $fetch("/api/image", { method: "POST", headers: { "Content-Type": "application/json" }, body: form });
+    }
   }
 };
 </script>

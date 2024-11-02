@@ -6,13 +6,28 @@ import (
 	"net/http"
 
 	resolvers "github.com/Tchoupinax/image-operator/graphql/resolvers"
+	mutations "github.com/Tchoupinax/image-operator/graphql/resolvers/mutations"
 	"github.com/graphql-go/graphql"
 	graphl "github.com/graphql-go/graphql"
 	"github.com/graphql-go/handler"
 )
 
+var modeEnum = graphql.NewEnum(graphql.EnumConfig{
+	Name: "Mode",
+	Values: graphql.EnumValueConfigMap{
+		"OneShot": &graphql.EnumValueConfig{
+			Value: "OneShot",
+		},
+		"OnceByTag": &graphql.EnumValueConfig{
+			Value: "OnceByTag",
+		},
+		"Recurrent": &graphql.EnumValueConfig{
+			Value: "Recurrent",
+		},
+	},
+})
+
 func StartGraphqlServer() {
-	// Schema
 	fields := graphl.Fields{
 		"images": &graphl.Field{
 			Type:    graphql.NewList(resolvers.ImageType),
@@ -23,8 +38,35 @@ func StartGraphqlServer() {
 			Resolve: resolvers.ImageBuilders,
 		},
 	}
+	mutations := graphl.Fields{
+		"createImage": &graphl.Field{
+			Type: resolvers.ImageType,
+			Args: graphql.FieldConfigArgument{
+				"sourceRepositoryName": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.String),
+				},
+				"sourceVersion": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.String),
+				},
+				"destinationRepositoryName": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.String),
+				},
+				"destinationVersion": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.String),
+				},
+				"mode": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(modeEnum),
+				},
+				"name": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.String),
+				},
+			},
+			Resolve: mutations.CreateImage,
+		},
+	}
 	rootQuery := graphl.ObjectConfig{Name: "RootQuery", Fields: fields}
-	schemaConfig := graphl.SchemaConfig{Query: graphl.NewObject(rootQuery)}
+	rootMutation := graphl.ObjectConfig{Name: "RootMutation", Fields: mutations}
+	schemaConfig := graphl.SchemaConfig{Query: graphl.NewObject(rootQuery), Mutation: graphql.NewObject(rootMutation)}
 	schema, err := graphl.NewSchema(schemaConfig)
 	if err != nil {
 		log.Fatalf("failed to create new schema, error: %v", err)

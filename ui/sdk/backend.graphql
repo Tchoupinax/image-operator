@@ -2,10 +2,32 @@ query fullData {
   images {
     name
     createdAt
+    status
   }
   imageBuilders {
     name
     createdAt
     architecture
+  }
+}
+
+mutation createImage(
+  $destinationRepositoryName: String!
+  $destinationVersion: String!
+  $sourceRepositoryName: String!
+  $sourceVersion: String!
+  $mode: Mode!
+  $name: String!
+) {
+  createImage(
+    destinationRepositoryName: $destinationRepositoryName
+    destinationVersion: $destinationVersion
+    mode: $mode
+    name: $name
+    sourceRepositoryName: $sourceRepositoryName
+    sourceVersion: $sourceVersion
+  ) {
+    name
+    createdAt
   }
 }
