@@ -1,9 +1,6 @@
 name: Build image operator UI next
 
-on:
-  pull_request:
-    paths:
-    - "ui/**"
+on: workflow_dispatch
 
 jobs:
   docker:
