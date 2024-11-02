@@ -211,6 +211,12 @@ Operator exposes a Prometheus route to show basic metrics about operator and how
 
 ## Development
 
+### Run
+
+```
+npx nodemon --watch './**/*.go' --signal SIGTERM --exec go run cmd/main.go
+```
+
 ### Tests
 
 Command to launch a specific test
