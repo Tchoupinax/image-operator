@@ -8,12 +8,10 @@ spec:
   selector:
     matchLabels:
       kubernetes.io/name: image-operator
-
   template:
     metadata:
       labels:
         kubernetes.io/name: image-operator
-
     spec:
       {{- with .Values.affinity }}
       affinity:
@@ -49,6 +47,10 @@ spec:
         ports:
         - containerPort: 8080
           name: metrics
+        - containerPort: 8081
+          name: health
+        - containerPort: 9090
+          name: graphql
 
         livenessProbe:
           httpGet:

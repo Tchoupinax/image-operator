@@ -1,0 +1,52 @@
+{{- if .Values.config.ui.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-operator-ui
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      kubernetes.io/name: image-operator-ui
+  template:
+    metadata:
+      labels:
+        kubernetes.io/name: image-operator-ui
+    spec:
+      {{- with .Values.config.ui.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.config.ui.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml .Values.image.pullSecrets | nindent 8 }}
+      {{- end }}
+      securityContext:
+        runAsNonRoot: true
+      containers:
+      - image: "{{ .Values.config.ui.image.repository }}:{{ .Values.config.ui.image.version }}"
+        imagePullPolicy: "{{ .Values.config.ui.image.imagePullPolicy }}"
+        name: image-operator-ui
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - "ALL"
+        ports:
+        - containerPort: 3000
+          name: web
+        resources:
+          limits:
+            memory: 100Mi
+          requests:
+            cpu: 10m
+            memory: 20Mi
+        env:
+          - name: "NUXT_PUBLIC_GRAPHQL_API_URL"
+            value: "{{ .Values.config.ui.apiUrl }}"
+{{- end }}

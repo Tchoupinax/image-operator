@@ -1,0 +1,16 @@
+{{- if and .Values.config.ui.enabled .Values.config.ui.ingress.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: image-operator
+  annotations:
+    {{- toYaml .Values.config.ui.ingress.annotations | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 9090
+  selector:
+    kubernetes.io/name: image-operator
+{{- end }}

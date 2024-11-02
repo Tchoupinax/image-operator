@@ -3,19 +3,19 @@ name: release
 on:
   push:
     branches:
-      - master
+    - master
   release:
-    types: [published, created]
+    types: [ published, created ]
 
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
 
-      - name: Publish Helm charts
-        uses: stefanprodan/helm-gh-pages@v1.7.0
-        with:
-          token: ${{ secrets.CR_TOKEN }}
-          charts_dir: charts
+    - name: Publish Helm charts
+      uses: stefanprodan/helm-gh-pages@v1.7.0
+      with:
+        token: ${{ secrets.CR_TOKEN }}
+        charts_dir: charts

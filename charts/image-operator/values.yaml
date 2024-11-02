@@ -32,6 +32,22 @@ config:
     version: "v1.37.5"
     jobNamespace: "image-operator"
 
+  ui:
+    enabled: false
+    affinity: {}
+    tolerations: []
+    image:
+      repository: "tchoupinax/image-operator-ui"
+      version: "v0.1.0"
+      imagePullPolicy: "IfNotPresent"
+    apiUrl: "http://image-operator.image-operator.svc:9090/graphql"
+    ingress:
+      enabled: false
+      annotations: {}
+      path: ""
+      pathType: "Prefix"
+      host: ""
+
 monitoring:
   podMonitor:
     enabled: false
