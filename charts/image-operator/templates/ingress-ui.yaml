@@ -14,11 +14,9 @@ spec:
             name: image-operator-ui
             port:
               number: 3000
-        pathType: {{ .Values.config.ui.ingress.pathType }}
-        path: /{{ .Values.config.ui.ingress.path }}
+        pathType: "{{ .Values.config.ui.ingress.pathType }}"
+        path: "/{{ .Values.config.ui.ingress.path }}"
     {{ if .Values.config.ui.ingress.host }}
     host: {{ .Values.config.ui.ingress.host }}
     {{ end }}
-status:
-  loadBalancer: {}
 {{- end }}
