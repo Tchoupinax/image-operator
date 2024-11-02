@@ -2,6 +2,9 @@ name: Build image operator UI next
 
 on: workflow_dispatch
 
+on:
+  pull_request:
+
 jobs:
   docker:
     runs-on: ubuntu-latest
