@@ -2,10 +2,10 @@ name: Build binary
 
 on:
   pull_request:
-  #branches:
-  #- 'feature/**'
-  #paths:
-  #- "internal/**"
+    paths:
+    - "api/**"
+    - "graphql/**"
+    - "internal/**"
 
 jobs:
   build-binary:
