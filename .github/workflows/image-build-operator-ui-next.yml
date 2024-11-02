@@ -17,9 +17,9 @@ jobs:
       with:
         node-version-file: 'ui/.nvmrc'
     - name: Install dependencies
-      run: yarn
+      run: cd ui && yarn
     - name: Build Nuxt.js
-      run: yarn build
+      run: cd ui && yarn build
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
