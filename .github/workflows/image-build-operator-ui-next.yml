@@ -1,8 +1,7 @@
 name: Build image operator UI next
 
-# on: workflow_dispatch
 on:
-  push:
+  pull_request:
     paths:
     - "ui/**"
 
