@@ -6,6 +6,15 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: 'ui/.nvmrc'
+    - name: Install dependencies
+      run: yarn
+    - name: Build Nuxt.js
+      run: yarn build
+
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
     - name: Set up Docker Buildx
