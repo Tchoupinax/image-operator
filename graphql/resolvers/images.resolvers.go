@@ -14,13 +14,14 @@ import (
 )
 
 type Image struct {
-	Name                  string
 	AllowCandidateRelease bool
+	CreatedAt             string
 	Destination           v1alpha1.ImageEndpoint
 	Frequency             string
 	Mode                  v1alpha1.Mode
+	Name                  string
 	Source                v1alpha1.ImageEndpoint
-	CreatedAt             string
+	Status                string
 }
 
 var sourceType = graphql.NewObject(graphql.ObjectConfig{
@@ -59,6 +60,9 @@ var ImageType = graphql.NewObject(graphql.ObjectConfig{
 		"createdAt": &graphql.Field{
 			Type: graphql.String,
 		},
+		"status": &graphql.Field{
+			Type: graphql.String,
+		},
 	},
 })
 
@@ -91,6 +95,10 @@ func Images(p graphql.ResolveParams) (interface{}, error) {
 			img.CreatedAt = name
 		}
 
+		if status, found, _ := unstructured.NestedString(item.Object, "status", "phase"); found {
+			img.Status = status
+		}
+
 		if _, found, _ := unstructured.NestedString(item.Object, "metadata", "name"); found {
 			img.Destination = v1alpha1.ImageEndpoint{
 				ImageName:    "DD",
@@ -114,6 +122,7 @@ func Images(p graphql.ResolveParams) (interface{}, error) {
 			"name":        img.Name,
 			"source":      img.Source,
 			"createdAt":   img.CreatedAt,
+			"status":      img.Status,
 		}
 	}
 
