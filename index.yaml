@@ -3,9 +3,9 @@ entries:
   image-operator:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2024-11-03T20:51:37.647268269Z"
+    created: "2024-11-03T20:55:17.427117285Z"
     description: A Helm Chart for Image Operator
-    digest: 03d6e2c421d4632fe89ab2dce51fb5474442fb50ed4b42f9a1113a6525f0ee80
+    digest: 36acd51d31da31c57b49c242dbdc9f33c5dbb38e1e4a7d7dde8842210e458bd4
     home: https://github.com/Tchoupinax/image-operator
     keywords:
     - docker
@@ -665,4 +665,4 @@ entries:
     urls:
     - https://Tchoupinax.github.io/skopeo-operator/skopeo-operator-0.0.1.tgz
     version: 0.0.1
-generated: "2024-11-03T20:51:37.64656851Z"
+generated: "2024-11-03T20:55:17.426416312Z"
