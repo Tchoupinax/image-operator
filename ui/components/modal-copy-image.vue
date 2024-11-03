@@ -25,46 +25,39 @@
           <!-- Source Repository with Autocomplete -->
           <div class="form-group autocomplete">
             <label for="source-repo">Source Repository</label>
-            <input 
-              v-model="formData.sourceRepository"
-              type="text"
-              id="source-repo"
-              required
-              placeholder="quay.io/nginx/nginx-ingress"
-              @input="debouncedSearch"
-              @focus="showSuggestions = true"
-              class="border-b-2 border-gray-300 focus:outline-none"
-              autocomplete="off"
-            />
+            <input v-model="formData.sourceRepository" type="text" id="source-repo" required
+              placeholder="quay.io/nginx/nginx-ingress" @input="debouncedSearch" @focus="showSuggestions = true"
+              class="border-b-2 border-gray-300 focus:outline-none" autocomplete="off" />
             <!-- Suggestions Dropdown -->
             <ul v-if="showSuggestions && filteredRepositories.length" class="suggestions-dropdown">
-              <li 
-                v-for="(repo, index) in filteredRepositories" 
-                :key="index"
-                @click="selectRepository(repo)"
-                class="suggestion-item"
-              >
-              <div class="flex justify-between">
-                <div class="flex">
-                  <img v-if="repo.registry === 'Quay.io'" class="mr-2 size-6" src="https://upload.wikimedia.org/wikipedia/commons/d/d8/Red_Hat_logo.svg" />
-                  <img v-if="repo.registry === 'Amazon ECR'" class="mr-2 size-6" src="https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg" />
-                  <img v-if="repo.registry === 'DockerHub'" class="mr-2 size-6" src="https://icon.icepanel.io/Technology/svg/Docker.svg" />
+              <li v-for="(repo, index) in filteredRepositories" :key="index" @click="selectRepository(repo)"
+                class="suggestion-item">
+                <div class="flex justify-between">
+                  <div class="flex">
+                    <img v-if="repo.registry === 'Quay.io'" class="mr-2 size-6"
+                      src="https://upload.wikimedia.org/wikipedia/commons/d/d8/Red_Hat_logo.svg" />
+                    <img v-if="repo.registry === 'Amazon ECR'" class="mr-2 size-6"
+                      src="https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg" />
+                    <img v-if="repo.registry === 'DockerHub'" class="mr-2 size-6"
+                      src="https://icon.icepanel.io/Technology/svg/Docker.svg" />
 
-                  <p>
-                    {{ repo.name }}
-                  </p>
-                </div>
+                    <p>
+                      {{ repo.name }}
+                    </p>
+                  </div>
 
-                <div class="flex">
-                  <p class="mr-1">
-                    {{ repo.downloadCount }}
-                  </p>
-                  
-                  <svg v-if="repo.isOfficial" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="text-green-600 size-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
-                  </svg>
+                  <div class="flex">
+                    <p class="mr-1">
+                      {{ repo.downloadCount }}
+                    </p>
+
+                    <svg v-if="repo.isOfficial" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                      stroke-width="1.5" stroke="currentColor" class="text-green-600 size-6">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
+                    </svg>
+                  </div>
                 </div>
-              </div>
               </li>
             </ul>
           </div>
@@ -78,7 +71,8 @@
           <div class="form-group">
             <label for="destination-repo">Destination Repository</label>
             <input v-model="formData.destinationRepository" type="text" id="destination-repo" required
-              placeholder="myregistry.io/nginx/nginx-ingress" class="border-b-2 border-gray-300 focus:outline-none" autocomplete="off" />
+              placeholder="myregistry.io/nginx/nginx-ingress" class="border-b-2 border-gray-300 focus:outline-none"
+              autocomplete="off" />
           </div>
 
           <div class="form-group">
@@ -155,7 +149,7 @@ export default {
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
         this.filterSuggestions();
-      }, 500); 
+      }, 500);
     },
     async filterSuggestions() {
       console.log("this.filterSuggestions")

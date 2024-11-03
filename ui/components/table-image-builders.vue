@@ -7,6 +7,7 @@
           <th class="px-6 py-3 text-left">Name</th>
           <th class="px-6 py-3 text-left">Architecture</th>
           <th class="px-6 py-3 text-left">Created At</th>
+          <th class="px-6 py-3 text-left">Source</th>
         </tr>
       </thead>
       <tbody class="text-sm font-light text-gray-700">
@@ -20,17 +21,32 @@
               borderColor="border-green-700" />
           </td>
           <td class="px-6 py-3 text-lg">{{ formatDate(imageBuilder.createdAt) }}</td>
+          <td class="px-6 py-3 text-lg">
+            <button @click="showCode(imageBuilder.name)">Show Code</button>
+            <ModalDockerfile :code="imageBuilder.source" :visible="showCodeModalName === imageBuilder.name"
+              @close="showCodeModalName = undefined" />
+          </td>
         </tr>
       </tbody>
     </table>
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { Tag } from '#build/components';
+
 export default {
   props: ["imageBuilders"],
+  data(): { showCodeModalName?: string } {
+    return {
+      showCodeModalName: undefined,
+    }
+  },
   methods: {
-    formatDate(dateString) {
+    showCode(name: string) {
+      this.showCodeModalName = name
+    },
+    formatDate(dateString: string) {
       const options = { year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" };
       return new Date(dateString).toLocaleDateString(undefined, options);
     },

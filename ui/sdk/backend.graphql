@@ -16,6 +16,7 @@ query fullData {
     name
     createdAt
     architecture
+    source
   }
 }
 
