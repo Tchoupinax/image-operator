@@ -29,7 +29,7 @@ var ImageBuilderType = graphql.NewObject(graphql.ObjectConfig{
 			Type: graphql.String,
 		},
 		"source": &graphql.Field{
-			Type: sourceType,
+			Type: graphql.String,
 		},
 		"createdAt": &graphql.Field{
 			Type: graphql.String,
@@ -70,6 +70,10 @@ func ImageBuilders(p graphql.ResolveParams) (interface{}, error) {
 			imageBuilder.Architecture = architecture
 		}
 
+		if source, found, _ := unstructured.NestedString(item.Object, "spec", "source"); found {
+			imageBuilder.Source = source
+		}
+
 		images = append(images, imageBuilder)
 	}
 
@@ -77,8 +81,9 @@ func ImageBuilders(p graphql.ResolveParams) (interface{}, error) {
 	for i, img := range images {
 		result[i] = map[string]interface{}{
 			"architecture": img.Architecture,
-			"name":         img.Name,
 			"createdAt":    img.CreatedAt,
+			"name":         img.Name,
+			"source":       img.Source,
 		}
 	}
 
