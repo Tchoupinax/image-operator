@@ -13,7 +13,7 @@
   "dependencies": {
     "graphql": "16.9.0",
     "highlight.js": "11.10.0",
-    "nuxt": "3.14.0",
+    "nuxt": "3.14.159",
     "vue": "latest",
     "vue-router": "latest"
   },
