@@ -73,6 +73,8 @@ type ImageBuilderSpec struct {
 type ImageBuilderStatus struct {
 	RanJobs []string `json:"ranJobs,omitempty"`
 	Pushed  bool     `json:"pushed,omitempty"`
+	// +kubebuilder:default:=0
+	LastGenerationSeen int64 `json:"lastGenerationSeen,omitempty"`
 }
 
 // +kubebuilder:object:root=true

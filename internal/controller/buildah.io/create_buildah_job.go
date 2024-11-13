@@ -49,7 +49,6 @@ func CreateBuildahJobs(
 
 		if createError := r.Create(ctx, &configMap); createError != nil {
 			logger.Error(createError, "Fail to create config map")
-			return ctrl.Result{}, createError
 		}
 
 		desiredJob := GenerateBuildahJob(

@@ -100,6 +100,10 @@ spec:
                       type: string
                   type: object
                 type: array
+              lastGenerationSeen:
+                default: 0
+                format: int64
+                type: integer
               phase:
                 default: COMPLETED
                 type: string

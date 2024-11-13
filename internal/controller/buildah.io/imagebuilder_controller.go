@@ -50,7 +50,19 @@ func (r *ImageBuilderReconciler) Reconcile(ctx context.Context, req ctrl.Request
 		return ctrl.Result{}, nil
 	}
 
-	if len(imageBuilder.Status.RanJobs) == 0 {
+	var newGeneration = false
+	if imageBuilder.Generation != imageBuilder.Status.LastGenerationSeen {
+		newGeneration = true
+		imageBuilder.Status.LastGenerationSeen = imageBuilder.Generation
+		updateError := r.Status().Update(ctx, &imageBuilder)
+		if updateError != nil {
+			fmt.Println(updateError)
+		}
+	}
+
+	// If it's the first time, start a job creation
+	// Also, if the object has changed we reapply it
+	if len(imageBuilder.Status.RanJobs) == 0 || newGeneration {
 		return CreateBuildahJobs(
 			r,
 			ctx,
