@@ -59,22 +59,35 @@ var (
 
 	prometheusReloadGauge = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Name: "skopeo_operator_reload_total",
+			Name: "image_operator_reload_total",
 			Help: "Number of reload proccessed",
 		},
 		[]string{"image"},
 	)
 	lastTimeImageWasReloaded = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Name: "skopeo_operator_last_time_image_was_reloaded",
+			Name: "image_operator_last_time_image_was_reloaded",
 			Help: "Timestamp of when the image was reloaded for the last time",
 		},
 		[]string{"image"},
 	)
+	lastTimeImagebuilderWasReloaded = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "image_operator_last_time_image_was_reloaded",
+			Help: "Timestamp of when the image was reloaded for the last time",
+		},
+		[]string{"imagebuilder"},
+	)
 	dockerhubQuota = prometheus.NewGauge(
 		prometheus.GaugeOpts{
-			Name: "skopeo_operator_dockerhub_quota",
+			Name: "image_operator_dockerhub_quota",
 			Help: "How much pull are available from Docker.io API",
+		},
+	)
+	imagebuilderBuildsCount = prometheus.NewCounter(
+		prometheus.CounterOpts{
+			Name: "image_operator_imagebuilder_build_count",
+			Help: "Count of builds done by imagebuilder",
 		},
 	)
 )
@@ -85,7 +98,13 @@ func init() {
 	utilruntime.Must(buildahiov1alpha1.AddToScheme(scheme))
 	// +kubebuilder:scaffold:scheme
 
-	metrics.Registry.MustRegister(prometheusReloadGauge, lastTimeImageWasReloaded, dockerhubQuota)
+	metrics.Registry.MustRegister(
+		dockerhubQuota,
+		imagebuilderBuildsCount,
+		lastTimeImageWasReloaded,
+		lastTimeImagebuilderWasReloaded,
+		prometheusReloadGauge,
+	)
 }
 
 func main() {
@@ -200,8 +219,9 @@ func main() {
 			os.Exit(1)
 		}
 		if err = (&buildahiocontroller.ImageBuilderReconciler{
-			Client: mgr.GetClient(),
-			Scheme: mgr.GetScheme(),
+			Client:                  mgr.GetClient(),
+			Scheme:                  mgr.GetScheme(),
+			ImagebuilderBuildsCount: imagebuilderBuildsCount,
 		}).SetupWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create controller", "controller", "ImageBuilder")
 			os.Exit(1)
