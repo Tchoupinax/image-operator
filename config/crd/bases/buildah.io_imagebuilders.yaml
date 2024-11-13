@@ -90,6 +90,10 @@ spec:
           status:
             description: ImageBuilderStatus defines the observed state of ImageBuilder
             properties:
+              lastGenerationSeen:
+                default: 0
+                format: int64
+                type: integer
               pushed:
                 type: boolean
               ranJobs:

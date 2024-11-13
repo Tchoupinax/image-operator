@@ -50,8 +50,6 @@ func CreateImage(params graphql.ResolveParams) (interface{}, error) {
 		},
 	}
 
-	fmt.Println(image)
-
 	imageMap, err := runtime.DefaultUnstructuredConverter.ToUnstructured(&image)
 	if err != nil {
 		log.Fatalf("Failed to convert Image to unstructured: %v", err)
@@ -60,7 +58,7 @@ func CreateImage(params graphql.ResolveParams) (interface{}, error) {
 
 	_, err = dynamicClient.Resource(gvr).Namespace("image-operator").Create(context.Background(), unstructuredImage, v1.CreateOptions{})
 	if err != nil {
-		fmt.Println("Fail to create image: %v", err)
+		fmt.Printf("Fail to create image: %v", err)
 
 		if strings.Contains(err.Error(), "already exists") {
 			imageFromCluster, _ := dynamicClient.Resource(gvr).Namespace("image-operator").Get(context.Background(), image.Name, v1.GetOptions{})

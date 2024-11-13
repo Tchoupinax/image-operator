@@ -66,6 +66,8 @@ type ImageStatus struct {
 	// +kubebuilder:default:=COMPLETED
 	Phase            string   `json:"phase,omitempty"`
 	TagAlreadySynced []string `json:"tagAlreadySynced,omitempty"`
+	// +kubebuilder:default:=0
+	LastGenerationSeen int64 `json:"lastGenerationSeen,omitempty"`
 }
 
 // +kubebuilder:object:root=true

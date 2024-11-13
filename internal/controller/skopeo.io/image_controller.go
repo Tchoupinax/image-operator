@@ -18,6 +18,7 @@ package controller
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -55,11 +56,19 @@ func (r *ImageReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 		return ctrl.Result{}, nil
 	}
 
-	// Parse the time from the spec. By default, it returns 5 minutes
-	var parsedFrequency time.Duration = helpers.ParseTime(image.Spec.Frequency)
+	var newGeneration = false
+	if image.Generation != image.Status.LastGenerationSeen {
+		newGeneration = true
+		image.Status.LastGenerationSeen = image.Generation
+		updateError := r.Status().Update(ctx, &image)
+		if updateError != nil {
+			fmt.Println(updateError)
+		}
+	}
 
 	// If it's the first time, start a job creation
-	if len(image.Status.History) == 0 {
+	// Also, if the object has changed we reapply it
+	if len(image.Status.History) == 0 || newGeneration {
 		planJobCreation(r, ctx, req, image, logger)
 
 		if image.Spec.Mode == skopeoiov1alpha1.ONE_SHOT {
@@ -76,6 +85,9 @@ func (r *ImageReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 	if image.Spec.Mode == skopeoiov1alpha1.ONE_SHOT {
 		return ctrl.Result{}, nil
 	}
+
+	// Parse the time from the spec. By default, it returns 5 minutes
+	var parsedFrequency time.Duration = helpers.ParseTime(image.Spec.Frequency)
 
 	lastApplication := image.Status.History[len(image.Status.History)-1].PerformedAt
 	timeDifference := metav1.Now().Sub(lastApplication.Time)
