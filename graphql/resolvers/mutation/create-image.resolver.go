@@ -50,8 +50,6 @@ func CreateImage(params graphql.ResolveParams) (interface{}, error) {
 		},
 	}
 
-	fmt.Println(image)
-
 	imageMap, err := runtime.DefaultUnstructuredConverter.ToUnstructured(&image)
 	if err != nil {
 		log.Fatalf("Failed to convert Image to unstructured: %v", err)
