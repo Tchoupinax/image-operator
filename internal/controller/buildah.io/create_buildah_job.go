@@ -71,6 +71,7 @@ func CreateBuildahJobs(
 			logger.Error(createError2, "Fail to create job")
 			return ctrl.Result{}, createError2
 		}
+		r.ImagebuilderBuildsCount.Inc()
 
 		var imageBuilderLocal buildahiov1alpha1.ImageBuilder
 		if err := r.Get(ctx, types.NamespacedName{Name: req.Name, Namespace: req.Namespace}, &imageBuilderLocal); err != nil {

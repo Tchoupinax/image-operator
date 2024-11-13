@@ -29,12 +29,14 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	buildahiov1alpha1 "github.com/Tchoupinax/image-operator/api/buildah.io/v1alpha1"
+	"github.com/prometheus/client_golang/prometheus"
 )
 
 // ImageBuilderReconciler reconciles a ImageBuilder object
 type ImageBuilderReconciler struct {
 	client.Client
-	Scheme *runtime.Scheme
+	Scheme                  *runtime.Scheme
+	ImagebuilderBuildsCount prometheus.Counter
 }
 
 // +kubebuilder:rbac:groups=buildah.io,resources=imagebuilders,verbs=get;list;watch;create;update;patch;delete
