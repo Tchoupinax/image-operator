@@ -22,5 +22,8 @@
   "[yaml]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "kennylong.kubernetes-yaml-formatter"
+  },
+  "[markdown]": {
+    "editor.formatOnSave": false
   }
 }
