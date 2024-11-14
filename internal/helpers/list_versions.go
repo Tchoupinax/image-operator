@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"sort"
 	"strings"
 
 	"github.com/go-logr/logr"
@@ -163,6 +164,7 @@ func ListVersion(
 	}
 
 	logger.Info(fmt.Sprintf("%d images detected", len(matchedTags)))
+	sort.Strings(matchedTags)
 
 	return matchedTags
 }

@@ -22,6 +22,7 @@ export type Image = {
   createdAt?: Maybe<Scalars['String']['output']>;
   destination?: Maybe<Source>;
   frequency?: Maybe<Scalars['String']['output']>;
+  lastExecution?: Maybe<Scalars['String']['output']>;
   mode?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   source?: Maybe<Source>;
@@ -76,6 +77,7 @@ export const FullData = gql`
     name
     createdAt
     status
+    lastExecution
     source {
       name
       version
@@ -115,6 +117,7 @@ export const FullDataDocument = gql`
     name
     createdAt
     status
+    lastExecution
     source {
       name
       version
@@ -167,7 +170,7 @@ export type Sdk = ReturnType<typeof getSdk>;
 export type FullDataQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FullDataQuery = { __typename?: 'RootQuery', images?: Array<{ __typename?: 'Image', name?: string | null, createdAt?: string | null, status?: string | null, source?: { __typename?: 'Source', name?: string | null, version?: string | null } | null, destination?: { __typename?: 'Source', name?: string | null, version?: string | null } | null } | null> | null, imageBuilders?: Array<{ __typename?: 'ImageBuilder', name?: string | null, createdAt?: string | null, architecture?: string | null, source?: string | null } | null> | null };
+export type FullDataQuery = { __typename?: 'RootQuery', images?: Array<{ __typename?: 'Image', name?: string | null, createdAt?: string | null, status?: string | null, lastExecution?: string | null, source?: { __typename?: 'Source', name?: string | null, version?: string | null } | null, destination?: { __typename?: 'Source', name?: string | null, version?: string | null } | null } | null> | null, imageBuilders?: Array<{ __typename?: 'ImageBuilder', name?: string | null, createdAt?: string | null, architecture?: string | null, source?: string | null } | null> | null };
 
 export type CreateImageMutationVariables = Exact<{
   destinationRepositoryName: Scalars['String']['input'];

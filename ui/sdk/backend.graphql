@@ -3,6 +3,7 @@ query fullData {
     name
     createdAt
     status
+    lastExecution
     source {
       name
       version

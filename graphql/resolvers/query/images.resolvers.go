@@ -18,6 +18,7 @@ type Image struct {
 	CreatedAt             string
 	Destination           v1alpha1.ImageEndpoint
 	Frequency             string
+	LastExecution         string
 	Mode                  v1alpha1.Mode
 	Name                  string
 	Source                v1alpha1.ImageEndpoint
@@ -63,6 +64,9 @@ var ImageType = graphql.NewObject(graphql.ObjectConfig{
 		"status": &graphql.Field{
 			Type: graphql.String,
 		},
+		"lastExecution": &graphql.Field{
+			Type: graphql.String,
+		},
 	},
 })
 
@@ -99,6 +103,10 @@ func Images(p graphql.ResolveParams) (interface{}, error) {
 			img.Status = status
 		}
 
+		if histories, found, _ := unstructured.NestedSlice(item.Object, "status", "history"); found {
+			img.LastExecution = histories[len(histories)-1].(map[string]interface{})["performedAt"].(string)
+		}
+
 		if _, found, _ := unstructured.NestedString(item.Object, "metadata", "name"); found {
 			img.Destination = v1alpha1.ImageEndpoint{
 				ImageName:    "DD",
@@ -129,11 +137,12 @@ func Images(p graphql.ResolveParams) (interface{}, error) {
 	result := make([]map[string]interface{}, len(images))
 	for i, img := range images {
 		result[i] = map[string]interface{}{
-			"destination": img.Destination,
-			"name":        img.Name,
-			"source":      img.Source,
-			"createdAt":   img.CreatedAt,
-			"status":      img.Status,
+			"createdAt":     img.CreatedAt,
+			"destination":   img.Destination,
+			"lastExecution": img.LastExecution,
+			"name":          img.Name,
+			"source":        img.Source,
+			"status":        img.Status,
 		}
 	}
 
