@@ -136,7 +136,7 @@ func ListVersion(
 			}
 		} else if isAWSPublicECR {
 			// Are made 1000 by 1000
-			if page > 2 || len(result.ImageTagDetails) == 0 {
+			if page > 4 || len(result.ImageTagDetails) == 0 {
 				break
 			}
 			for _, image := range result.ImageTagDetails {
