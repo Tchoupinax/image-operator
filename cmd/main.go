@@ -73,8 +73,8 @@ var (
 	)
 	lastTimeImagebuilderWasReloaded = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Name: "image_operator_last_time_image_was_reloaded",
-			Help: "Timestamp of when the image was reloaded for the last time",
+			Name: "image_operator_last_time_imagebuilder_was_reloaded",
+			Help: "Timestamp of when the image builder was reloaded for the last time",
 		},
 		[]string{"imagebuilder"},
 	)
