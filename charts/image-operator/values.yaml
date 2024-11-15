@@ -13,6 +13,11 @@ config:
   destination:
     disabledTlsCheck: false
 
+  api:
+    aws:
+      pageMax: 4
+      itemsByPage: 1000
+
   credentials:
     createSecret: true
     destinationPassword: ""

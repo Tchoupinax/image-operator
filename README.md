@@ -176,6 +176,8 @@ You can find an exemple of values [here](charts/image-operator/values.yaml).
 
 ### Environment variables list
 
+- `API_AWS_PAGE_MAX`: 4
+- `API_AWS_PAGE_ITEMS_COUNT`: 1000
 - `BUILDAH_IMAGE`: "quay.io/containers/buildah"
 - `BUILDAH_PRIVILEGED_CONTAINER`: false
 - `BUILDAH_VERSION`: "v1.37.3"
