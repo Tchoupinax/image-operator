@@ -73,9 +73,9 @@ spec:
             memory: 20Mi
         env:
           - name: "API_AWS_PAGE_MAX"
-            value: "{{ .Values.config.api.aws.pageMax | quote }}"
+            value: {{ .Values.config.api.aws.pageMax | quote }}
           - name: "API_AWS_PAGE_ITEMS_COUNT"
-            value: "{{ .Values.config.api.aws.itemsByPage | quote }}"
+            value: {{ .Values.config.api.aws.itemsByPage | quote }}
           - name: "BUILDAH_PRIVILEGED_CONTAINER"
             value: "{{ .Values.config.buildah.dangerUsePrivilegedContainers }}"
           - name: "BUILDAH_IMAGE"
