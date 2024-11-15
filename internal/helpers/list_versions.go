@@ -8,6 +8,7 @@ import (
 	"os"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/go-logr/logr"
@@ -58,20 +59,27 @@ func ListVersion(
 
 			var parts = strings.Split(repository, "/")
 
+			awsPageCount := 1000
+			if os.Getenv("API_AWS_PAGE_ITEMS_COUNT") != "" {
+				if number, err := strconv.Atoi(os.Getenv("API_AWS_PAGE_ITEMS_COUNT")); err != nil {
+					awsPageCount = number
+				}
+			}
+
 			var jsonData string
 			if nextToken != "" {
 				jsonData = fmt.Sprintf(`{
 					"registryAliasName":"%s",
 					"repositoryName":"%s",
 					"nextToken": "%s",
-					"maxResults": 1000
-				}`, parts[0], parts[1]+"/"+parts[2], nextToken)
+					"maxResults": %s
+				}`, parts[0], parts[1]+"/"+parts[2], nextToken, awsPageCount)
 			} else {
 				jsonData = fmt.Sprintf(`{
 					"registryAliasName":"%s",
 					"repositoryName":"%s",
-					"maxResults": 1000
-				}`, parts[0], parts[1]+"/"+parts[2])
+					"maxResults": %s
+				}`, parts[0], parts[1]+"/"+parts[2], awsPageCount)
 			}
 
 			req, _ = http.NewRequest("POST", url, bytes.NewBuffer([]byte(jsonData)))
@@ -135,8 +143,15 @@ func ListVersion(
 				tags = append(tags, tag.Name)
 			}
 		} else if isAWSPublicECR {
+			pageMax := 1000
+			if os.Getenv("API_AWS_PAGE_MAX") != "" {
+				if number, err := strconv.Atoi(os.Getenv("API_AWS_PAGE_MAX")); err != nil {
+					pageMax = number
+				}
+			}
+
 			// Are made 1000 by 1000
-			if page > 4 || len(result.ImageTagDetails) == 0 {
+			if page > pageMax || len(result.ImageTagDetails) == 0 {
 				break
 			}
 			for _, image := range result.ImageTagDetails {
