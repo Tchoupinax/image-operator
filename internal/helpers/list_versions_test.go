@@ -85,6 +85,13 @@ var _ = Describe("List version from external registry", func() {
 			}
 			Expect(helpers.ListVersion(logr.Logger{}, "public.ecr.aws/docker/library/node", "20", false, helpers.DockerHubAuth{}, helpers.AWSPublicECR{})).To(Equal(expectedValue))
 		})
+
+		It("should correctly find image Node.js 22", func() {
+			var expectedValue = []string{
+				"22",
+			}
+			Expect(helpers.ListVersion(logr.Logger{}, "public.ecr.aws/docker/library/node", "22", false, helpers.DockerHubAuth{}, helpers.AWSPublicECR{})).To(Equal(expectedValue))
+		})
 	})
 })
 

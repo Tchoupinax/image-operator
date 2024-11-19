@@ -61,7 +61,8 @@ func ListVersion(
 
 			awsPageCount := 1000
 			if os.Getenv("API_AWS_PAGE_ITEMS_COUNT") != "" {
-				if number, err := strconv.Atoi(os.Getenv("API_AWS_PAGE_ITEMS_COUNT")); err != nil {
+				number, err := strconv.Atoi(os.Getenv("API_AWS_PAGE_ITEMS_COUNT"))
+				if err == nil {
 					awsPageCount = number
 				}
 			}
@@ -72,13 +73,13 @@ func ListVersion(
 					"registryAliasName":"%s",
 					"repositoryName":"%s",
 					"nextToken": "%s",
-					"maxResults": %s
+					"maxResults": %d
 				}`, parts[0], parts[1]+"/"+parts[2], nextToken, awsPageCount)
 			} else {
 				jsonData = fmt.Sprintf(`{
 					"registryAliasName":"%s",
 					"repositoryName":"%s",
-					"maxResults": %s
+					"maxResults": %d
 				}`, parts[0], parts[1]+"/"+parts[2], awsPageCount)
 			}
 
@@ -143,9 +144,10 @@ func ListVersion(
 				tags = append(tags, tag.Name)
 			}
 		} else if isAWSPublicECR {
-			pageMax := 1000
+			pageMax := 4
 			if os.Getenv("API_AWS_PAGE_MAX") != "" {
-				if number, err := strconv.Atoi(os.Getenv("API_AWS_PAGE_MAX")); err != nil {
+				number, err := strconv.Atoi(os.Getenv("API_AWS_PAGE_MAX"))
+				if err == nil {
 					pageMax = number
 				}
 			}
@@ -154,6 +156,7 @@ func ListVersion(
 			if page > pageMax || len(result.ImageTagDetails) == 0 {
 				break
 			}
+
 			for _, image := range result.ImageTagDetails {
 				tags = append(tags, image.ImageTag)
 			}
