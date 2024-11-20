@@ -19,7 +19,7 @@ func CreateSkopeoJob(
 	r *ImageReconciler,
 	ctx context.Context,
 	req ctrl.Request,
-	image skopeoiov1alpha1.Image,
+	image *skopeoiov1alpha1.Image,
 	logger logr.Logger,
 	overridenVersion string,
 ) {
@@ -47,7 +47,7 @@ func GenerateSkopeoJob(
 	r *ImageReconciler,
 	ctx context.Context,
 	req ctrl.Request,
-	image skopeoiov1alpha1.Image,
+	image *skopeoiov1alpha1.Image,
 	logger logr.Logger,
 	overridenVersion string,
 ) batchv1.Job {
