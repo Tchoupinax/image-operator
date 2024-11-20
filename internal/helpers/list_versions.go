@@ -189,7 +189,7 @@ func ListVersion(
 
 func GenerateRegex(input string, allowReleaseCandidate bool) string {
 	if strings.Contains(input, ".x") {
-		regex := strings.Replace(input, ".x", `.\d+`, 1)
+		regex := strings.ReplaceAll(input, ".x", `.\d+`)
 
 		if allowReleaseCandidate {
 			regex = fmt.Sprintf(`%s(-rc\d)?`, regex)

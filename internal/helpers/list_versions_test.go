@@ -97,12 +97,15 @@ var _ = Describe("List version from external registry", func() {
 
 var _ = Describe("when computing regex", func() {
 	It("should generate regex", func() {
-		Expect(helpers.GenerateRegex("2", false)).To(Equal(`^v?2$`))
-		Expect(helpers.GenerateRegex("2.x", false)).To(Equal(`^v?2.\d+$`))
 		Expect(helpers.GenerateRegex("19.x", false)).To(Equal(`^v?19.\d+$`))
+		Expect(helpers.GenerateRegex("2", false)).To(Equal(`^v?2$`))
 		Expect(helpers.GenerateRegex("2.12.x", false)).To(Equal(`^v?2.12.\d+$`))
-		Expect(helpers.GenerateRegex("4.56.x", false)).To(Equal(`^v?4.56.\d+$`))
 		Expect(helpers.GenerateRegex("2.12.x", true)).To(Equal(`^v?2.12.\d+(-rc\d)?$`))
+		Expect(helpers.GenerateRegex("2.x", false)).To(Equal(`^v?2.\d+$`))
 		Expect(helpers.GenerateRegex("3.34.x", true)).To(Equal(`^v?3.34.\d+(-rc\d)?$`))
+		Expect(helpers.GenerateRegex("3.x.x", true)).To(Equal(`^v?3.\d+.\d+(-rc\d)?$`))
+		Expect(helpers.GenerateRegex("3.x.0", true)).To(Equal(`^v?3.\d+.0(-rc\d)?$`))
+		Expect(helpers.GenerateRegex("4.56.x", false)).To(Equal(`^v?4.56.\d+$`))
+		Expect(helpers.GenerateRegex("4.56.x", false)).To(Equal(`^v?4.56.\d+$`))
 	})
 })
