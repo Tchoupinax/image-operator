@@ -15,10 +15,10 @@ func planJobCreation(
 	r *ImageReconciler,
 	ctx context.Context,
 	req ctrl.Request,
-	image skopeoiov1alpha1.Image,
+	image *skopeoiov1alpha1.Image,
 	logger logr.Logger,
 ) {
-	addHistory(r, ctx, image)
+	addHistory(image)
 
 	selectedVersions := helpers.ListVersion(
 		logger,
@@ -48,18 +48,17 @@ func planJobCreation(
 				image.Status.TagAlreadySynced,
 				selectedVersions...,
 			)
-			updateError2 := r.Status().Update(ctx, &image)
-			if updateError2 != nil {
-				fmt.Println(updateError2)
+
+			updateError := r.Status().Update(ctx, image)
+			if updateError != nil {
+				fmt.Println(updateError)
 			}
 		}
 	}
 }
 
 func addHistory(
-	r *ImageReconciler,
-	ctx context.Context,
-	image skopeoiov1alpha1.Image,
+	image *skopeoiov1alpha1.Image,
 ) {
 	image.Status.History = append(image.Status.History, skopeoiov1alpha1.History{
 		PerformedAt: metav1.Now(),
@@ -68,10 +67,5 @@ func addHistory(
 	maxItems := 20
 	if len(image.Status.History) > maxItems {
 		image.Status.History = image.Status.History[len(image.Status.History)-maxItems:]
-	}
-
-	updateError := r.Status().Update(ctx, &image)
-	if updateError != nil {
-		fmt.Println(updateError)
 	}
 }
