@@ -61,8 +61,17 @@ spec:
 
 ### Sync by tag pattern
 
+⚠️ WARNING: please check what you are doing. According the pattern and the repository, it can create thousands of jobs!
+
 You can order to copy every images matching a pattern. For exemple, if you want to copy every image like `2.13.1`, `2.13.2`, `2.13.3` etc... you can put version as `2.13.x`.
 Moreover, if you want to include release candidate you can with the option `allowCandidateRelease: true`. It will create a Kubernetes job for each version detected.
+
+It's support pattern like:
+- `2.x.0`
+- `3.1.x`
+- `4.x.x`
+
+Please use this pattern with cautious!
 
 > I want to copy every image `>=2.13` and `<2.14` and I accept release candidates (tag having `-rc{\d}{1,2}`)
 
