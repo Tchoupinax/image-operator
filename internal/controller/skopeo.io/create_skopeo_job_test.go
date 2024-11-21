@@ -25,7 +25,7 @@ var _ = Describe("Create Skopeo job", func() {
 				},
 				nil,
 				ctrl.Request{},
-				v1alpha1.Image{
+				&v1alpha1.Image{
 					Spec: v1alpha1.ImageSpec{
 						Source: v1alpha1.ImageEndpoint{
 							ImageName:  "repository.source.com",
@@ -63,7 +63,7 @@ var _ = Describe("Create Skopeo job", func() {
 				},
 				nil,
 				ctrl.Request{},
-				v1alpha1.Image{
+				&v1alpha1.Image{
 					Spec: v1alpha1.ImageSpec{
 						Source: v1alpha1.ImageEndpoint{
 							ImageName:  "repository.source.com",
