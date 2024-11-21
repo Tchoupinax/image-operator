@@ -64,15 +64,12 @@ func (r *ImageReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 	// If it's the first time, start a job creation
 	// Also, if the object has changed we reapply it
 	if len(image.Status.History) == 0 || newGeneration {
-		planJobCreation(r, ctx, req, &image, logger)
+		returnedResult := planJobCreation(r, ctx, req, &image, logger)
 
 		if image.Spec.Mode == skopeoiov1alpha1.ONE_SHOT {
 			return ctrl.Result{}, nil
 		} else {
-			return ctrl.Result{
-				Requeue:      true,
-				RequeueAfter: 10 * time.Second,
-			}, nil
+			return returnedResult, nil
 		}
 	}
 
@@ -86,15 +83,18 @@ func (r *ImageReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 
 	lastApplication := image.Status.History[len(image.Status.History)-1].PerformedAt
 	timeDifference := metav1.Now().Sub(lastApplication.Time)
-	// Start a job if the period defined is expired
-	if timeDifference > parsedFrequency {
-		planJobCreation(r, ctx, req, &image, logger)
-	}
 
-	return ctrl.Result{
+	returnedResult := ctrl.Result{
 		Requeue:      true,
 		RequeueAfter: 10 * time.Second,
-	}, nil
+	}
+
+	// Start a job if the period defined is expired
+	if timeDifference > parsedFrequency {
+		returnedResult = planJobCreation(r, ctx, req, &image, logger)
+	}
+
+	return returnedResult, nil
 }
 
 func (r *ImageReconciler) SetupWithManager(mgr ctrl.Manager) error {

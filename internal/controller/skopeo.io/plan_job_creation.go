@@ -2,7 +2,7 @@ package controller
 
 import (
 	"context"
-	"fmt"
+	"time"
 
 	skopeoiov1alpha1 "github.com/Tchoupinax/image-operator/api/skopeo.io/v1alpha1"
 	"github.com/Tchoupinax/image-operator/internal/helpers"
@@ -17,7 +17,7 @@ func planJobCreation(
 	req ctrl.Request,
 	image *skopeoiov1alpha1.Image,
 	logger logr.Logger,
-) {
+) ctrl.Result {
 	addHistory(image)
 
 	selectedVersions := helpers.ListVersion(
@@ -51,9 +51,16 @@ func planJobCreation(
 
 			updateError := r.Status().Update(ctx, image)
 			if updateError != nil {
-				fmt.Println(updateError)
+				logger.Error(updateError, "Failed to update the CRD "+image.Name)
+				// We stop the loop
+				return ctrl.Result{}
 			}
 		}
+	}
+
+	return ctrl.Result{
+		Requeue:      true,
+		RequeueAfter: 10 * time.Second,
 	}
 }
 
