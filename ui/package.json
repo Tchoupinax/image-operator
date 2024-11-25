@@ -13,7 +13,7 @@
   "dependencies": {
     "graphql": "16.9.0",
     "highlight.js": "11.10.0",
-    "nuxt": "3.14.159",
+    "nuxt": "3.14.1592",
     "timeago.js": "4.0.2",
     "vue": "latest",
     "vue-router": "latest"
@@ -21,10 +21,10 @@
   "devDependencies": {
     "@graphql-codegen/cli": "5.0.3",
     "@graphql-codegen/schema-ast": "4.1.0",
-    "@graphql-codegen/typescript": "4.1.1",
-    "@graphql-codegen/typescript-document-nodes": "4.0.11",
+    "@graphql-codegen/typescript": "4.1.2",
+    "@graphql-codegen/typescript-document-nodes": "4.0.12",
     "@graphql-codegen/typescript-graphql-request": "6.2.0",
-    "@graphql-codegen/typescript-operations": "4.3.1",
+    "@graphql-codegen/typescript-operations": "4.4.0",
     "@nuxt/eslint": "^0.7.0",
     "@nuxtjs/tailwindcss": "^6.12.2"
   },
