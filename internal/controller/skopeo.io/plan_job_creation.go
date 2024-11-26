@@ -38,8 +38,8 @@ func planJobCreation(
 	if len(selectedVersions) > 0 {
 		logger.Info("Reload image")
 
-		for _, tag := range selectedVersions {
-			CreateSkopeoJob(r, ctx, req, image, logger, tag)
+		for _, selectedVersion := range selectedVersions {
+			CreateSkopeoJob(r, ctx, req, image, logger, selectedVersion)
 		}
 
 		if image.Spec.Mode == "OnceByTag" {

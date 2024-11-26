@@ -21,7 +21,7 @@ func CreateSkopeoJob(
 	req ctrl.Request,
 	image *skopeoiov1alpha1.Image,
 	logger logr.Logger,
-	overridenVersion string,
+	incomingVersion string,
 ) {
 	desiredJob := GenerateSkopeoJob(
 		r,
@@ -29,7 +29,7 @@ func CreateSkopeoJob(
 		req,
 		image,
 		logger,
-		overridenVersion,
+		incomingVersion,
 	)
 
 	creationError := r.Create(ctx, &desiredJob)
@@ -49,15 +49,15 @@ func GenerateSkopeoJob(
 	req ctrl.Request,
 	image *skopeoiov1alpha1.Image,
 	logger logr.Logger,
-	overridenVersion string,
+	incomingVersion string,
 ) batchv1.Job {
 	logger.Info("Create job to copy image", image.Spec.Source.ImageName, image.Spec.Source.ImageVersion)
 
 	skopeoCommand := []string{
 		"skopeo",
 		"copy",
-		fmt.Sprintf("docker://%s:%s", image.Spec.Source.ImageName, overridenVersion),
-		fmt.Sprintf("docker://%s:%s", image.Spec.Destination.ImageName, overridenVersion),
+		fmt.Sprintf("docker://%s:%s", image.Spec.Source.ImageName, incomingVersion),
+		fmt.Sprintf("docker://%s:%s", image.Spec.Destination.ImageName, image.Spec.Destination.ImageVersion),
 		"--all",
 		"--preserve-digests",
 	}
@@ -136,7 +136,7 @@ func GenerateSkopeoJob(
 			Name: fmt.Sprintf(
 				"skopeo-job-copy-%s-%s",
 				strings.ReplaceAll(req.Name, ".", ""),
-				strings.ReplaceAll(overridenVersion, ".", ""),
+				strings.ReplaceAll(incomingVersion, ".", ""),
 			),
 			Namespace: podNamespace,
 		},

@@ -32,8 +32,9 @@ var _ = Describe("Create Skopeo job", func() {
 							UseAwsIRSA: false,
 						},
 						Destination: v1alpha1.ImageEndpoint{
-							ImageName:  "repository.destination.com",
-							UseAwsIRSA: false,
+							ImageName:    "repository.destination.com",
+							ImageVersion: "v4.5.6-public",
+							UseAwsIRSA:   false,
 						},
 					},
 				},
@@ -44,7 +45,7 @@ var _ = Describe("Create Skopeo job", func() {
 			Expect(job.Spec.Template.Spec.Containers[0].Command).To(Equal([]string{"/bin/bash"}))
 			Expect(job.Spec.Template.Spec.Containers[0].Args).To(Equal([]string{
 				"-c",
-				"skopeo copy docker://repository.source.com:v4.5.6 docker://repository.destination.com:v4.5.6 --all --preserve-digests --src-tls-verify=true --dest-tls-verify=true",
+				"skopeo copy docker://repository.source.com:v4.5.6 docker://repository.destination.com:v4.5.6-public --all --preserve-digests --src-tls-verify=true --dest-tls-verify=true",
 			}))
 		})
 	})
@@ -70,8 +71,9 @@ var _ = Describe("Create Skopeo job", func() {
 							UseAwsIRSA: false,
 						},
 						Destination: v1alpha1.ImageEndpoint{
-							ImageName:  "repository.destination.com",
-							UseAwsIRSA: true,
+							ImageName:    "repository.destination.com",
+							UseAwsIRSA:   true,
+							ImageVersion: "v4.5.6-public",
 						},
 					},
 				},
@@ -82,7 +84,7 @@ var _ = Describe("Create Skopeo job", func() {
 			Expect(job.Spec.Template.Spec.Containers[0].Command).To(Equal([]string{"/bin/bash"}))
 			Expect(job.Spec.Template.Spec.Containers[0].Args).To(Equal([]string{
 				"-c",
-				"yum install -y awscli &&\n\t\t\taws ecr get-login-password --region eu-west-1 | skopeo login --username AWS --password-stdin xxxxxxxxxxx.dkr.ecr.eu-west-3swa.amazonaws.com &&\n\t\t\tskopeo copy docker://repository.source.com:v4.5.6 docker://repository.destination.com:v4.5.6 --all --preserve-digests --src-tls-verify=true --dest-tls-verify=true",
+				"yum install -y awscli &&\n\t\t\taws ecr get-login-password --region eu-west-1 | skopeo login --username AWS --password-stdin repository.destination.com &&\n\t\t\tskopeo copy docker://repository.source.com:v4.5.6 docker://repository.destination.com:v4.5.6-public --all --preserve-digests --src-tls-verify=true --dest-tls-verify=true",
 			}))
 		})
 	})
