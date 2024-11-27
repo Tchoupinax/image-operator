@@ -48,13 +48,13 @@ func planJobCreation(
 				image.Status.TagAlreadySynced,
 				selectedVersions...,
 			)
+		}
 
-			updateError := r.Status().Update(ctx, image)
-			if updateError != nil {
-				logger.Error(updateError, "Failed to update the CRD "+image.Name)
-				// We stop the loop
-				return ctrl.Result{}
-			}
+		updateError := r.Status().Update(ctx, image)
+		if updateError != nil {
+			logger.Error(updateError, "Failed to update the CRD "+image.Name)
+			// We stop the loop
+			return ctrl.Result{}
 		}
 	}
 
