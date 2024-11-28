@@ -38,8 +38,7 @@ func ListVersion(
 
 	repoParts := strings.SplitN(sourceName, "/", 2)
 	if len(repoParts) != 2 {
-		fmt.Printf("Invalid source name format. Expected format: 'namespace/repo'. Got: %s\n", sourceName)
-		os.Exit(1)
+		repoParts = strings.SplitN("library/"+sourceName, "/", 2)
 	}
 	repository := repoParts[1]
 
@@ -88,6 +87,10 @@ func ListVersion(
 			req.Header.Set("TE", "trailers")
 			req.Header.Set("Content-Type", "application/json")
 		} else {
+			if !strings.Contains(sourceName, "/") {
+				sourceName = "library/" + sourceName
+			}
+
 			url = fmt.Sprintf("https://hub.docker.com/v2/repositories/%s/tags/?page_size=100&page=%d", sourceName, page)
 			req, _ = http.NewRequest("GET", url, nil)
 		}
