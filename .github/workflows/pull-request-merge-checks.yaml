@@ -1,7 +1,7 @@
 name: Merge checks
 on:
   pull_request:
-
+    types: [ ready_for_review, reopened, synchronize, labeled, unlabeled ]
 
 jobs:
   check-labels:
@@ -14,7 +14,17 @@ jobs:
       statuses: write
 
     steps:
+    - uses: actions/create-github-app-token@v1
+      id: app-token
+      with:
+        app-id: ${{ secrets.DEPLOY_APP_ID }}
+        private-key: ${{ secrets.DEPLOY_APP_KEY }}
+
+    - uses: actions/checkout@v4
+      with:
+        token: ${{ steps.app-token.outputs.token }}
+
     - name: labels
       uses: fuxingloh/multi-labeler@v4
       with:
-        github-token: ${{ secret.CR_TOKEN }}
+        github-token: ${{ steps.app-token.outputs.token }}
