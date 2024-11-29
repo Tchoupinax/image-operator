@@ -1,0 +1,20 @@
+name: Merge checks
+on:
+  pull_request:
+    types: [ ready_for_review, reopened, synchronize, labeled, unlabeled ]
+
+jobs:
+  check-labels:
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      contents: read
+      issues: write
+      pull-requests: write
+      statuses: write
+
+    steps:
+    - name: labels
+      uses: fuxingloh/multi-labeler@v4
+      with:
+        github-token: ${{ secret.CR_TOKEN }}
