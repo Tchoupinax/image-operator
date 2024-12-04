@@ -1,0 +1,28 @@
+name: Relabelling
+on:
+  pull_request:
+    types: [ ready_for_review, reopened, synchronize, labeled, unlabeled ]
+
+jobs:
+  check-labels:
+    name: Relabelling
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      contents: read
+      issues: write
+      pull-requests: write
+      statuses: write
+
+    steps:
+    - uses: actions/create-github-app-token@v1
+      id: app-token
+      with:
+        app-id: ${{ secrets.DEPLOY_APP_ID }}
+        private-key: ${{ secrets.DEPLOY_APP_KEY }}
+
+    # https://github.com/fuxingloh/multi-labeler
+    - name: labels
+      uses: fuxingloh/multi-labeler@v4
+      with:
+        github-token: ${{ steps.app-token.outputs.token }}

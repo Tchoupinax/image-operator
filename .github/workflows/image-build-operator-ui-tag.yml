@@ -1,5 +1,4 @@
 name: Build image operator UI release
-
 on:
   push:
     tags:
