@@ -1,4 +1,4 @@
-name: Update release draft
+name: Release draft
 on:
   push:
     branches:
@@ -6,12 +6,19 @@ on:
 
 jobs:
   release-draft:
+    name: Prepare draft release
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
 
     steps:
+    - uses: actions/create-github-app-token@v1
+      id: app-token
+      with:
+        app-id: ${{ secrets.DEPLOY_APP_ID }}
+        private-key: ${{ secrets.DEPLOY_APP_KEY }}
+
     - uses: release-drafter/release-drafter@v6
       env:
-        GITHUB_TOKEN: ${{ secret.CR_TOKEN }}
+        GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
