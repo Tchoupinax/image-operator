@@ -1,5 +1,4 @@
-name: release
-
+name: Helm Chart
 on:
   push:
     branches:
@@ -9,13 +8,20 @@ on:
 
 jobs:
   release:
+    name: Publish Helm Chart
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - uses: actions/create-github-app-token@v1
+      id: app-token
+      with:
+        app-id: ${{ secrets.DEPLOY_APP_ID }}
+        private-key: ${{ secrets.DEPLOY_APP_KEY }}
+
     - name: Publish Helm charts
       uses: stefanprodan/helm-gh-pages@v1.7.0
       with:
-        token: ${{ secrets.CR_TOKEN }}
+        token: ${{ steps.app-token.outputs.token }}
         charts_dir: charts
