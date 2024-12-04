@@ -2,6 +2,7 @@ name: Relabelling
 on:
   pull_request:
     types: [ ready_for_review, reopened, synchronize, labeled, unlabeled ]
+
 jobs:
   check-labels:
     name: Relabelling
