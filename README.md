@@ -59,7 +59,7 @@ spec:
     version: 3.7-alpine
 ```
 
-### Sync by tag pattern
+#### Sync by tag pattern
 
 ⚠️ WARNING: please check what you are doing. According the pattern and the repository, it can create thousands of jobs!
 
@@ -109,6 +109,16 @@ spec:
     name: destination/argoproj/argocd
     version: v2.13.x
 ```
+
+#### Copy on the fly (`Experimental`)
+
+⚠️ This feature is usable **at your own risk**. It's still experimental.
+
+The operator listens for pod events and detects when a pod is created, but the image is not found in the registry. In such cases, it assumes the image is not present in the target registry and that it needs to be copied from Dockerhub (or another registry). Based on this detection, the operator attempts to determine the correct image to copy and creates a job to perform the transfer.
+
+To activate this feature:
+- Provide `FEATURE_COPY_ON_THE_FLY` as "`true`"
+- With helm chart, set `.Values.config.features.copyOnTheFly` to "`true`"
 
 ### Build image (`ImageBuilder`)
 
@@ -185,18 +195,21 @@ You can find an exemple of values [here](charts/image-operator/values.yaml).
 
 ### Environment variables list
 
-- `API_AWS_PAGE_MAX`: 4
-- `API_AWS_PAGE_ITEMS_COUNT`: 1000
+- `API_AWS_PAGE_ITEMS_COUNT`: "1000"
+- `API_AWS_PAGE_MAX`: "4"
 - `BUILDAH_IMAGE`: "quay.io/containers/buildah"
-- `BUILDAH_PRIVILEGED_CONTAINER`: false
-- `BUILDAH_VERSION`: "v1.37.3"
 - `BUILDAH_JOB_NAMESPACE`: "image-operator"
+- `BUILDAH_PRIVILEGED_CONTAINER`: "false"
+- `BUILDAH_VERSION`: "v1.37.3"
 - `CREDS_DESTINATION_PASSWORD`: ""
 - `CREDS_DESTINATION_USERNAME`: ""
 - `CREDS_SOURCE_PASSWORD`: ""
 - `CREDS_SOURCE_USERNAME`: ""
+- `DESTINATION_DEFAULT_AWS_IRSA_USAGE`: "false"
+- `DESTINATION_DEFAULT_REGISTRY`: ""
 - `DISABLE_DEST_TLS_VERIFICATION`: "false"
 - `DISABLE_SRC_TLS_VERIFICATION`: "false"
+- `FEATURE_COPY_ON_THE_FLY`: "false"
 - `PULL_JOB_NAMESPACE`: "image-operator"
 - `SKOPEO_IMAGE`: "quay.io/containers/skopeo"
 - `SKOPEO_VERSION`: "v1.16.1"

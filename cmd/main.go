@@ -42,10 +42,12 @@ import (
 	skopeoiov1alpha1 "github.com/Tchoupinax/image-operator/api/skopeo.io/v1alpha1"
 	"github.com/Tchoupinax/image-operator/graphql"
 	controller "github.com/Tchoupinax/image-operator/internal/controller/skopeo.io"
-	"github.com/Tchoupinax/image-operator/internal/helpers"
 
 	buildahiov1alpha1 "github.com/Tchoupinax/image-operator/api/buildah.io/v1alpha1"
 	buildahiocontroller "github.com/Tchoupinax/image-operator/internal/controller/buildah.io"
+
+	corecontroller "github.com/Tchoupinax/image-operator/internal/controller/core"
+	helpers "github.com/Tchoupinax/image-operator/internal/helpers"
 
 	// +kubebuilder:scaffold:imports
 
@@ -233,6 +235,18 @@ func main() {
 			setupLog.Error(err, "unable to create controller", "controller", "ImageBuilder")
 			os.Exit(1)
 		}
+
+		// Activate copy on fly feature. Disabled by default
+		if helpers.GetEnv("FEATURE_COPY_ON_THE_FLY", "false") == "true" {
+			if err = (&corecontroller.PodReconciler{
+				Client: mgr.GetClient(),
+				Scheme: mgr.GetScheme(),
+			}).SetupWithManager(mgr); err != nil {
+				setupLog.Error(err, "unable to create controller", "controller", "Pod")
+				os.Exit(1)
+			}
+		}
+
 		// +kubebuilder:scaffold:builder
 
 		if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {
@@ -255,9 +269,12 @@ func main() {
 func heartBeatDockerhub(logger logr.Logger) {
 	for range time.Tick(time.Second * 60) {
 		result := helpers.GetDockerhubLimit(setupLog)
-
-		logger.Info(fmt.Sprintf("Dockerhub quota reminds %d/%s", result.Remaining, result.Limit))
-		dockerhubQuotaRemaining.Set(float64(result.Remaining))
-		dockerhubQuotaLimit.Set(float64(result.Limit))
+		if result.Succeeded {
+			logger.Info(fmt.Sprintf("Dockerhub quota reminds %d/%d with %s", result.Remaining, result.Limit, result.Ip))
+			dockerhubQuotaRemaining.Set(float64(result.Remaining))
+			dockerhubQuotaLimit.Set(float64(result.Limit))
+		} else {
+			logger.Info("You are rate-limited by DockerHub")
+		}
 	}
 }

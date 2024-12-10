@@ -133,11 +133,7 @@ func GenerateSkopeoJob(
 
 	return batchv1.Job{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: fmt.Sprintf(
-				"skopeo-job-copy-%s-%s",
-				strings.ReplaceAll(req.Name, ".", ""),
-				strings.ReplaceAll(incomingVersion, ".", ""),
-			),
+			Name:      helpers.GenerateSkopeoJobName(req.Name, incomingVersion),
 			Namespace: podNamespace,
 		},
 		Spec: batchv1.JobSpec{
