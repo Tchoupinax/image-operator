@@ -18,9 +18,7 @@ func planJobCreation(
 	image *skopeoiov1alpha1.Image,
 	logger logr.Logger,
 ) ctrl.Result {
-	addHistory(image)
-
-	selectedVersions := helpers.ListVersion(
+	selectedVersions := helpers.ListVersions(
 		logger,
 		image.Spec.Source.ImageName,
 		image.Spec.Source.ImageVersion,
@@ -37,6 +35,8 @@ func planJobCreation(
 
 	if len(selectedVersions) > 0 {
 		logger.Info("Reload image")
+
+		addHistory(image)
 
 		for _, selectedVersion := range selectedVersions {
 			CreateSkopeoJob(r, ctx, req, image, logger, selectedVersion)
@@ -56,11 +56,19 @@ func planJobCreation(
 			// We stop the loop
 			return ctrl.Result{}
 		}
+
+		// We entered in the condition where at least one version is detected
+		// so if the mode is one shot, we do NOT want to loop again
+		// If the mode is not ONE_SHOT, then we will return the Result
+		// at the end
+		if image.Spec.Mode == skopeoiov1alpha1.ONE_SHOT {
+			return ctrl.Result{}
+		}
 	}
 
 	return ctrl.Result{
 		Requeue:      true,
-		RequeueAfter: 10 * time.Second,
+		RequeueAfter: 60 * time.Second,
 	}
 }
 

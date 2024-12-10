@@ -64,13 +64,9 @@ func (r *ImageReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 	// If it's the first time, start a job creation
 	// Also, if the object has changed we reapply it
 	if len(image.Status.History) == 0 || newGeneration {
+		// Knowing if it should be planed again is done by "planJobCreation"
 		returnedResult := planJobCreation(r, ctx, req, &image, logger)
-
-		if image.Spec.Mode == skopeoiov1alpha1.ONE_SHOT {
-			return ctrl.Result{}, nil
-		} else {
-			return returnedResult, nil
-		}
+		return returnedResult, nil
 	}
 
 	// With an history and one-shot mode, it stops

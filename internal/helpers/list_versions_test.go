@@ -21,7 +21,7 @@ var _ = Describe("List version from external registry", func() {
 				"3.7",
 				"v3.6",
 			}
-			Expect(helpers.ListVersion(logr.Logger{}, "quay.io/nginx/nginx-ingress", "3.x", false, helpers.DockerHubAuth{}, helpers.AWSPublicECR{})).To(Equal(expectedValue))
+			Expect(helpers.ListVersions(logr.Logger{}, "quay.io/nginx/nginx-ingress", "3.x", false, helpers.DockerHubAuth{}, helpers.AWSPublicECR{})).To(Equal(expectedValue))
 		})
 
 		It("should correctly find image for 3.3.x", func() {
@@ -30,14 +30,14 @@ var _ = Describe("List version from external registry", func() {
 				"3.3.1",
 				"3.3.2",
 			}
-			Expect(helpers.ListVersion(logr.Logger{}, "quay.io/nginx/nginx-ingress", "3.3.x", false, helpers.DockerHubAuth{}, helpers.AWSPublicECR{})).To(Equal(expectedValue))
+			Expect(helpers.ListVersions(logr.Logger{}, "quay.io/nginx/nginx-ingress", "3.3.x", false, helpers.DockerHubAuth{}, helpers.AWSPublicECR{})).To(Equal(expectedValue))
 		})
 
 		It("should correctly find image with release candidate", func() {
 			var expectedValue = []string{
 				"v2.13.0", "v2.13.0-rc1", "v2.13.0-rc2", "v2.13.0-rc3", "v2.13.0-rc4", "v2.13.0-rc5", "v2.13.1",
 			}
-			Expect(helpers.ListVersion(logr.Logger{}, "quay.io/argoproj/argocd", "2.13.x", true, helpers.DockerHubAuth{}, helpers.AWSPublicECR{})).To(Equal(expectedValue))
+			Expect(helpers.ListVersions(logr.Logger{}, "quay.io/argoproj/argocd", "2.13.x", true, helpers.DockerHubAuth{}, helpers.AWSPublicECR{})).To(Equal(expectedValue))
 		})
 	})
 
@@ -45,7 +45,7 @@ var _ = Describe("List version from external registry", func() {
 		Describe("when image is not prefixed because it is from Dockerhub", func() {
 			It("should correctly find image for 2.x", func() {
 				var expectedValue = []string{"3.20"}
-				Expect(helpers.ListVersion(logr.Logger{}, "alpine", "3.20", false, helpers.DockerHubAuth{}, helpers.AWSPublicECR{})).To(Equal(expectedValue))
+				Expect(helpers.ListVersions(logr.Logger{}, "alpine", "3.20", false, helpers.DockerHubAuth{}, helpers.AWSPublicECR{})).To(Equal(expectedValue))
 			})
 		})
 
@@ -53,7 +53,7 @@ var _ = Describe("List version from external registry", func() {
 			var expectedValue = []string{
 				"2.1", "2.10", "2.11", "2.2", "2.3", "2.4", "2.5", "2.6", "2.7", "2.8", "2.9", "v2.1", "v2.10", "v2.11", "v2.2", "v2.3", "v2.4", "v2.5", "v2.6", "v2.7", "v2.8", "v2.9",
 			}
-			Expect(helpers.ListVersion(logr.Logger{}, "library/traefik", "2.x", false, helpers.DockerHubAuth{}, helpers.AWSPublicECR{})).To(Equal(expectedValue))
+			Expect(helpers.ListVersions(logr.Logger{}, "library/traefik", "2.x", false, helpers.DockerHubAuth{}, helpers.AWSPublicECR{})).To(Equal(expectedValue))
 		})
 	})
 
@@ -62,14 +62,14 @@ var _ = Describe("List version from external registry", func() {
 			var expectedValue = []string{
 				"20",
 			}
-			Expect(helpers.ListVersion(logr.Logger{}, "public.ecr.aws/docker/library/node", "20", false, helpers.DockerHubAuth{}, helpers.AWSPublicECR{})).To(Equal(expectedValue))
+			Expect(helpers.ListVersions(logr.Logger{}, "public.ecr.aws/docker/library/node", "20", false, helpers.DockerHubAuth{}, helpers.AWSPublicECR{})).To(Equal(expectedValue))
 		})
 
 		It("should correctly find image Node.js 22", func() {
 			var expectedValue = []string{
 				"22",
 			}
-			Expect(helpers.ListVersion(logr.Logger{}, "public.ecr.aws/docker/library/node", "22", false, helpers.DockerHubAuth{}, helpers.AWSPublicECR{})).To(Equal(expectedValue))
+			Expect(helpers.ListVersions(logr.Logger{}, "public.ecr.aws/docker/library/node", "22", false, helpers.DockerHubAuth{}, helpers.AWSPublicECR{})).To(Equal(expectedValue))
 		})
 	})
 })
