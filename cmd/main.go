@@ -247,11 +247,9 @@ func main() {
 
 func heartBeatDockerhub(logger logr.Logger) {
 	for range time.Tick(time.Second * 60) {
-		resultChan := make(chan int)
-		go helpers.GetDockerhubLimit(setupLog, resultChan)
-		result := <-resultChan
+		result := helpers.GetDockerhubLimit(setupLog)
 
-		logger.Info(fmt.Sprintf("Dockerhub rate current rate limit is %d", result))
-		dockerhubQuota.Set(float64(result))
+		logger.Info(fmt.Sprintf("Dockerhub rate current rate limit is %d", result.Limit))
+		dockerhubQuota.Set(float64(result.Limit))
 	}
 }
