@@ -12,6 +12,8 @@ config:
     disabledTlsCheck: false
   destination:
     disabledTlsCheck: false
+    defaultRegistry: ""
+    defaultAwsIrsaUsage: false
 
   api:
     aws:
@@ -25,6 +27,10 @@ config:
     secretName: "image-operator"
     sourcePassword: ""
     sourceUsername: ""
+
+  features:
+    copyOnTheFly: false
+
   pullJobNamespace: "image-operator"
   skopeo:
     image: "quay.io/containers/skopeo"

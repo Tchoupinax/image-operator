@@ -64,7 +64,6 @@ func callWithToken(token string) DockerHubQuota {
 		log.Fatalf("Error fetching token: %s\n", err)
 	}
 	defer resp.Body.Close()
-
 	if resp.StatusCode == 429 || resp.Header.Get("Ratelimit-Limit") == "" {
 		return DockerHubQuota{
 			Succeeded: false,
