@@ -1666,7 +1666,7 @@
     "@typescript-eslint/types" "^8.16.0"
     "@typescript-eslint/utils" "^8.16.0"
 
-"@nuxt/eslint@^0.7.0":
+"@nuxt/eslint@0.7.2":
   version "0.7.2"
   resolved "https://registry.yarnpkg.com/@nuxt/eslint/-/eslint-0.7.2.tgz#b4dc75506d57ca9fa54d5ac9835d68c461cb5459"
   integrity sha512-vYHeSkl9GnLUNXQQU2hupytalgD2mqDg2hrONzu+cayaow4YsqkbtrInNsvUMpH1PsvfFMonv3YK+hvptArTVw==
@@ -1794,7 +1794,7 @@
     vite-plugin-checker "^0.8.0"
     vue-bundle-renderer "^2.1.1"
 
-"@nuxtjs/tailwindcss@^6.12.2":
+"@nuxtjs/tailwindcss@6.12.2":
   version "6.12.2"
   resolved "https://registry.yarnpkg.com/@nuxtjs/tailwindcss/-/tailwindcss-6.12.2.tgz#3fa41b0b9361cd69ec14934f800e66225b3c9e1f"
   integrity sha512-qPJiFH67CkTj/2kBGBzqXihOD1rQXMsbVS4vdQvfBxOBLPfGhU1yw7AATdhPl2BBjO2krjJLuZj39t7dnDYOwg==
