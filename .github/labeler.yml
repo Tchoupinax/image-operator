@@ -10,8 +10,7 @@ labels:
   matcher:
     title: "^feat(?!.*BREAKING).*"
     files:
-      any: [ "app/*" ]
-      all: [ "!app/config/**" ]
+      any: [ "internal/*", "graphql/**", "cmd/**" ]
       count:
         gte: 1
         lte: 1000
