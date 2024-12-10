@@ -1,6 +1,6 @@
 image:
   repository: "tchoupinax/image-operator"
-  version: "v2.7.0"
+  version: "v2.7.1"
   imagePullPolicy: "IfNotPresent"
   pullSecrets: []
 
