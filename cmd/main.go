@@ -78,10 +78,16 @@ var (
 		},
 		[]string{"imagebuilder"},
 	)
-	dockerhubQuota = prometheus.NewGauge(
+	dockerhubQuotaLimit = prometheus.NewGauge(
 		prometheus.GaugeOpts{
-			Name: "image_operator_dockerhub_quota",
-			Help: "How much pull are available from Docker.io API",
+			Name: "image_operator_dockerhub_quota_limit",
+			Help: "What is the quota limit (hard limit) for Docker.io API",
+		},
+	)
+	dockerhubQuotaRemaining = prometheus.NewGauge(
+		prometheus.GaugeOpts{
+			Name: "image_operator_dockerhub_quota_remaining",
+			Help: "How many pull are available from Docker.io API",
 		},
 	)
 	imagebuilderBuildsCount = prometheus.NewCounter(
@@ -99,7 +105,8 @@ func init() {
 	// +kubebuilder:scaffold:scheme
 
 	metrics.Registry.MustRegister(
-		dockerhubQuota,
+		dockerhubQuotaLimit,
+		dockerhubQuotaRemaining,
 		imagebuilderBuildsCount,
 		lastTimeImageWasReloaded,
 		lastTimeImagebuilderWasReloaded,
@@ -249,7 +256,8 @@ func heartBeatDockerhub(logger logr.Logger) {
 	for range time.Tick(time.Second * 60) {
 		result := helpers.GetDockerhubLimit(setupLog)
 
-		logger.Info(fmt.Sprintf("Dockerhub rate current rate limit is %d", result.Limit))
-		dockerhubQuota.Set(float64(result.Limit))
+		logger.Info(fmt.Sprintf("Dockerhub quota reminds %d/%s", result.Remaining, result.Limit))
+		dockerhubQuotaRemaining.Set(float64(result.Remaining))
+		dockerhubQuotaLimit.Set(float64(result.Limit))
 	}
 }
