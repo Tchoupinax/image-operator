@@ -42,12 +42,12 @@ labels:
       any:
       - "**/*.md"
 
-- label: "manifest"
+- label: "helm-chart"
   sync: true # remove label if match failed, default: false
   matcher:
     files:
       any:
-      - "action.yml"
+      - "charts/**"
 
 #checks:
 #  - context: "Ready to merge"
