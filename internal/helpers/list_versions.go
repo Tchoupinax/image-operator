@@ -23,7 +23,7 @@ type AWSPublicECR struct {
 	token string
 }
 
-func ListVersion(
+func ListVersions(
 	logger logr.Logger,
 	sourceName string,
 	matchingString string,
