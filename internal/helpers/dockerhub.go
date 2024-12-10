@@ -7,8 +7,8 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/go-logr/logr"
 )
 
@@ -16,7 +16,16 @@ type AuthResponse struct {
 	Token string `json:"token"`
 }
 
-func GetDockerhubLimit(setupLog logr.Logger, resultChan chan<- int) {
+type DockerHubQuota struct {
+	Ip            string
+	Limit         int
+	LimitWait     int
+	Remaining     int
+	RemainingWait int
+	Succeeded     bool
+}
+
+func GetDockerhubLimit(setupLog logr.Logger) DockerHubQuota {
 	url := "https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull"
 
 	resp, err := http.Get(url)
@@ -36,23 +45,58 @@ func GetDockerhubLimit(setupLog logr.Logger, resultChan chan<- int) {
 		log.Fatalf("Error unmarshalling JSON: %s\n", err)
 	}
 
-	token, _, err := new(jwt.Parser).ParseUnverified(authResp.Token, jwt.MapClaims{})
+	return callWithToken(authResp.Token)
+}
+
+func callWithToken(token string) DockerHubQuota {
+	var url = "https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest"
+
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		log.Fatalf("Error parsing token: %s\n", err)
+		fmt.Println(err)
 	}
+	req.Header.Add("Authorization", "Bearer "+token)
 
-	if claims, ok := token.Claims.(jwt.MapClaims); ok {
-		var pull_limit = claims["access"].([]interface{})[0].(map[string]interface{})["parameters"].(map[string]interface{})["pull_limit"]
-		i, err := strconv.Atoi(pull_limit.(string))
-		if err != nil {
-			fmt.Printf("Error converting string to int: %s\n", err)
-			resultChan <- 0
-		} else {
-			resultChan <- i
+	client := &http.Client{}
+	resp, err := client.Do(req)
+
+	if err != nil {
+		log.Fatalf("Error fetching token: %s\n", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode == 429 || resp.Header.Get("Ratelimit-Limit") == "" {
+		return DockerHubQuota{
+			Succeeded: false,
 		}
-	} else {
-		log.Fatalf("Invalid token claims")
 	}
 
-	resultChan <- 0
+	limitSplited := strings.Split(resp.Header.Get("Ratelimit-Limit"), ";")
+	limit, err := strconv.Atoi(limitSplited[0])
+	if err != nil {
+		log.Fatalf("Error fetching token5: %s\n", err)
+	}
+	limitWait, err := strconv.Atoi(strings.Replace(limitSplited[1], "w=", "", 1))
+	if err != nil {
+		log.Fatalf("Error fetching token4: %s\n", err)
+	}
+
+	remainingSplited := strings.Split(resp.Header.Get("Ratelimit-Limit"), ";")
+	remaining, err := strconv.Atoi(remainingSplited[0])
+	if err != nil {
+		log.Fatalf("Error fetching token3: %s\n", err)
+	}
+	remainingWait, err := strconv.Atoi(strings.Replace(remainingSplited[1], "w=", "", 1))
+	if err != nil {
+		log.Fatalf("Error fetching token2: %s\n", err)
+	}
+
+	return DockerHubQuota{
+		Limit:         limit,
+		LimitWait:     limitWait,
+		Remaining:     remaining,
+		RemainingWait: remainingWait,
+		Ip:            resp.Header.Get("Docker-Ratelimit-Source"),
+		Succeeded:     true,
+	}
 }
