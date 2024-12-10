@@ -1,4 +1,5 @@
 name: Helm Chart
+
 on:
   release:
     types: [ published, created ]

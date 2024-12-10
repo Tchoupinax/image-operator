@@ -1,4 +1,5 @@
 name: Release draft
+
 on:
   push:
     branches:
