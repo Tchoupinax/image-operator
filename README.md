@@ -117,8 +117,8 @@ spec:
 The operator listens for pod events and detects when a pod is created, but the image is not found in the registry. In such cases, it assumes the image is not present in the target registry and that it needs to be copied from Dockerhub (or another registry). Based on this detection, the operator attempts to determine the correct image to copy and creates a job to perform the transfer.
 
 To activate this feature:
-- Provide `FEATURE_COPY_ON_THE_FLY` as "`true`"
-- With helm chart, set `.Values.config.features.copyOnTheFly` to "`true`"
+- Provide `FEATURE_COPY_ON_THE_FLY` as `true`
+- With helm chart, set `.Values.config.features.copyOnTheFly` to `true`
 
 ### Build image (`ImageBuilder`)
 
