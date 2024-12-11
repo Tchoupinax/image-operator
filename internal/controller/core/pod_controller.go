@@ -107,7 +107,7 @@ func (r *PodReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 
 				var image = v1alpha1.Image{
 					ObjectMeta: metav1.ObjectMeta{
-						Name:      helpers.GenerateSkopeoJobName(data.Image, detectedVersions[0]),
+						Name:      helpers.GenerateImageName(data.Image, detectedVersions[0]),
 						Namespace: "image-operator",
 					},
 					Spec: v1alpha1.ImageSpec{

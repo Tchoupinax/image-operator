@@ -11,5 +11,9 @@ var _ = Describe("when performing names", func() {
 		It("should truncate to 63 chars if the name is longer", func() {
 			Expect(len(helpers.GenerateSkopeoJobName("abcdefghijklmnabcdefghijklmnabcdefghijklmnabcdefghijklmn", "v1.2.3"))).To(Equal(63))
 		})
+		It("should not end with a dash", func() {
+			var name = helpers.GenerateSkopeoJobName("abcdefghijklmnabcdefghijklmnabcdddddddd", "v1.2.3")
+			Expect(name[len(name)-1:]).ToNot(Equal("-"))
+		})
 	})
 })
