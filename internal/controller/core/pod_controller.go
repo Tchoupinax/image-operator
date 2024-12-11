@@ -38,7 +38,8 @@ var notFoundImageCache []string
 
 type PodReconciler struct {
 	client.Client
-	Scheme *runtime.Scheme
+	Scheme                *runtime.Scheme
+	OnFlyNamespaceAllowed []string
 }
 
 // +kubebuilder:rbac:groups=core,resources=pods,verbs=get;list;watch;create;update;patch;delete
@@ -60,6 +61,17 @@ func (r *PodReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 	var event corev1.Event
 	if err := r.Get(ctx, req.NamespacedName, &event); err != nil {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
+	}
+
+	var shouldThisPodBeHandled = helpers.Contains(r.OnFlyNamespaceAllowed, req.Namespace)
+	// If the array equals ["*"], handle every namespace
+	if len(r.OnFlyNamespaceAllowed) == 1 && r.OnFlyNamespaceAllowed[0] == "*" {
+		shouldThisPodBeHandled = true
+	}
+
+	if !shouldThisPodBeHandled {
+		logger.Info("Pod " + req.Name + "/" + req.Namespace + " not handled because NS is not allowed")
+		return ctrl.Result{}, nil
 	}
 
 	// Event on the pod

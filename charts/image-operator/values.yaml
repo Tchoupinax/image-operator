@@ -1,6 +1,6 @@
 image:
   repository: "tchoupinax/image-operator"
-  version: "v2.8.4"
+  version: "v2.9.0"
   imagePullPolicy: "IfNotPresent"
   pullSecrets: []
 
@@ -29,7 +29,10 @@ config:
     sourceUsername: ""
 
   features:
-    copyOnTheFly: false
+    copyOnTheFly:
+      enabled: false
+      namespacesAllowed:
+      - "*"
 
   pullJobNamespace: "image-operator"
   skopeo:
