@@ -64,16 +64,20 @@ func (r *PodReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 
 	// Event on the pod
 	if event.Reason == "Failed" {
+		// fmt.Println(event.Reason, req.Name)
+		// fmt.Println(event.Message)
 		// We detect a not found image
 		if strings.Contains(event.Message, "not found") {
 			data, err := helpers.ExtractImageName(event.Message)
 			if err != nil {
+				logger.Error(err, "Failed to extract image name")
 				return ctrl.Result{}, nil
 			}
 
 			var newImage = fmt.Sprintf("%s:%s", data.Image, data.Version)
 			// We try to perform the image once only
 			if helpers.Contains(notFoundImageCache, newImage) {
+				logger.Info("Image detected but already handled: " + newImage)
 				return ctrl.Result{}, nil
 			}
 			notFoundImageCache = append(notFoundImageCache, newImage)
