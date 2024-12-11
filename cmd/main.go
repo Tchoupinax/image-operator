@@ -21,6 +21,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
@@ -237,10 +238,11 @@ func main() {
 		}
 
 		// Activate copy on fly feature. Disabled by default
-		if helpers.GetEnv("FEATURE_COPY_ON_THE_FLY", "false") == "true" {
+		if helpers.GetEnv("FEATURE_COPY_ON_THE_FLY_ENABLED", "false") == "true" {
 			if err = (&corecontroller.PodReconciler{
-				Client: mgr.GetClient(),
-				Scheme: mgr.GetScheme(),
+				Client:                mgr.GetClient(),
+				Scheme:                mgr.GetScheme(),
+				OnFlyNamespaceAllowed: strings.Split(helpers.GetEnv("FEATURE_COPY_ON_THE_FLY_NAMESPACES_ALLOWED", "*"), ","),
 			}).SetupWithManager(mgr); err != nil {
 				setupLog.Error(err, "unable to create controller", "controller", "Pod")
 				os.Exit(1)

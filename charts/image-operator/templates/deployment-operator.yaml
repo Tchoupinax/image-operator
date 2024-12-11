@@ -112,8 +112,12 @@ spec:
             value: "{{ .Values.config.destination.disabledTlsCheck }}"
           - name: "DISABLE_SRC_TLS_VERIFICATION"
             value: "{{ .Values.config.source.disabledTlsCheck }}"
-          - name: "FEATURE_COPY_ON_THE_FLY"
-            value: "{{ .Values.config.features.copyOnTheFly }}"
+          - name: "FEATURE_COPY_ON_THE_FLY_ENABLED"
+            value: "{{ .Values.config.features.copyOnTheFly.enabled }}"
+          {{- if .Values.config.features.copyOnTheFly.enabled }}
+          - name: "FEATURE_COPY_ON_THE_FLY_NAMESPACES_ALLOWED"
+            value: "{{ .Values.config.features.copyOnTheFly.namespacesAllowed | join "," }}"
+          {{- end }}
           - name: "GRAPHQL_API_ENABLED"
             value: "{{ .Values.config.ui.enabled }}"
           - name: "PULL_JOB_NAMESPACE"

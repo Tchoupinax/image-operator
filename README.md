@@ -195,6 +195,8 @@ You can find an exemple of values [here](charts/image-operator/values.yaml).
 
 ### Environment variables list
 
+Below are all environment handled by the app with their default values.
+
 - `API_AWS_PAGE_ITEMS_COUNT`: "1000"
 - `API_AWS_PAGE_MAX`: "4"
 - `BUILDAH_IMAGE`: "quay.io/containers/buildah"
@@ -209,7 +211,8 @@ You can find an exemple of values [here](charts/image-operator/values.yaml).
 - `DESTINATION_DEFAULT_REGISTRY`: ""
 - `DISABLE_DEST_TLS_VERIFICATION`: "false"
 - `DISABLE_SRC_TLS_VERIFICATION`: "false"
-- `FEATURE_COPY_ON_THE_FLY`: "false"
+- `FEATURE_COPY_ON_THE_FLY_ENABLED`: "false"
+- `FEATURE_COPY_ON_THE_FLY_NAMESPACES_ALLOWED`: "*"
 - `PULL_JOB_NAMESPACE`: "image-operator"
 - `SKOPEO_IMAGE`: "quay.io/containers/skopeo"
 - `SKOPEO_VERSION`: "v1.16.1"
