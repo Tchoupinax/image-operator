@@ -32,6 +32,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/log"
+	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 )
 
 var notFoundImageCache []string
@@ -62,7 +63,6 @@ func (r *PodReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 	if err := r.Get(ctx, req.NamespacedName, &event); err != nil {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
-
 	// Event on the pod
 	if event.Reason != "Failed" {
 		return ctrl.Result{}, nil
@@ -154,7 +154,16 @@ func (r *PodReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		For(&corev1.Pod{}).
 		Watches(
 			&corev1.Event{},
-			&handler.EnqueueRequestForObject{},
+			handler.EnqueueRequestsFromMapFunc(func(ctx context.Context, object client.Object) []reconcile.Request {
+				// This function filters but do not prevent cache add, so probably not super useful for the case
+				// if !helpers.Contains(allowedNamespaces, object.GetNamespace()) {
+				//	return []reconcile.Request{}
+				// }
+
+				return []reconcile.Request{{
+					NamespacedName: client.ObjectKeyFromObject(object),
+				}}
+			}),
 		).
 		Complete(r)
 }

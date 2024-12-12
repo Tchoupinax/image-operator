@@ -27,12 +27,15 @@ import (
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
-	_ "k8s.io/client-go/plugin/pkg/client/auth"
 
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
+	_ "k8s.io/client-go/plugin/pkg/client/auth"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/cache"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	"sigs.k8s.io/controller-runtime/pkg/metrics/filters"
@@ -122,6 +125,17 @@ func main() {
 	if helpers.GetEnv("FEATURE_DOCKERHUB_RATE_LIMIT_ENABLED", "false") == "true" {
 		go heartBeatDockerhub(setupLog)
 	}
+	var namespaces = strings.Split(helpers.GetEnv("FEATURE_COPY_ON_THE_FLY_NAMESPACES_ALLOWED", "*"), ",")
+
+	cacheNamespaces := make(map[string]cache.Config)
+	cacheOptions := cache.Options{
+		DefaultNamespaces: cacheNamespaces,
+	}
+	if !(len(namespaces) == 1 && namespaces[0] == "*") {
+		for _, namespace := range namespaces {
+			cacheNamespaces[namespace] = cache.Config{}
+		}
+	}
 
 	var metricsAddr string
 	var enableLeaderElection bool
@@ -199,12 +213,22 @@ func main() {
 		}
 
 		mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
-			Scheme:                 scheme,
+			Scheme: scheme,
+			Client: client.Options{
+				Cache: &client.CacheOptions{
+					DisableFor: []client.Object{
+						&corev1.Secret{},
+						&corev1.ConfigMap{},
+						&corev1.Pod{},
+					},
+				},
+			},
 			Metrics:                metricsServerOptions,
 			WebhookServer:          webhookServer,
 			HealthProbeBindAddress: probeAddr,
 			LeaderElection:         enableLeaderElection,
 			LeaderElectionID:       "dce26553.skopeo.io",
+			Cache:                  cacheOptions,
 			// LeaderElectionReleaseOnCancel defines if the leader should step down voluntarily
 			// when the Manager ends. This requires the binary to immediately end when the
 			// Manager is stopped, otherwise, this setting is unsafe. Setting this significantly
@@ -245,7 +269,7 @@ func main() {
 			if err = (&corecontroller.PodReconciler{
 				Client:                mgr.GetClient(),
 				Scheme:                mgr.GetScheme(),
-				OnFlyNamespaceAllowed: strings.Split(helpers.GetEnv("FEATURE_COPY_ON_THE_FLY_NAMESPACES_ALLOWED", "*"), ","),
+				OnFlyNamespaceAllowed: namespaces,
 			}).SetupWithManager(mgr); err != nil {
 				setupLog.Error(err, "unable to create controller", "controller", "Pod")
 				os.Exit(1)

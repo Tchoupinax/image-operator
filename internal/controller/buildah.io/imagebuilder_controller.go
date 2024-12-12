@@ -125,6 +125,8 @@ func (r *ImageBuilderReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&buildahiov1alpha1.ImageBuilder{}).
 		Owns(&batchv1.Job{}).
+		// TODO: investigate what is this option? => OnlyMetadata
+		// Owns(&batchv1.Job{}, builder.OnlyMetadata).
 		Complete(r)
 }
 

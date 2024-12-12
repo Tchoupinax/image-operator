@@ -265,3 +265,13 @@ go run github.com/onsi/ginkgo/v2/ginkgo run --focus "Node.js" internal/helpers/
 ### Dockerhub
 
 [source](https://www.docker.com/blog/checking-your-current-docker-pull-rate-limits-and-status)
+
+## Memory usage Documentation
+
+- https://gist.github.com/j33ty/79e8b736141be19687f565ea4c6f4226
+- https://github.com/external-secrets/external-secrets/issues/721
+- https://github.com/kubernetes-sigs/controller-runtime/blob/main/designs/cache_options.md
+- https://github.com/kubernetes-sigs/controller-runtime/issues?q=cache
+- https://github.com/operator-framework/operator-sdk/issues/6255
+- https://medium.com/@timebertt/kubernetes-controllers-at-scale-clients-caches-conflicts-patches-explained-aa0f7a8b4332
+- https://tyk.io/blog/the-role-of-controller-runtime-manager-in-kubernetes-operators/
