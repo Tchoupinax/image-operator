@@ -25,7 +25,6 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/builder"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
@@ -125,7 +124,9 @@ func (r *ImageBuilderReconciler) Reconcile(ctx context.Context, req ctrl.Request
 func (r *ImageBuilderReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&buildahiov1alpha1.ImageBuilder{}).
-		Owns(&batchv1.Job{}, builder.OnlyMetadata).
+		Owns(&batchv1.Job{}).
+		// TODO: investigate what is this option? => OnlyMetadata
+		// Owns(&batchv1.Job{}, builder.OnlyMetadata).
 		Complete(r)
 }
 
