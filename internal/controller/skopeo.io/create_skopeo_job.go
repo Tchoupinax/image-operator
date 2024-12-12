@@ -150,9 +150,9 @@ func GenerateSkopeoJob(
 					// 		RequiredDuringSchedulingIgnoredDuringExecution: &corev1.NodeSelector{
 					// 			NodeSelectorTerms: []corev1.NodeSelectorTerm{{
 					// 				MatchExpressions: []corev1.NodeSelectorRequirement{{
-					// 					Key:      "infra-tools",
+					// 					Key:      "",
 					// 					Operator: "In",
-					// 					Values:   []string{"true"},
+					// 					Values:   []string{""},
 					// 				}},
 					// 			}},
 					// 		},
@@ -160,9 +160,9 @@ func GenerateSkopeoJob(
 					// },
 					// Tolerations: []corev1.Toleration{{
 					// 	 Effect:   "NoSchedule",
-					// 	 Key:      "role",
+					// 	 Key:      "",
 					// 	 Operator: "Equal",
-					// 	 Value:    "infra-tools",
+					// 	 Value:    "",
 					// }},
 					RestartPolicy: "Never",
 					Containers: []corev1.Container{
