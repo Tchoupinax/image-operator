@@ -29,6 +29,9 @@ config:
     sourceUsername: ""
 
   features:
+    dockerHubRateLimit:
+      enabled: false
+      frequencySecond: 60
     copyOnTheFly:
       enabled: false
       namespacesAllowed:

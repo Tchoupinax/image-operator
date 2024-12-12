@@ -213,6 +213,8 @@ Below are all environment handled by the app with their default values.
 - `DISABLE_SRC_TLS_VERIFICATION`: "false"
 - `FEATURE_COPY_ON_THE_FLY_ENABLED`: "false"
 - `FEATURE_COPY_ON_THE_FLY_NAMESPACES_ALLOWED`: "*"
+- `FEATURE_DOCKERHUB_RATE_LIMIT_ENABLED`: "false"
+- `FEATURE_DOCKERHUB_RATE_LIMIT_FREQUENCY_SECOND`: "60"
 - `PULL_JOB_NAMESPACE`: "image-operator"
 - `SKOPEO_IMAGE`: "quay.io/containers/skopeo"
 - `SKOPEO_VERSION`: "v1.16.1"
