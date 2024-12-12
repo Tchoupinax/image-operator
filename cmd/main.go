@@ -21,6 +21,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -118,7 +119,9 @@ func init() {
 }
 
 func main() {
-	go heartBeatDockerhub(setupLog)
+	if helpers.GetEnv("FEATURE_DOCKERHUB_RATE_LIMIT_ENABLED", "false") == "true" {
+		go heartBeatDockerhub(setupLog)
+	}
 
 	var metricsAddr string
 	var enableLeaderElection bool
@@ -269,7 +272,14 @@ func main() {
 }
 
 func heartBeatDockerhub(logger logr.Logger) {
-	for range time.Tick(time.Second * 60) {
+	var frequencySecond = helpers.GetEnv("FEATURE_DOCKERHUB_RATE_LIMIT_FREQUENCY_SECOND", "60")
+	value, err := strconv.Atoi(frequencySecond)
+	if err != nil {
+		logger.Error(err, "Value of FEATURE_DOCKERHUB_RATE_LIMIT_FREQUENCY_SECOND is not a correct integer")
+		return
+	}
+
+	for range time.Tick(time.Second * time.Duration(value)) {
 		result := helpers.GetDockerhubLimit(setupLog)
 		if result.Succeeded {
 			logger.Info(fmt.Sprintf("Dockerhub quota reminds %d/%d with %s", result.Remaining, result.Limit, result.Ip))

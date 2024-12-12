@@ -118,6 +118,12 @@ spec:
           - name: "FEATURE_COPY_ON_THE_FLY_NAMESPACES_ALLOWED"
             value: "{{ .Values.config.features.copyOnTheFly.namespacesAllowed | join "," }}"
           {{- end }}
+          - name: "FEATURE_DOCKERHUB_RATE_LIMIT_ENABLED"
+            value: "{{ .Values.config.features.dockerHubRateLimit.enabled }}"
+          {{- if .Values.config.features.dockerHubRateLimit.enabled }}
+          - name: "FEATURE_DOCKERHUB_RATE_LIMIT_FREQUENCY_SECOND"
+            value: "{{ .Values.config.features.dockerHubRateLimit.frequencySecond }}"
+          {{- end }}
           - name: "GRAPHQL_API_ENABLED"
             value: "{{ .Values.config.ui.enabled }}"
           - name: "PULL_JOB_NAMESPACE"
