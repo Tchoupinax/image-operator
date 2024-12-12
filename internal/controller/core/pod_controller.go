@@ -63,6 +63,11 @@ func (r *PodReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
+	// Event on the pod
+	if event.Reason != "Failed" {
+		return ctrl.Result{}, nil
+	}
+
 	var shouldThisPodBeHandled = helpers.Contains(r.OnFlyNamespaceAllowed, req.Namespace)
 	// If the array equals ["*"], handle every namespace
 	if len(r.OnFlyNamespaceAllowed) == 1 && r.OnFlyNamespaceAllowed[0] == "*" {
@@ -74,72 +79,69 @@ func (r *PodReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 		return ctrl.Result{}, nil
 	}
 
-	// Event on the pod
-	if event.Reason == "Failed" {
-		// fmt.Println(event.Reason, req.Name)
-		// fmt.Println(event.Message)
-		// We detect a not found image
-		if strings.Contains(event.Message, "not found") {
-			data, err := helpers.ExtractImageName(event.Message)
+	// fmt.Println(event.Reason, req.Name)
+	// fmt.Println(event.Message)
+	// We detect a not found image
+	if strings.Contains(event.Message, "not found") {
+		data, err := helpers.ExtractImageName(event.Message)
+		if err != nil {
+			logger.Error(err, "Failed to extract image name")
+			return ctrl.Result{}, nil
+		}
+
+		var newImage = fmt.Sprintf("%s:%s", data.Image, data.Version)
+		// We try to perform the image once only
+		if helpers.Contains(notFoundImageCache, newImage) {
+			logger.Info("Image detected but already handled: " + newImage)
+			return ctrl.Result{}, nil
+		}
+		notFoundImageCache = append(notFoundImageCache, newImage)
+
+		logger.Info(fmt.Sprintf(
+			"Image not found detected => %s/%s:%s — Try to automatically copy it => %s",
+			data.Registry, data.Image, data.Version, newImage,
+		))
+
+		detectedVersions := helpers.ListVersions(
+			logger,
+			data.Image,
+			data.Version,
+			false,
+			helpers.DockerHubAuth{},
+			helpers.AWSPublicECR{},
+		)
+
+		if len(detectedVersions) == 1 {
+			var destinationDefaultRegistry = os.Getenv("DESTINATION_DEFAULT_REGISTRY")
+			var destinationDefaultIrsaUsage = helpers.GetEnv("DESTINATION_DEFAULT_AWS_IRSA_USAGE", "false")
+
+			if destinationDefaultRegistry == "" {
+				logger.Info("On-fly copy aborted because default registry not defined (see DESTINATION_DEFAULT_REGISTRY).")
+				return ctrl.Result{}, nil
+			}
+
+			var image = v1alpha1.Image{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      helpers.GenerateImageName(data.Image, detectedVersions[0]),
+					Namespace: "image-operator",
+				},
+				Spec: v1alpha1.ImageSpec{
+					Mode: "OneShot",
+					Source: v1alpha1.ImageEndpoint{
+						ImageName:    data.Image,
+						ImageVersion: detectedVersions[0],
+					},
+					Destination: v1alpha1.ImageEndpoint{
+						ImageName:    destinationDefaultRegistry + "/" + data.Image,
+						ImageVersion: detectedVersions[0],
+						UseAwsIRSA:   destinationDefaultIrsaUsage == "true",
+					},
+				},
+			}
+
+			err := r.Create(ctx, &image)
 			if err != nil {
-				logger.Error(err, "Failed to extract image name")
-				return ctrl.Result{}, nil
-			}
-
-			var newImage = fmt.Sprintf("%s:%s", data.Image, data.Version)
-			// We try to perform the image once only
-			if helpers.Contains(notFoundImageCache, newImage) {
-				logger.Info("Image detected but already handled: " + newImage)
-				return ctrl.Result{}, nil
-			}
-			notFoundImageCache = append(notFoundImageCache, newImage)
-
-			logger.Info(fmt.Sprintf(
-				"Image not found detected => %s/%s:%s — Try to automatically copy it => %s",
-				data.Registry, data.Image, data.Version, newImage,
-			))
-
-			detectedVersions := helpers.ListVersions(
-				logger,
-				data.Image,
-				data.Version,
-				false,
-				helpers.DockerHubAuth{},
-				helpers.AWSPublicECR{},
-			)
-
-			if len(detectedVersions) == 1 {
-				var destinationDefaultRegistry = os.Getenv("DESTINATION_DEFAULT_REGISTRY")
-				var destinationDefaultIrsaUsage = helpers.GetEnv("DESTINATION_DEFAULT_AWS_IRSA_USAGE", "false")
-
-				if destinationDefaultRegistry == "" {
-					logger.Info("On-fly copy aborted because default registry not defined (see DESTINATION_DEFAULT_REGISTRY).")
-					return ctrl.Result{}, nil
-				}
-
-				var image = v1alpha1.Image{
-					ObjectMeta: metav1.ObjectMeta{
-						Name:      helpers.GenerateImageName(data.Image, detectedVersions[0]),
-						Namespace: "image-operator",
-					},
-					Spec: v1alpha1.ImageSpec{
-						Mode: "OneShot",
-						Source: v1alpha1.ImageEndpoint{
-							ImageName:    data.Image,
-							ImageVersion: detectedVersions[0],
-						},
-						Destination: v1alpha1.ImageEndpoint{
-							ImageName:    destinationDefaultRegistry + "/" + data.Image,
-							ImageVersion: detectedVersions[0],
-							UseAwsIRSA:   destinationDefaultIrsaUsage == "true",
-						},
-					},
-				}
-
-				err := r.Create(ctx, &image)
-				if err != nil {
-					fmt.Println(err)
-				}
+				fmt.Println(err)
 			}
 		}
 	}
