@@ -265,7 +265,7 @@ func main() {
 		}
 
 		// Activate copy on fly feature. Disabled by default
-		if helpers.GetEnv("FEATURE_COPY_ON_THE_FLY_ENABLED", "true") == "true" {
+		if helpers.GetEnv("FEATURE_COPY_ON_THE_FLY_ENABLED", "false") == "true" {
 			if err = (&corecontroller.PodReconciler{
 				Client:                mgr.GetClient(),
 				Scheme:                mgr.GetScheme(),
