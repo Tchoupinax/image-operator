@@ -145,6 +145,25 @@ func GenerateSkopeoJob(
 					Labels:      image.Labels,
 				},
 				Spec: corev1.PodSpec{
+					// Affinity: &corev1.Affinity{
+					// 	NodeAffinity: &corev1.NodeAffinity{
+					// 		RequiredDuringSchedulingIgnoredDuringExecution: &corev1.NodeSelector{
+					// 			NodeSelectorTerms: []corev1.NodeSelectorTerm{{
+					// 				MatchExpressions: []corev1.NodeSelectorRequirement{{
+					// 					Key:      "infra-tools",
+					// 					Operator: "In",
+					// 					Values:   []string{"true"},
+					// 				}},
+					// 			}},
+					// 		},
+					// 	},
+					// },
+					// Tolerations: []corev1.Toleration{{
+					// 	 Effect:   "NoSchedule",
+					// 	 Key:      "role",
+					// 	 Operator: "Equal",
+					// 	 Value:    "infra-tools",
+					// }},
 					RestartPolicy: "Never",
 					Containers: []corev1.Container{
 						{
