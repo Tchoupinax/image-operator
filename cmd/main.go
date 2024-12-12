@@ -126,9 +126,15 @@ func main() {
 		go heartBeatDockerhub(setupLog)
 	}
 	var namespaces = strings.Split(helpers.GetEnv("FEATURE_COPY_ON_THE_FLY_NAMESPACES_ALLOWED", "*"), ",")
+
 	cacheNamespaces := make(map[string]cache.Config)
-	for _, namespace := range namespaces {
-		cacheNamespaces[namespace] = cache.Config{}
+	cacheOptions := cache.Options{
+		DefaultNamespaces: cacheNamespaces,
+	}
+	if !(len(namespaces) == 1 && namespaces[0] == "*") {
+		for _, namespace := range namespaces {
+			cacheNamespaces[namespace] = cache.Config{}
+		}
 	}
 
 	var metricsAddr string
@@ -222,9 +228,7 @@ func main() {
 			HealthProbeBindAddress: probeAddr,
 			LeaderElection:         enableLeaderElection,
 			LeaderElectionID:       "dce26553.skopeo.io",
-			Cache: cache.Options{
-				DefaultNamespaces: cacheNamespaces,
-			},
+			Cache:                  cacheOptions,
 			// LeaderElectionReleaseOnCancel defines if the leader should step down voluntarily
 			// when the Manager ends. This requires the binary to immediately end when the
 			// Manager is stopped, otherwise, this setting is unsafe. Setting this significantly
