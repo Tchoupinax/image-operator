@@ -67,10 +67,10 @@ spec:
 
         resources:
           limits:
-            memory: 200Mi
+            memory: {{ .Values.resources.memory.limit }}
           requests:
-            cpu: 10m
-            memory: 20Mi
+            cpu: 30m
+            memory: {{ .Values.resources.memory.request }}
         env:
           - name: "API_AWS_PAGE_MAX"
             value: {{ .Values.config.api.aws.pageMax | quote }}
