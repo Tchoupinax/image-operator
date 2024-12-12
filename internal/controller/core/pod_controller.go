@@ -155,6 +155,7 @@ func (r *PodReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Watches(
 			&corev1.Event{},
 			handler.EnqueueRequestsFromMapFunc(func(ctx context.Context, object client.Object) []reconcile.Request {
+				// This function filters but do not prevent cache add, so probably not super useful for the case
 				// if !helpers.Contains(allowedNamespaces, object.GetNamespace()) {
 				//	return []reconcile.Request{}
 				// }
