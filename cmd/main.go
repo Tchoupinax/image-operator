@@ -85,17 +85,19 @@ var (
 		},
 		[]string{"imagebuilder"},
 	)
-	dockerhubQuotaLimit = prometheus.NewGauge(
+	dockerhubQuotaLimit = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "image_operator_dockerhub_quota_limit",
 			Help: "What is the quota limit (hard limit) for Docker.io API",
 		},
+		[]string{"ip"},
 	)
-	dockerhubQuotaRemaining = prometheus.NewGauge(
+	dockerhubQuotaRemaining = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "image_operator_dockerhub_quota_remaining",
 			Help: "How many pull are available from Docker.io API",
 		},
+		[]string{"ip"},
 	)
 	imagebuilderBuildsCount = prometheus.NewCounter(
 		prometheus.CounterOpts{
@@ -124,7 +126,12 @@ func init() {
 func main() {
 	if helpers.GetEnv("FEATURE_DOCKERHUB_RATE_LIMIT_ENABLED", "false") == "true" {
 		go heartBeatDockerhub(setupLog)
+	} else {
+		// Set default value to prevent from returning 0
+		dockerhubQuotaRemaining.WithLabelValues("ip", "0.0.0.0").Set(-1)
+		dockerhubQuotaLimit.WithLabelValues("ip", "0.0.0.0").Set(-1)
 	}
+
 	var namespaces = strings.Split(helpers.GetEnv("FEATURE_COPY_ON_THE_FLY_NAMESPACES_ALLOWED", "*"), ",")
 
 	cacheNamespaces := make(map[string]cache.Config)
@@ -307,8 +314,8 @@ func heartBeatDockerhub(logger logr.Logger) {
 		result := helpers.GetDockerhubLimit(setupLog)
 		if result.Succeeded {
 			logger.Info(fmt.Sprintf("Dockerhub quota reminds %d/%d with %s", result.Remaining, result.Limit, result.Ip))
-			dockerhubQuotaRemaining.Set(float64(result.Remaining))
-			dockerhubQuotaLimit.Set(float64(result.Limit))
+			dockerhubQuotaRemaining.WithLabelValues("ip", result.Ip).Set(float64(result.Remaining))
+			dockerhubQuotaLimit.WithLabelValues("ip", result.Ip).Set(float64(result.Limit))
 		} else {
 			logger.Info("You are rate-limited by DockerHub")
 		}
