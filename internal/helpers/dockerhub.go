@@ -51,7 +51,7 @@ func GetDockerhubLimit(setupLog logr.Logger) DockerHubQuota {
 func callWithToken(token string) DockerHubQuota {
 	var url = "https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest"
 
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest("HEAD", url, nil)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -80,7 +80,7 @@ func callWithToken(token string) DockerHubQuota {
 		log.Fatalf("Error fetching token4: %s\n", err)
 	}
 
-	remainingSplited := strings.Split(resp.Header.Get("Ratelimit-Limit"), ";")
+	remainingSplited := strings.Split(resp.Header.Get("Ratelimit-Remaining"), ";")
 	remaining, err := strconv.Atoi(remainingSplited[0])
 	if err != nil {
 		log.Fatalf("Error fetching token3: %s\n", err)
