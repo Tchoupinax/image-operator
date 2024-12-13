@@ -128,8 +128,8 @@ func main() {
 		go heartBeatDockerhub(setupLog)
 	} else {
 		// Set default value to prevent from returning 0
-		dockerhubQuotaRemaining.WithLabelValues("ip", "0.0.0.0").Set(-1)
-		dockerhubQuotaLimit.WithLabelValues("ip", "0.0.0.0").Set(-1)
+		dockerhubQuotaRemaining.WithLabelValues("0.0.0.0").Set(-1)
+		dockerhubQuotaLimit.WithLabelValues("0.0.0.0").Set(-1)
 	}
 
 	var namespaces = strings.Split(helpers.GetEnv("FEATURE_COPY_ON_THE_FLY_NAMESPACES_ALLOWED", "*"), ",")
@@ -314,8 +314,8 @@ func heartBeatDockerhub(logger logr.Logger) {
 		result := helpers.GetDockerhubLimit(setupLog)
 		if result.Succeeded {
 			logger.Info(fmt.Sprintf("Dockerhub quota reminds %d/%d with %s", result.Remaining, result.Limit, result.Ip))
-			dockerhubQuotaRemaining.WithLabelValues("ip", result.Ip).Set(float64(result.Remaining))
-			dockerhubQuotaLimit.WithLabelValues("ip", result.Ip).Set(float64(result.Limit))
+			dockerhubQuotaRemaining.WithLabelValues(result.Ip).Set(float64(result.Remaining))
+			dockerhubQuotaLimit.WithLabelValues(result.Ip).Set(float64(result.Limit))
 		} else {
 			logger.Info("You are rate-limited by DockerHub")
 		}
