@@ -26,7 +26,6 @@ var _ = Describe("DockerHub", func() {
 			var data = helpers.GetDockerhubLimit(logr.Logger{})
 
 			Expect(data.Succeeded).To(BeTrue())
-
 			Expect(validIP4(data.Ip)).To(BeTrue())
 			Expect(data.Limit).To(Equal(100))
 			Expect(data.LimitWait).To(Equal(21600))
