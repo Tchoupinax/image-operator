@@ -11,7 +11,7 @@
     "codegen": "graphql-codegen"
   },
   "dependencies": {
-    "graphql": "16.9.0",
+    "graphql": "16.10.0",
     "highlight.js": "11.11.0",
     "nuxt": "3.14.1592",
     "timeago.js": "4.0.2",
