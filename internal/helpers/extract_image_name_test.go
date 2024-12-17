@@ -46,4 +46,24 @@ var _ = Describe("Extract image name", func() {
 		Expect(data.Registry).To(Equal("rg.fr-par.scw.cloud/my-registry"))
 		Expect(data.Image).To(Equal("tchoupinax/image-operator"))
 	})
+
+	It("should handle a complex not found image", func() {
+		data, err := helpers.ExtractImageName(
+			"rpc error: code = NotFound desc = failed to pull and unpack image \"rg.fr-par.scw.cloud/my-registry/repo/image-operator:test2\": failed to resolve reference \"rg.fr-par.scw.cloud/my-registry/repo/image-operator:test2\": rg.fr-par.scw.cloud/my-registry/repo/image-operator:test2: not found",
+		)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(data.Version).To(Equal("test2"))
+		Expect(data.Registry).To(Equal("rg.fr-par.scw.cloud/my-registry"))
+		Expect(data.Image).To(Equal("repo/image-operator"))
+	})
+
+	It("should extract tag with dot", func() {
+		data, err := helpers.ExtractImageName(
+			"rpc error: code = NotFound desc = failed to pull and unpack rg.fr-par.scw.cloud/my-registry/woodpeckerci/woodpecker-agent:v2.8.1 not found",
+		)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(data.Version).To(Equal("v2.8.1"))
+		Expect(data.Registry).To(Equal("rg.fr-par.scw.cloud/my-registry"))
+		Expect(data.Image).To(Equal("woodpeckerci/woodpecker-agent"))
+	})
 })
