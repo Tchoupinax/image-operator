@@ -20,15 +20,16 @@ type ImageDetails struct {
 }
 
 func ExtractImageName(input string) (*ImageDetails, error) {
-	pattern := `"(.*)"`
+	pattern := `([a-z0-9-._]*/[a-z0-9-]*/[a-z0-9-]*(/[a-z0-9-]*)?(:[a-z0-9]*)?)`
 	re := regexp.MustCompile(pattern)
 
 	matches := re.FindStringSubmatch(input)
 	fmt.Println(matches)
-	if len(matches) < 2 {
+	if len(matches) < 1 {
 		return nil, fmt.Errorf("no matches found in the input string")
 	}
-	var imageName = matches[1]
+
+	var imageName = matches[0]
 	// Handle the case where there is no tag
 	// We add latest explicitly
 	if !strings.Contains(imageName, ":") {
