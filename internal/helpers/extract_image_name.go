@@ -24,7 +24,8 @@ func ExtractImageName(input string) (*ImageDetails, error) {
 	re := regexp.MustCompile(pattern)
 
 	matches := re.FindStringSubmatch(input)
-	if len(matches) == 0 {
+	fmt.Println(matches)
+	if len(matches) < 2 {
 		return nil, fmt.Errorf("no matches found in the input string")
 	}
 	var imageName = matches[1]

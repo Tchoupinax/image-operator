@@ -35,7 +35,7 @@ var _ = Describe("List version from external registry", func() {
 
 		It("should correctly find image with release candidate", func() {
 			var expectedValue = []string{
-				"v2.13.0", "v2.13.0-rc1", "v2.13.0-rc2", "v2.13.0-rc3", "v2.13.0-rc4", "v2.13.0-rc5", "v2.13.1",
+				"v2.13.0", "v2.13.0-rc1", "v2.13.0-rc2", "v2.13.0-rc3", "v2.13.0-rc4", "v2.13.0-rc5", "v2.13.1", "v2.13.2",
 			}
 			Expect(helpers.ListVersions(logr.Logger{}, "quay.io/argoproj/argocd", "2.13.x", true, helpers.DockerHubAuth{}, helpers.AWSPublicECR{})).To(Equal(expectedValue))
 		})

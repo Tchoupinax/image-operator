@@ -46,4 +46,14 @@ var _ = Describe("Extract image name", func() {
 		Expect(data.Registry).To(Equal("rg.fr-par.scw.cloud/my-registry"))
 		Expect(data.Image).To(Equal("tchoupinax/image-operator"))
 	})
+
+	It("should handle when latest is implicit (standard image)", func() {
+		data, err := helpers.ExtractImageName(
+			"Failed to pull image \"rg.fr-par.scw.cloud/scaleway-tchoupinax/tchoupinax/image-operator:v2.12.0\": rpc error:",
+		)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(data.Version).To(Equal("v2.12.0"))
+		Expect(data.Registry).To(Equal("rg.fr-par.scw.cloud/scaleway-tchoupinax"))
+		Expect(data.Image).To(Equal("tchoupinax/image-operator"))
+	})
 })
