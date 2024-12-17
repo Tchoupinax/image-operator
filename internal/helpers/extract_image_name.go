@@ -20,11 +20,10 @@ type ImageDetails struct {
 }
 
 func ExtractImageName(input string) (*ImageDetails, error) {
-	pattern := `([a-z0-9-._]*/[a-z0-9-]*/[a-z0-9-]*(/[a-z0-9-]*)?(:[a-z0-9]*)?)`
+	pattern := `([a-z0-9-._]*/[a-z0-9-]*/[a-z0-9-]*(/[a-z0-9-]*)?(:[a-z0-9.]*)?)`
 	re := regexp.MustCompile(pattern)
 
 	matches := re.FindStringSubmatch(input)
-	fmt.Println(matches)
 	if len(matches) < 1 {
 		return nil, fmt.Errorf("no matches found in the input string")
 	}
