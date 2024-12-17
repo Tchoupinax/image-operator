@@ -3,7 +3,15 @@ package helpers
 import (
 	"fmt"
 	"regexp"
+	"strings"
 )
+
+var dockerImageWithoutPrefix = []string{
+	"alpine",
+	"busybox",
+	"debian",
+	"ubuntu",
+}
 
 type ImageDetails struct {
 	Registry string
@@ -12,18 +20,41 @@ type ImageDetails struct {
 }
 
 func ExtractImageName(input string) (*ImageDetails, error) {
-	pattern := `Failed to pull image "(?P<registry>[a-zA-Z0-9._-]+(?:\.[a-zA-Z0-9._-]+)+(?:/[a-zA-Z0-9._-]+)*)/(?P<image>[a-zA-Z0-9_.-]+/[a-zA-Z0-9_.-]+):(?P<version>[a-zA-Z0-9_.-]+)"`
+	pattern := `"(.*)"`
 	re := regexp.MustCompile(pattern)
 
 	matches := re.FindStringSubmatch(input)
 	if len(matches) == 0 {
 		return nil, fmt.Errorf("no matches found in the input string")
 	}
+	var imageName = matches[1]
+	// Handle the case where there is no tag
+	// We add latest explicitly
+	if !strings.Contains(imageName, ":") {
+		imageName += ":latest"
+	}
+
+	var registry string
+	var image string
+	parts := strings.Split(imageName, "/")
+
+	if len(parts) == 3 {
+		if Contains(dockerImageWithoutPrefix, strings.Split(parts[2], ":")[0]) {
+			registry = parts[0] + "/" + parts[1]
+			image = parts[2]
+		} else {
+			registry = parts[0]
+			image = parts[1] + "/" + parts[2]
+		}
+	} else if len(parts) == 4 {
+		registry = parts[0] + "/" + parts[1]
+		image = parts[2] + "/" + parts[3]
+	}
 
 	result := &ImageDetails{
-		Registry: matches[1],
-		Image:    matches[2],
-		Version:  matches[3],
+		Registry: registry,
+		Image:    strings.Split(image, ":")[0],
+		Version:  strings.Split(image, ":")[1],
 	}
 
 	return result, nil
