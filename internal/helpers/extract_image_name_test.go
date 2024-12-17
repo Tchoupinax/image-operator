@@ -26,4 +26,24 @@ var _ = Describe("Extract image name", func() {
 		Expect(data.Registry).To(Equal("aws_account_id.dkr.ecr.region.amazonaws.com"))
 		Expect(data.Image).To(Equal("tchoupinax/image-operator-ui"))
 	})
+
+	It("should handle when latest is implicit (root image)", func() {
+		data, err := helpers.ExtractImageName(
+			"Failed to pull image \"rg.fr-par.scw.cloud/my-registry/busybox\": rpc error:",
+		)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(data.Version).To(Equal("latest"))
+		Expect(data.Registry).To(Equal("rg.fr-par.scw.cloud/my-registry"))
+		Expect(data.Image).To(Equal("busybox"))
+	})
+
+	It("should handle when latest is implicit (standard image)", func() {
+		data, err := helpers.ExtractImageName(
+			"Failed to pull image \"rg.fr-par.scw.cloud/my-registry/tchoupinax/image-operator\": rpc error:",
+		)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(data.Version).To(Equal("latest"))
+		Expect(data.Registry).To(Equal("rg.fr-par.scw.cloud/my-registry"))
+		Expect(data.Image).To(Equal("tchoupinax/image-operator"))
+	})
 })
