@@ -218,7 +218,7 @@ Below are all environment handled by the app with their default values.
 - `PULL_JOB_NAMESPACE`: "image-operator"
 - `SKOPEO_IMAGE`: "quay.io/containers/skopeo"
 - `SKOPEO_VERSION`: "v1.16.1"
-- `SUCCEEDED_JOB_DELETION_DELAY_SECONDS`: "10"
+- `JOB_DELETION_DELAY_SECONDS`: "10"
 
 ## Features
 

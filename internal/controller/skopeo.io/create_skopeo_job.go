@@ -133,8 +133,8 @@ func GenerateSkopeoJob(
 	}
 
 	var deleteJobAfterXSeconds int32 = 10
-	if helpers.GetEnv("SUCCEEDED_JOB_DELETION_DELAY_SECONDS", "10") != "" {
-		numericValue, error := strconv.Atoi(helpers.GetEnv("SUCCEEDED_JOB_DELETION_DELAY_SECONDS", "10"))
+	if helpers.GetEnv("JOB_DELETION_DELAY_SECONDS", "10") != "" {
+		numericValue, error := strconv.Atoi(helpers.GetEnv("JOB_DELETION_DELAY_SECONDS", "10"))
 		if error != nil {
 			deleteJobAfterXSeconds = int32(numericValue)
 		} else {

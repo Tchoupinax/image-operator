@@ -53,7 +53,7 @@ config:
     version: "v1.37.5"
     jobNamespace: "image-operator"
 
-  succeededJobDeletionDelaySeconds: 10
+  jobDeletionDelaySeconds: 10
 
   ui:
     enabled: false
