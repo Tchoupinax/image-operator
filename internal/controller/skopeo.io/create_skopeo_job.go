@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 
 	skopeoiov1alpha1 "github.com/Tchoupinax/image-operator/api/skopeo.io/v1alpha1"
@@ -131,6 +132,14 @@ func GenerateSkopeoJob(
 		}
 	}
 
+	var deleteJobAfterXSeconds int32
+	numericValue, error := strconv.Atoi(helpers.GetEnv("JOB_DELETION_DELAY_SECONDS", "10"))
+	if error != nil {
+		deleteJobAfterXSeconds = int32(numericValue)
+	} else {
+		deleteJobAfterXSeconds = 10
+	}
+
 	return batchv1.Job{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      helpers.GenerateSkopeoJobName(req.Name, incomingVersion),
@@ -138,7 +147,7 @@ func GenerateSkopeoJob(
 		},
 		Spec: batchv1.JobSpec{
 			BackoffLimit:            int32Ptr(0),
-			TTLSecondsAfterFinished: int32Ptr(10),
+			TTLSecondsAfterFinished: int32Ptr(deleteJobAfterXSeconds),
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
 					Annotations: image.Annotations,

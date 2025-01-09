@@ -134,3 +134,5 @@ spec:
             value: "{{ .Values.config.skopeo.imageAwsIrsa }}"
           - name: "SKOPEO_VERSION"
             value: "{{ .Values.config.skopeo.version }}"
+          - name: "JOB_DELETION_DELAY_SECONDS"
+            value: "{{ .Values.config.jobDeletionDelaySeconds }}"
