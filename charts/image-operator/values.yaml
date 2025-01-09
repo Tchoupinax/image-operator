@@ -1,6 +1,6 @@
 image:
   repository: "tchoupinax/image-operator"
-  version: "v2.13.0"
+  version: "v2.13.1"
   imagePullPolicy: "IfNotPresent"
   pullSecrets: []
 
@@ -52,6 +52,8 @@ config:
     imageAwsIrsa: false
     version: "v1.37.5"
     jobNamespace: "image-operator"
+
+  succeededJobDeletionDelaySeconds: 10
 
   ui:
     enabled: false
