@@ -35,7 +35,7 @@ var _ = Describe("List version from external registry", func() {
 
 		It("should correctly find image with release candidate", func() {
 			var expectedValue = []string{
-				"v2.13.0", "v2.13.0-rc1", "v2.13.0-rc2", "v2.13.0-rc3", "v2.13.0-rc4", "v2.13.0-rc5", "v2.13.1", "v2.13.2",
+				"v2.13.0", "v2.13.0-rc1", "v2.13.0-rc2", "v2.13.0-rc3", "v2.13.0-rc4", "v2.13.0-rc5", "v2.13.1", "v2.13.2", "v2.13.3",
 			}
 			Expect(helpers.ListVersions(logr.Logger{}, "quay.io/argoproj/argocd", "2.13.x", true, helpers.DockerHubAuth{}, helpers.AWSPublicECR{})).To(Equal(expectedValue))
 		})
@@ -51,7 +51,7 @@ var _ = Describe("List version from external registry", func() {
 
 		It("should correctly find image for 2.x", func() {
 			var expectedValue = []string{
-				"2.1", "2.10", "2.11", "2.2", "2.3", "2.4", "2.5", "2.6", "2.7", "2.8", "2.9", "v2.1", "v2.10", "v2.11", "v2.2", "v2.3", "v2.4", "v2.5", "v2.6", "v2.7", "v2.8", "v2.9",
+				"2.10", "2.11", "2.2", "2.3", "2.4", "2.5", "2.6", "2.7", "2.8", "2.9", "v2.10", "v2.11", "v2.2", "v2.3", "v2.4", "v2.5", "v2.6", "v2.7", "v2.8", "v2.9",
 			}
 			Expect(helpers.ListVersions(logr.Logger{}, "library/traefik", "2.x", false, helpers.DockerHubAuth{}, helpers.AWSPublicECR{})).To(Equal(expectedValue))
 		})
