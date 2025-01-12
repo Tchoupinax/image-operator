@@ -66,4 +66,14 @@ var _ = Describe("Extract image name", func() {
 		Expect(data.Registry).To(Equal("rg.fr-par.scw.cloud/my-registry"))
 		Expect(data.Image).To(Equal("woodpeckerci/woodpecker-agent"))
 	})
+
+	It("should extract tag with laster and hour", func() {
+		data, err := helpers.ExtractImageName(
+			"rpc error: code = NotFound desc = failed to pull and unpack rg.fr-par.scw.cloud/my-registry/tchoupinax/s3-prometheus-exporter:next-2025-01-10-22h12 not found",
+		)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(data.Version).To(Equal("next-2025-01-10-22h12"))
+		Expect(data.Registry).To(Equal("rg.fr-par.scw.cloud/my-registry"))
+		Expect(data.Image).To(Equal("tchoupinax/s3-prometheus-exporter"))
+	})
 })
