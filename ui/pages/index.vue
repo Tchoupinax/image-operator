@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="p-2">
     <div class="max-w-6xl mx-auto mt-8">
       <h1 class="mb-16 text-4xl font-thin">Image Operator <span v-if="version">({{ version }})</span></h1>
 
