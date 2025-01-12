@@ -22,13 +22,21 @@
               class="border-b-2 border-gray-300 focus:outline-none" autocomplete="off" />
           </div>
 
-          <!-- Source Repository with Autocomplete -->
           <div class="form-group autocomplete">
             <label for="source-repo">Source Repository</label>
-            <input v-model="formData.sourceRepository" type="text" id="source-repo" required
-              placeholder="quay.io/nginx/nginx-ingress" @input="debouncedSearch" @focus="showSuggestions = true"
-              class="border-b-2 border-gray-300 focus:outline-none" autocomplete="off" />
-            <!-- Suggestions Dropdown -->
+            <div class="flex items-center justify-center">
+              <input v-model="formData.sourceRepository" type="text" id="source-repo" required
+                placeholder="quay.io/nginx/nginx-ingress" @input="debouncedSearch" @focus="showSuggestions = true"
+                class="border-b-2 border-gray-300 focus:outline-none" autocomplete="off" />
+              <div>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                  stroke="currentColor" class="size-6">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="m15.75 15.75-2.489-2.489m0 0a3.375 3.375 0 1 0-4.773-4.773 3.375 3.375 0 0 0 4.774 4.774ZM21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+              </div>
+            </div>
+
             <ul v-if="showSuggestions && filteredRepositories.length" class="suggestions-dropdown">
               <li v-for="(repo, index) in filteredRepositories" :key="index" @click="selectRepository(repo)"
                 class="suggestion-item">
@@ -97,8 +105,10 @@
   </div>
 </template>
 
-<script lang="ts">
-import type { RegistryImage } from '~/server/api/images/search';
+<script lang="ts" setup>
+import { ref, computed, watch } from "vue";
+import { useFetch } from "#app";
+import type { RegistryImage } from "~/server/api/images/search";
 
 type Store = {
   showModal: boolean;
@@ -116,58 +126,57 @@ type Store = {
   timeout?: NodeJS.Timeout,
 }
 
-export default {
-  emits: ["create"],
-  data(): Store {
-    return {
-      showModal: false,
-      showSuggestions: false,
-      formData: {
-        destinationRepository: '',
-        destinationVersion: '',
-        mode: "OneShot",
-        name: "",
-        sourceRepository: '',
-        sourceVersion: '',
-      },
-      repositories: [],
-      filteredRepositories: [],
-      timeout: undefined,
-    };
-  },
-  methods: {
-    closeModal() {
-      this.showModal = false;
-      this.showSuggestions = false;
-    },
-    submitForm() {
-      this.showModal = false;
-      this.showSuggestions = false;
-      this.$emit("create", this.formData);
-    },
-    debouncedSearch() {
-      clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => {
-        this.filterSuggestions();
-      }, 500);
-    },
-    async filterSuggestions() {
-      console.log("this.filterSuggestions")
-      const repositories = await $fetch(`/api/images/search?repo=${this.formData.sourceRepository.toLowerCase()}`)
-      if (this.formData.sourceRepository) {
-        this.filteredRepositories = repositories.filter(repo =>
-          repo.name.toLowerCase().includes(this.formData.sourceRepository.toLowerCase())
-        );
-      } else {
-        this.filteredRepositories = [];
-      }
-    },
-    selectRepository(repo: RegistryImage) {
-      this.formData.sourceRepository = repo.name;
-      this.showSuggestions = false;
-    }
-  },
+const emit = defineEmits(["create"])
+
+const showModal = ref(false);
+const showSuggestions = ref(false);
+const repositories = ref<Array<RegistryImage>>([]);
+const filteredRepositories = ref<Array<RegistryImage>>([]);
+const formData = ref({
+  destinationRepository: "",
+  destinationVersion: "",
+  mode: "OneShot" as "OneShot" | "OnceByTag" | "Recurrent",
+  name: "",
+  sourceRepository: "",
+  sourceVersion: "",
+});
+let timeout: NodeJS.Timeout | undefined;
+
+const closeModal = () => {
+  showModal.value = false;
+  showSuggestions.value = false;
 };
+
+const submitForm = () => {
+  showModal.value = false;
+  showSuggestions.value = false;
+  emit("create", formData.value);
+};
+
+const debouncedSearch = () => {
+  clearTimeout(timeout);
+  timeout = setTimeout(() => {
+    filterSuggestions();
+  }, 500);
+};
+
+const filterSuggestions = async () => {
+  if (formData.value.sourceRepository) {
+    const { data: repos } = await useFetch<Array<RegistryImage>>(`/api/images/search?repo=${formData.value.sourceRepository.toLowerCase()}`);
+    filteredRepositories.value = repos.value?.filter((repo) =>
+      repo.name.toLowerCase().includes(formData.value.sourceRepository.toLowerCase())
+    ) || [];
+  } else {
+    filteredRepositories.value = [];
+  }
+};
+
+const selectRepository = (repo: RegistryImage) => {
+  formData.value.sourceRepository = repo.name;
+  showSuggestions.value = false;
+};
+
+watch(() => formData.value.sourceRepository, () => debouncedSearch());
 </script>
 
 <style scoped>
@@ -255,7 +264,7 @@ export default {
   left: 0;
   right: 0;
   background: white;
-  border: 1px solid #ddd;
+  border: 2px solid #ddd;
   border-top: none;
   box-shadow: inset;
   max-height: 250px;

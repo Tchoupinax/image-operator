@@ -25,7 +25,6 @@ export default defineEventHandler(async (event): Promise<Array<RegistryImage>> =
     }).then(res => res.json())
   ])
 
-
   const result = ([
     ...amazon.repositoryCatalogSearchResultList.map((r) => ({
       downloadCount: r.downloadCount,
@@ -33,27 +32,37 @@ export default defineEventHandler(async (event): Promise<Array<RegistryImage>> =
       name: r.repositoryName,
       registry: "Amazon ECR",
     } satisfies RegistryImage)),
-    ...quay.results.map((r) => ({
+    ...quay.results.map((r: any) => ({
       name: `${r.namespace.name}/${r.name}`,
       registry: "Quay.io",
       isOfficial: false,
     } satisfies RegistryImage)),
-    ...dockerHub.results.map((s) => ({
+    ...dockerHub.results.map((s: any) => ({
       downloadCount: s.pull_count,
       isOfficial: s.is_official,
       name: s.repo_name,
       registry: "DockerHub",
     } satisfies RegistryImage))
   ] as Array<RegistryImage>)
-    .sort((a, b) => {
-      if (a.isOfficial && !b.isOfficial) {
-        return -1
-      }
-      if (!a.isOfficial && b.isOfficial) {
-        return 1;
-      }
-      return 0
-    }) as Array<RegistryImage>;
 
-  return result;
+  return limitResultReturned(sortResult(result));
 });
+
+function sortResult(result: Array<RegistryImage>): Array<RegistryImage> {
+  return result.sort((a, b) => {
+    if (a.isOfficial && !b.isOfficial) {
+      return -1;
+    }
+    if (!a.isOfficial && b.isOfficial) {
+      return 1;
+    }
+    // Secondary criterion: Higher downloadCount comes first
+    const downloadCountA = a.downloadCount || 0; // Treat missing as 0
+    const downloadCountB = b.downloadCount || 0; // Treat missing as 0
+    return downloadCountB - downloadCountA;
+  });
+}
+
+function limitResultReturned(result: Array<RegistryImage>): Array<RegistryImage> {
+  return result.slice(0, 1000);
+}
