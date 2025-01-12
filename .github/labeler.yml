@@ -49,7 +49,7 @@ labels:
       any:
       - "charts/**"
 
-- label: "ui"
+- label: "UI"
   sync: true # remove label if match failed, default: false
   matcher:
     files:
