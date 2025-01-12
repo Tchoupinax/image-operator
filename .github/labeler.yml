@@ -10,7 +10,7 @@ labels:
   matcher:
     title: "^feat(?!.*BREAKING).*"
     files:
-      any: [ "internal/**", "graphql/**", "cmd/**" ]
+      any: [ "internal/**", "graphql/**", "cmd/**", "ui/server/**", "ui/components/**" ]
       count:
         gte: 1
         lte: 1000
@@ -48,6 +48,13 @@ labels:
     files:
       any:
       - "charts/**"
+
+- label: "ui"
+  sync: true # remove label if match failed, default: false
+  matcher:
+    files:
+      any:
+      - "ui/**"
 
 #checks:
 #  - context: "Ready to merge"
