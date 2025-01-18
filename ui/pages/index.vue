@@ -26,38 +26,44 @@
   </div>
 </template>
 
-<script lang="ts">
-import TableImageBuilders from '~/components/table-image-builders.vue';
-import { type Image, type ImageBuilder } from '../sdk/backend.generated';
+<script lang="ts" setup>
+import { ref, onMounted } from "vue";
+import { type Image, type ImageBuilder } from "../sdk/backend.generated";
 
-type Store = {
-  images: Array<Image>;
-  imageBuilders: Array<ImageBuilder>;
-  displayImages: boolean;
-  version: string;
+const images = ref<Array<Image>>([]);
+const imageBuilders = ref<Array<ImageBuilder>>([]);
+const displayImages = ref(true);
+const version = ref("");
+
+const { data } = await useFetch("/api/data", { credentials: "include" });
+if (data?.value) {
+  images.value = data.value.images;
+  imageBuilders.value = data.value.imageBuilders;
 }
 
-export default {
-  data(): Store {
-    return {
-      displayImages: true,
-      images: [],
-      imageBuilders: [],
-      version: ''
-    }
-  },
-  async mounted() {
-    const version = await $fetch('/api/version')
-    this.version = version;
-    
-    const { images, imageBuilders } = await $fetch("/api/data");
-    this.images = images;
-    this.imageBuilders = imageBuilders;
-  },
-  methods: {
-    async createImage(form: any) {
-      await $fetch("/api/image", { method: "POST", headers: { "Content-Type": "application/json" }, body: form });
-    }
-  }
+const { data: dataVersion } = await useFetch("/api/version", { credentials: "include" });
+if (dataVersion?.value) {
+  version.value = dataVersion.value;
+}
+
+const fetchData = async () => {
+  version.value = await $fetch("/api/version");
+
+  const { images: fetchedImages, imageBuilders: fetchedBuilders } = await $fetch(
+    "/api/data"
+  );
+  images.value = fetchedImages;
+  imageBuilders.value = fetchedBuilders;
 };
+
+// Method to create an image
+const createImage = async (form: any) => {
+  await $fetch("/api/image", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: form,
+  });
+};
+
+onMounted(fetchData);
 </script>
