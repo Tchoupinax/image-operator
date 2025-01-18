@@ -3,6 +3,7 @@ package resolvers
 import (
 	"context"
 	"log"
+	"sort"
 
 	"github.com/Tchoupinax/image-operator/api/skopeo.io/v1alpha1"
 	"github.com/graphql-go/graphql"
@@ -133,6 +134,10 @@ func Images(p graphql.ResolveParams) (interface{}, error) {
 
 		images = append(images, img)
 	}
+
+	sort.Slice(images, func(i, j int) bool {
+		return images[i].CreatedAt > images[j].CreatedAt
+	})
 
 	result := make([]map[string]interface{}, len(images))
 	for i, img := range images {
