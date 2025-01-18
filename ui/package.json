@@ -13,8 +13,8 @@
   "dependencies": {
     "fast-levenshtein": "3.0.0",
     "graphql": "16.10.0",
-    "highlight.js": "11.11.0",
-    "nuxt": "3.14.1592",
+    "highlight.js": "11.11.1",
+    "nuxt": "3.15.2",
     "pino": "9.6.0",
     "timeago.js": "4.0.2",
     "vue": "latest",
@@ -27,8 +27,8 @@
     "@graphql-codegen/typescript-document-nodes": "4.0.12",
     "@graphql-codegen/typescript-graphql-request": "6.2.0",
     "@graphql-codegen/typescript-operations": "4.4.0",
-    "@nuxt/eslint": "0.7.3",
-    "@nuxtjs/tailwindcss": "6.12.2",
+    "@nuxt/eslint": "0.7.5",
+    "@nuxtjs/tailwindcss": "6.13.1",
     "@types/fast-levenshtein": "0.0.4",
     "pino-pretty": "13.0.0"
   },
