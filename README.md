@@ -118,7 +118,16 @@ The operator listens for pod events and detects when a pod is created, but the i
 
 To activate this feature:
 - Provide `FEATURE_COPY_ON_THE_FLY` as `true`
-- With helm chart, set `.Values.config.features.copyOnTheFly` to `true`
+- With helm chart, set `.Values.config.features.copyOnTheFly.enabled` to `true`
+
+🚨 Namespace scope 🚨
+
+On large cluster, there are many pods to listen. In this case, operator might require lot of memory to run (between 1G and 2G for average of 1500 pods). If you do not care about it, it's OK.
+
+But if it is an issue for you, you can limit which namespaces are listened by the operator for this feature. It can be done with:
+
+- Provider `FEATURE_COPY_ON_THE_FLY_NAMESPACES_ALLOWED` as an array of namespaces.
+- With helm chart, add namespaces to the array at `.Values.config.features.copyOnTheFly.namespacesAllowed`. By default it's `- *`.
 
 ### Build image (`ImageBuilder`)
 
