@@ -76,4 +76,14 @@ var _ = Describe("Extract image name", func() {
 		Expect(data.Registry).To(Equal("rg.fr-par.scw.cloud/my-registry"))
 		Expect(data.Image).To(Equal("tchoupinax/s3-prometheus-exporter"))
 	})
+
+	It("should extract tag when it's a version and a dash", func() {
+		data, err := helpers.ExtractImageName(
+			"Failed to pull image \"rg.fr-par.scw.cloud/my-registry/louislam/uptime-kuma:1.23.16-debian\": rpc error: code = NotFound desc = failed to pull and unpack image \"rg.fr-par.scw.cloud/my-registry/louislam/uptime-kuma:1.23.16-debian\": failed to resolve reference \"rg.fr-par.scw.cloud/my-registry/louislam/uptime-kuma:1.23.16-debian\": rg.fr-par.scw.cloud/my-registry/louislam/uptime-kuma:1.23.16-debian: not found",
+		)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(data.Version).To(Equal("1.23.16-debian"))
+		Expect(data.Registry).To(Equal("rg.fr-par.scw.cloud/my-registry"))
+		Expect(data.Image).To(Equal("louislam/uptime-kuma"))
+	})
 })
