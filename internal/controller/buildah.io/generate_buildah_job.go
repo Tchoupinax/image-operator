@@ -18,7 +18,7 @@ func GenerateAbtractBuildahJob(
 ) batchv1.Job {
 	jobNamespace := os.Getenv("BUILDAH_JOB_NAMESPACE")
 	if jobNamespace == "" {
-		jobNamespace = "image-operator"
+		jobNamespace = "image-operator-system" // NAMESPACE
 	}
 
 	buildahImage := os.Getenv("BUILDAH_IMAGE")

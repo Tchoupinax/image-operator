@@ -12,7 +12,7 @@ import (
 )
 
 func planJobCreation(
-	r *ImageReconciler,
+	r *LegacyImageReconciler,
 	ctx context.Context,
 	req ctrl.Request,
 	image *skopeoiov1alpha1.Image,

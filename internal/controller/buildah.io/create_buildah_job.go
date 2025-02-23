@@ -17,7 +17,7 @@ import (
 )
 
 func CreateBuildahJobs(
-	r *ImageBuilderReconciler,
+	r *LegacyImageBuilderReconciler,
 	ctx context.Context,
 	req ctrl.Request,
 	imageBuilder buildahiov1alpha1.ImageBuilder,
@@ -25,7 +25,7 @@ func CreateBuildahJobs(
 ) (ctrl.Result, error) {
 	jobNamespace := os.Getenv("BUILD_JOB_NAMESPACE")
 	if jobNamespace == "" {
-		jobNamespace = "image-operator"
+		jobNamespace = "image-operator-system" // NAMESPACE
 	}
 
 	architectures := []buildahiov1alpha1.Architecture{imageBuilder.Spec.Architecture}
@@ -107,7 +107,7 @@ func generateConfigMap(
 }
 
 func GenerateBuildahJob(
-	r *ImageBuilderReconciler,
+	r *LegacyImageBuilderReconciler,
 	ctx context.Context,
 	req ctrl.Request,
 	imageBuilder buildahiov1alpha1.ImageBuilder,

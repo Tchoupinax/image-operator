@@ -1,0 +1,135 @@
+{{- if .Values.rbac.enable }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+  name: image-operator-manager-role
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - pods/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+- apiGroups:
+  - buildah.io
+  resources:
+  - imagebuilders
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - buildah.io
+  resources:
+  - imagebuilders/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - buildah.io
+  resources:
+  - imagebuilders/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - skopeo.io
+  resources:
+  - images
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - skopeo.io
+  resources:
+  - images/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - skopeo.io
+  resources:
+  - images/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - tchoupinax.dev
+  resources:
+  - imagebuilders
+  - images
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - tchoupinax.dev
+  resources:
+  - imagebuilders/finalizers
+  - images/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - tchoupinax.dev
+  resources:
+  - imagebuilders/status
+  - images/status
+  verbs:
+  - get
+  - patch
+  - update
+{{- end -}}

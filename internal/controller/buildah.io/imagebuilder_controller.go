@@ -32,18 +32,14 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
-// ImageBuilderReconciler reconciles a ImageBuilder object
-type ImageBuilderReconciler struct {
+// LegacyImageBuilderReconciler reconciles a ImageBuilder object
+type LegacyImageBuilderReconciler struct {
 	client.Client
 	Scheme                  *runtime.Scheme
 	ImagebuilderBuildsCount prometheus.Counter
 }
 
-// +kubebuilder:rbac:groups=buildah.io,resources=imagebuilders,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=buildah.io,resources=imagebuilders/status,verbs=get;update;patch
-// +kubebuilder:rbac:groups=buildah.io,resources=imagebuilders/finalizers,verbs=update
-// +kubebuilder:rbac:groups="",resources=pods,verbs=get;watch;list
-func (r *ImageBuilderReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+func (r *LegacyImageBuilderReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	logger := log.FromContext(ctx)
 
 	var imageBuilder buildahiov1alpha1.ImageBuilder
@@ -78,7 +74,7 @@ func (r *ImageBuilderReconciler) Reconcile(ctx context.Context, req ctrl.Request
 		for _, jobName := range imageBuilder.Status.RanJobs {
 			var job batchv1.Job
 			namespacedName := types.NamespacedName{
-				Namespace: "image-operator",
+				Namespace: "image-operator-system",
 				Name:      jobName,
 			}
 			getJobError := r.Client.Get(ctx, namespacedName, &job)
@@ -121,12 +117,13 @@ func (r *ImageBuilderReconciler) Reconcile(ctx context.Context, req ctrl.Request
 // https://yash-kukreja-98.medium.com/develop-on-kubernetes-series-demystifying-the-for-vs-owns-vs-watches-controller-builders-in-c11ab32a046e
 
 // SetupWithManager sets up the controller with the Manager.
-func (r *ImageBuilderReconciler) SetupWithManager(mgr ctrl.Manager) error {
+func (r *LegacyImageBuilderReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&buildahiov1alpha1.ImageBuilder{}).
 		Owns(&batchv1.Job{}).
 		// TODO: investigate what is this option? => OnlyMetadata
 		// Owns(&batchv1.Job{}, builder.OnlyMetadata).
+		Named("LegacyImageBuilder").
 		Complete(r)
 }
 

@@ -17,7 +17,7 @@ import (
 )
 
 func CreateSkopeoJob(
-	r *ImageReconciler,
+	r *LegacyImageReconciler,
 	ctx context.Context,
 	req ctrl.Request,
 	image *skopeoiov1alpha1.Image,
@@ -45,7 +45,7 @@ func CreateSkopeoJob(
 }
 
 func GenerateSkopeoJob(
-	r *ImageReconciler,
+	r *LegacyImageReconciler,
 	ctx context.Context,
 	req ctrl.Request,
 	image *skopeoiov1alpha1.Image,
@@ -103,7 +103,7 @@ func GenerateSkopeoJob(
 
 	podNamespace := os.Getenv("PULL_JOB_NAMESPACE")
 	if podNamespace == "" {
-		podNamespace = "image-operator"
+		podNamespace = "image-operator-system"
 	}
 
 	skopeoImage := os.Getenv("SKOPEO_IMAGE")

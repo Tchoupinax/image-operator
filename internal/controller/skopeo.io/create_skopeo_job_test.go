@@ -14,7 +14,7 @@ var _ = Describe("Create Skopeo job", func() {
 	Describe("when using classic way", func() {
 		It("should correctly call the command with given parameters", func() {
 			job := controller.GenerateSkopeoJob(
-				&controller.ImageReconciler{
+				&controller.LegacyImageReconciler{
 					PrometheusReloadGauge: *prometheus.NewCounterVec(
 						prometheus.CounterOpts{
 							Name: "skopeo_operator_reload_total",
@@ -53,7 +53,7 @@ var _ = Describe("Create Skopeo job", func() {
 	Describe("when destination or source uses AWS IRSA", func() {
 		It("should login to registry with AWS CLI", func() {
 			job := controller.GenerateSkopeoJob(
-				&controller.ImageReconciler{
+				&controller.LegacyImageReconciler{
 					PrometheusReloadGauge: *prometheus.NewCounterVec(
 						prometheus.CounterOpts{
 							Name: "skopeo_operator_reload_total",

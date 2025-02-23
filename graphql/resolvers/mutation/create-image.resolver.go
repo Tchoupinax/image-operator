@@ -20,8 +20,6 @@ import (
 func CreateImage(params graphql.ResolveParams) (interface{}, error) {
 	dynamicClient, err := dynamic.NewForConfig(ctrl.GetConfigOrDie())
 
-	fmt.Println(params.Args)
-
 	gvr := schema.GroupVersionResource{
 		Group:    "skopeo.io",
 		Version:  "v1alpha1",
@@ -35,7 +33,7 @@ func CreateImage(params graphql.ResolveParams) (interface{}, error) {
 		},
 		ObjectMeta: v1.ObjectMeta{
 			Name:      params.Args["name"].(string),
-			Namespace: "image-operator",
+			Namespace: "image-operator-system",
 		},
 		Spec: v1alpha1.ImageSpec{
 			Mode: "OneShot",
@@ -56,12 +54,12 @@ func CreateImage(params graphql.ResolveParams) (interface{}, error) {
 	}
 	unstructuredImage := &unstructured.Unstructured{Object: imageMap}
 
-	_, err = dynamicClient.Resource(gvr).Namespace("image-operator").Create(context.Background(), unstructuredImage, v1.CreateOptions{})
+	_, err = dynamicClient.Resource(gvr).Namespace("image-operator-system").Create(context.Background(), unstructuredImage, v1.CreateOptions{})
 	if err != nil {
 		fmt.Printf("Fail to create image: %v", err)
 
 		if strings.Contains(err.Error(), "already exists") {
-			imageFromCluster, _ := dynamicClient.Resource(gvr).Namespace("image-operator").Get(context.Background(), image.Name, v1.GetOptions{})
+			imageFromCluster, _ := dynamicClient.Resource(gvr).Namespace("image-operator-system").Get(context.Background(), image.Name, v1.GetOptions{})
 
 			var localImage resolvers.Image
 			if name, found, _ := unstructured.NestedString(imageFromCluster.Object, "metadata", "name"); found {

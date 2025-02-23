@@ -1,0 +1,16 @@
+apiVersion: v2
+kubeVersion: ">=1.20.0-0"
+description: A Helm chart to distribute the project image-operator
+icon: "https://example2.com/icon.png"
+name: image-operator
+type: application
+version: 2.14.0
+home: https://github.com/Tchoupinax/image-operator
+keywords:
+- docker
+- skopeo
+- buildah
+- image
+maintainers:
+- name: Tchoupinax
+  url: https://github.com/Tchoupinax/image-operator
