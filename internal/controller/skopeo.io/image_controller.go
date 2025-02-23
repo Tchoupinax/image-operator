@@ -33,8 +33,8 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
-// ImageReconciler reconciles a Image object
-type ImageReconciler struct {
+// LegacyImageReconciler reconciles a Image object
+type LegacyImageReconciler struct {
 	LastTimeImageWasReloaded prometheus.GaugeVec
 	PrometheusReloadGauge    prometheus.CounterVec
 	Scheme                   *runtime.Scheme
@@ -44,7 +44,7 @@ type ImageReconciler struct {
 // +kubebuilder:rbac:groups=skopeo.io,resources=images,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=skopeo.io,resources=images/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=skopeo.io,resources=images/finalizers,verbs=update
-func (r *ImageReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+func (r *LegacyImageReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	logger := log.FromContext(ctx)
 
 	// Get Image specs. If the image is not found, handle the error and return.
@@ -93,8 +93,9 @@ func (r *ImageReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 	return returnedResult, nil
 }
 
-func (r *ImageReconciler) SetupWithManager(mgr ctrl.Manager) error {
+func (r *LegacyImageReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&skopeoiov1alpha1.Image{}).
+		Named("LegacyImage").
 		Complete(r)
 }

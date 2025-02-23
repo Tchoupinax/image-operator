@@ -28,3 +28,6 @@ docker:
 
 docker-go:
   go run github.com/onsi/ginkgo/v2/ginkgo run --focus "when getting remaining quota" internal/helpers
+
+helm: 
+  kubebuilder edit --plugins=helm/v1-alpha

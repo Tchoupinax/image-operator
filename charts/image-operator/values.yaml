@@ -41,7 +41,7 @@ config:
       namespacesAllowed:
       - "*"
 
-  pullJobNamespace: "image-operator"
+  pullJobNamespace: "image-operator-system"
   skopeo:
     image: "quay.io/containers/skopeo"
     imageAwsIrsa: false
@@ -51,7 +51,7 @@ config:
     image: "quay.io/containers/buildah"
     imageAwsIrsa: false
     version: "v1.37.5"
-    jobNamespace: "image-operator"
+    jobNamespace: "image-operator-system"
 
   jobDeletionDelaySeconds: 10
 

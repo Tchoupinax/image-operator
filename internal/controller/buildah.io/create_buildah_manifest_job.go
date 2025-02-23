@@ -14,7 +14,7 @@ import (
 )
 
 func CreateBuildahManifestJobs(
-	r *ImageBuilderReconciler,
+	r *LegacyImageBuilderReconciler,
 	ctx context.Context,
 	req ctrl.Request,
 	imageBuilder buildahiov1alpha1.ImageBuilder,
@@ -48,7 +48,7 @@ func CreateBuildahManifestJobs(
 }
 
 func GenerateBuildahManifestJob(
-	r *ImageBuilderReconciler,
+	r *LegacyImageBuilderReconciler,
 	ctx context.Context,
 	req ctrl.Request,
 	imageBuilder buildahiov1alpha1.ImageBuilder,

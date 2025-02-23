@@ -123,7 +123,7 @@ func (r *PodReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 			var image = v1alpha1.Image{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      helpers.GenerateImageName(data.Image, detectedVersions[0]),
-					Namespace: "image-operator",
+					Namespace: "image-operator-system", // NAMESPACE
 				},
 				Spec: v1alpha1.ImageSpec{
 					Mode: "OneShot",
