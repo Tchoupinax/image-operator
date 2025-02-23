@@ -23,10 +23,10 @@
   "devDependencies": {
     "@graphql-codegen/cli": "5.0.5",
     "@graphql-codegen/schema-ast": "4.1.0",
-    "@graphql-codegen/typescript": "4.1.4",
-    "@graphql-codegen/typescript-document-nodes": "4.0.14",
+    "@graphql-codegen/typescript": "4.1.5",
+    "@graphql-codegen/typescript-document-nodes": "4.0.15",
     "@graphql-codegen/typescript-graphql-request": "6.2.0",
-    "@graphql-codegen/typescript-operations": "4.5.0",
+    "@graphql-codegen/typescript-operations": "4.5.1",
     "@nuxt/eslint": "1.1.0",
     "@nuxtjs/tailwindcss": "6.13.1",
     "@types/fast-levenshtein": "0.0.4",
