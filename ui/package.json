@@ -28,7 +28,7 @@
     "@graphql-codegen/typescript-graphql-request": "6.2.0",
     "@graphql-codegen/typescript-operations": "4.5.1",
     "@nuxt/eslint": "1.2.0",
-    "@nuxtjs/tailwindcss": "6.13.1",
+    "@nuxtjs/tailwindcss": "6.13.2",
     "@types/fast-levenshtein": "0.0.4",
     "pino-pretty": "13.0.0"
   },
