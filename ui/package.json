@@ -14,7 +14,7 @@
     "fast-levenshtein": "3.0.0",
     "graphql": "16.11.0",
     "highlight.js": "11.11.1",
-    "nuxt": "3.17.7",
+    "nuxt": "3.18.0",
     "pino": "9.7.0",
     "timeago.js": "4.0.2",
     "vue": "latest",
