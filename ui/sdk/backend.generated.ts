@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { GraphQLClient, RequestOptions } from 'graphql-request';
+import type { GraphQLClient, RequestOptions } from 'graphql-request';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -158,11 +158,11 @@ const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationTy
 
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
-    fullData(variables?: FullDataQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<FullDataQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<FullDataQuery>(FullDataDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'fullData', 'query', variables);
+    fullData(variables?: FullDataQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<FullDataQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<FullDataQuery>({ document: FullDataDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'fullData', 'query', variables);
     },
-    createImage(variables: CreateImageMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<CreateImageMutation> {
-      return withWrapper((wrappedRequestHeaders) => client.request<CreateImageMutation>(CreateImageDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createImage', 'mutation', variables);
+    createImage(variables: CreateImageMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<CreateImageMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateImageMutation>({ document: CreateImageDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'createImage', 'mutation', variables);
     }
   };
 }

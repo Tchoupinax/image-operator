@@ -2,7 +2,7 @@
   <div>
     <h2 class="mb-4 text-2xl font-semibold text-gray-800">Images</h2>
     
-    <table class="min-w-full text-xs bg-white border border-gray-300 rounded-lg shadow">
+    <table class="min-w-full text-base bg-white border border-gray-300 rounded-lg shadow">
       <thead>
         <tr class="leading-normal text-gray-600 uppercase bg-gray-200">
           <th class="px-6 py-3 text-left">Name</th>
@@ -15,7 +15,7 @@
 
       <tbody class="font-light text-gray-700">
         <tr v-for="(image, index) in images" :key="index"
-          class="transition-colors border-b border-gray-200 hover:bg-gray-100">
+          class="transition-colors border-b border-gray-200 text-md hover:bg-gray-100">
           <td class="px-6 py-3">{{ image.name }}</td>
           <td class="flex-col items-end justify-end px-6 py-3">
             <p>

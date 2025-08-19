@@ -35,8 +35,6 @@
 </template>
 
 <script lang="ts">
-import { Tag } from '#build/components';
-
 export default {
   props: ["imageBuilders"],
   data(): { showCodeModalName?: string } {
