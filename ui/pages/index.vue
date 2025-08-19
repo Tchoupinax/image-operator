@@ -1,6 +1,6 @@
 <template>
   <div class="p-2">
-    <div class="max-w-6xl mx-auto mt-8">
+    <div class="mx-auto mt-8 max-w-7xl">
       <h1 class="mb-16 text-4xl font-thin">Image Operator <span v-if="version">({{ version }})</span></h1>
 
       <div class="flex justify-between my-6">
