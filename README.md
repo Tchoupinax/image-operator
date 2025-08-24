@@ -3,6 +3,7 @@
 # image-operator
 
 Image Operator simplifies the process of synchronizing container images across registries and supports both one-time and scheduled tasks. Built around Skopeo, it offers Kubernetes-native orchestration for copying, managing, and monitoring images in your ecosystem.
+It can detect automatically missing image from your cluster and copy the required image on the fly fully automatically. 🚀
 
 ## Install with Helm Chart
 
@@ -110,9 +111,7 @@ spec:
     version: v2.13.x
 ```
 
-#### Copy on the fly (`Experimental`)
-
-⚠️ This feature is usable **at your own risk**. It's still experimental.
+#### Copy on the fly
 
 The operator listens for pod events and detects when a pod is created, but the image is not found in the registry. In such cases, it assumes the image is not present in the target registry and that it needs to be copied from Dockerhub (or another registry). Based on this detection, the operator attempts to determine the correct image to copy and creates a job to perform the transfer.
 
