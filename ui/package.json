@@ -15,7 +15,7 @@
     "graphql": "16.11.0",
     "highlight.js": "11.11.1",
     "nuxt": "4.1.2",
-    "pino": "9.13.0",
+    "pino": "9.13.1",
     "timeago.js": "4.0.2",
     "vue": "latest",
     "vue-router": "latest"
