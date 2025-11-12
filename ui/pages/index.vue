@@ -58,11 +58,17 @@ const fetchData = async () => {
 
 // Method to create an image
 const createImage = async (form: any) => {
-  await $fetch("/api/image", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: form,
-  });
+  try {
+    await $fetch("/api/image", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: form,
+    })
+
+    alert("Image copied!")
+  } catch (_) {
+    alert("Failed to launch the copy of the image")
+  }
 };
 
 onMounted(fetchData);

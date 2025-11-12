@@ -83,7 +83,7 @@ func StartGraphqlServer() {
 
 	http.Handle("/graphql", cors(h))
 	go func() {
-		fmt.Println("GraphQL server started")
+		fmt.Println("GraphQL server started on 9090")
 		httpServerError := http.ListenAndServe(":9090", nil)
 		if err := httpServerError; err != nil {
 			fmt.Println(err)

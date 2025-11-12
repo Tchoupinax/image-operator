@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
   logger.info(payload, 'Create image manually')
 
   const backend = new BackendWrapper(config.public.graphqlApiUrl);
-  await backend.sdk.createImage(payload);
+  const image = await backend.sdk.createImage(payload);
 
   return "OK";
 });

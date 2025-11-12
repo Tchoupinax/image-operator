@@ -106,7 +106,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, watch } from "vue";
+import { ref, watch } from "vue";
 import { useFetch } from "#app";
 import type { RegistryImage } from "~/server/api/images/search";
 
@@ -130,15 +130,14 @@ const emit = defineEmits(["create"])
 
 const showModal = ref(false);
 const showSuggestions = ref(false);
-const repositories = ref<Array<RegistryImage>>([]);
 const filteredRepositories = ref<Array<RegistryImage>>([]);
 const formData = ref({
   destinationRepository: "",
   destinationVersion: "",
   mode: "OneShot" as "OneShot" | "OnceByTag" | "Recurrent",
-  name: "",
-  sourceRepository: "",
-  sourceVersion: "",
+  name:  "",
+  sourceRepository:  "",
+  sourceVersion:  "",
 });
 let timeout: NodeJS.Timeout | undefined;
 
