@@ -10,6 +10,11 @@ export default defineEventHandler(async (): Promise<Data> => {
   const config = useRuntimeConfig();
 
   const backend = new BackendWrapper(config.public.graphqlApiUrl);
-  const { images, imageBuilders } = await backend.sdk.fullData();
-  return { images, imageBuilders } as Data;
+  try {
+
+    const { images, imageBuilders } = await backend.sdk.fullData();
+    return { images, imageBuilders } as Data;
+  } catch (_) {
+    return { images: [], imageBuilders: []}
+  }
 });
