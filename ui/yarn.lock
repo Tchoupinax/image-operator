@@ -5242,10 +5242,10 @@ graphql-config@^5.1.1:
     string-env-interpolation "^1.0.1"
     tslib "^2.4.0"
 
-graphql-request@7.3.4:
-  version "7.3.4"
-  resolved "https://registry.yarnpkg.com/graphql-request/-/graphql-request-7.3.4.tgz#742733cef8311dfa10b90291c1b524bdc7b38d1d"
-  integrity sha512-kbpP5dw9hHIL5jN/2VS2JU0/Sc1hlsj7zrYBKSDiYd5iG8QfX7P79u26ZBi84eAijsqYVZEpLvCCwEzVxscWhg==
+graphql-request@7.3.5:
+  version "7.3.5"
+  resolved "https://registry.yarnpkg.com/graphql-request/-/graphql-request-7.3.5.tgz#ef262a863adaddad3979e80e1027ba8090482467"
+  integrity sha512-yrikPPBQFrHTCEw+Nr89vcKkhSOaKk1a4i1aoK0q2pJp0TkkH+HxJXKeVDqzHSYAEoFoNqKmNuqda1tubgaGZQ==
   dependencies:
     "@graphql-typed-document-node/core" "^3.2.0"
 
