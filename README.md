@@ -115,9 +115,24 @@ spec:
 
 The operator listens for pod events and detects when a pod is created, but the image is not found in the registry. In such cases, it assumes the image is not present in the target registry and that it needs to be copied from Dockerhub (or another registry). Based on this detection, the operator attempts to determine the correct image to copy and creates a job to perform the transfer.
 
+For instance, you use postgres image from your private repository, copied from Dockerhub. Let's take a real use case.
+
+1. You are running Renovate and it upgrades an image from `your-registry.com/postgres:17.1` to `your-registry.com/postgres:17.2`.
+2. Your favorite gitops tool synchronizes the change and deploy the new container.
+3. Kubernetes pulls the new image from the registry but triggers an error: `image not found`
+4. Image Operator detects this erreur and tries to find the original image: `your-registry.com/postgres:17.2` becomes `postgres:17.2`.
+5. Image Operator finds `postgres:17.2` and automatically creates a resource `Image` to launch the copy of this image.
+6. After few seconds/minutes, Kubernetes restarts the pod and finally finds the image. The pod runs without issue.
+
 To activate this feature:
 - Provide `FEATURE_COPY_ON_THE_FLY` as `true`
 - With helm chart, set `.Values.config.features.copyOnTheFly.enabled` to `true`
+
+> [!NOTE]
+> Author's Note: I personally host and run this project in my cluster at home. Renovate run several time a day to upgrade all project to their latest version. Sometimes I'm happy to see the latest version of a project is running and then I realize that the image comes from my private registry. It forgot it was the case and I forgot this operator, but it did the job.
+\
+\
+Renovate + ArgoCD + Image Operator are awesome ❤️ 
 
 🚨 Namespace scope 🚨
 
