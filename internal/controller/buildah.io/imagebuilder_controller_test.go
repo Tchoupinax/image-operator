@@ -25,6 +25,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	buildahiov1alpha1 "github.com/Tchoupinax/image-operator/api/buildah.io/v1alpha1"
@@ -79,6 +80,55 @@ var _ = Describe("ImageBuilder Controller", func() {
 			Expect(err).NotTo(HaveOccurred())
 			// TODO(user): Add more specific assertions depending on your controller's reconciliation logic.
 			// Example: If you expect a certain status condition after reconciliation, verify it here.
+		})
+	})
+
+	Describe("when affinity and tolerations are configured", func() {
+		It("should propagate affinity and tolerations to job pod spec", func() {
+			affinity := &corev1.Affinity{
+				NodeAffinity: &corev1.NodeAffinity{
+					PreferredDuringSchedulingIgnoredDuringExecution: []corev1.PreferredSchedulingTerm{
+						{
+							Weight: 1,
+							Preference: corev1.NodeSelectorTerm{
+								MatchExpressions: []corev1.NodeSelectorRequirement{
+									{
+										Key:      "key1",
+										Operator: "In",
+										Values:   []string{"value1"},
+									},
+								},
+							},
+						},
+					},
+				},
+			}
+
+			tolerations := []corev1.Toleration{
+				{
+					Key:      "key1",
+					Operator: "Equal",
+					Value:    "value1",
+					Effect:   "NoSchedule",
+				},
+			}
+
+			imageBuilder := buildahiov1alpha1.ImageBuilder{
+				Spec: buildahiov1alpha1.ImageBuilderSpec{
+					Architecture: buildahiov1alpha1.AMD64,
+					Image: buildahiov1alpha1.ImageEndpoint{
+						ImageName:    "repository.destination.com",
+						ImageVersion: "v4.5.6-public",
+					},
+					Affinity:    affinity,
+					Tolerations: tolerations,
+				},
+			}
+
+			job := GenerateAbtractBuildahJob(imageBuilder, "test", []string{"echo test"})
+
+			Expect(job.Spec.Template.Spec.Affinity).To(Equal(affinity))
+			Expect(job.Spec.Template.Spec.Tolerations).To(Equal(tolerations))
 		})
 	})
 })

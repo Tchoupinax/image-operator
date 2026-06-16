@@ -17,6 +17,7 @@ limitations under the License.
 package v1alpha1
 
 import (
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -67,6 +68,10 @@ type ImageBuilderSpec struct {
 	Source string `json:"source,omitempty"`
 	// +kubebuilder:validation:Optional
 	Resources ResourcesQuota `json:"resources,omitempty"`
+	// +kubebuilder:validation:Optional
+	Affinity *corev1.Affinity `json:"affinity,omitempty"`
+	// +kubebuilder:validation:Optional
+	Tolerations []corev1.Toleration `json:"tolerations,omitempty"`
 }
 
 // ImageBuilderStatus defines the observed state of ImageBuilder
