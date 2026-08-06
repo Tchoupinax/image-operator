@@ -91,6 +91,8 @@ func GenerateAbtractBuildahJob(
 					Labels:      imageBuilder.Labels,
 				},
 				Spec: corev1.PodSpec{
+					Affinity:    imageBuilder.Spec.Affinity,
+					Tolerations: imageBuilder.Spec.Tolerations,
 					Containers: []corev1.Container{
 						{
 							Name:  "buildah",
