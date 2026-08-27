@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans text-slate-800;
+  }
+}
+
+@layer components {
+  .panel {
+    @apply rounded-2xl border border-slate-200 bg-white shadow-sm shadow-slate-200/60;
+  }
+
+  .input-field {
+    @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 transition focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/40 disabled:opacity-50;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-slate-400 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-300/60 disabled:opacity-50;
+  }
+
+  .tab-btn {
+    @apply rounded-lg px-4 py-2 text-sm font-medium transition;
+  }
+
+  .tab-btn-active {
+    @apply bg-white text-slate-900 shadow-sm ring-1 ring-slate-200;
+  }
+
+  .tab-btn-inactive {
+    @apply text-slate-500 hover:bg-white/70 hover:text-slate-800;
+  }
+}

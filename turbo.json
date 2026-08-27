@@ -1,0 +1,14 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "dev": {
+      "cache": false,
+      "persistent": true,
+      "passThroughEnv": ["KUBERNETES_MASTER", "KUBECONFIG"]
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".output/**", "dist/**"]
+    }
+  }
+}

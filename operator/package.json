@@ -1,0 +1,11 @@
+{
+  "name": "operator",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "GRAPHQL_API_ENABLED=true nodemon --cwd .. --watch '**/*.go' --ignore 'ui/**' --signal SIGTERM --exec 'go run cmd/main.go'"
+  },
+  "devDependencies": {
+    "nodemon": "3.1.14"
+  }
+}
