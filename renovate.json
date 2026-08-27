@@ -23,10 +23,6 @@
       "matchUpdateTypes": ["minor", "patch"],
       "matchCurrentVersion": "!/^0/",
       "automerge": true
-    },
-    {
-      "matchPackageNames": ["typescript"],
-      "allowedVersions": "<7"
     }
   ]
 }

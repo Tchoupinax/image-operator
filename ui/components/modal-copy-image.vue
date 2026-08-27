@@ -1,107 +1,185 @@
 <template>
   <div>
-    <button @click="showModal = true" class="px-4 py-2 mx-2 font-bold text-white bg-green-500 rounded">
+    <button class="btn-primary" @click="showModal = true">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4">
+        <path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
+      </svg>
       Copy image
     </button>
 
-    <transition name="modal-fade">
-      <div v-if="showModal" class="modal-overlay" @click="closeModal" aria-hidden="true"></div>
-    </transition>
+    <Teleport to="body">
+      <Transition name="modal-fade">
+        <div
+          v-if="showModal"
+          class="fixed inset-0 z-50 flex items-center justify-center p-4"
+        >
+          <div class="absolute inset-0 bg-slate-900/30 backdrop-blur-sm" @click="closeModal" />
 
-    <transition name="modal-fade">
-      <div v-if="showModal" class="modal" role="dialog" aria-labelledby="modal-title" aria-modal="true">
-        <div class="modal-header">
-          <h2 id="modal-title" class="font-bold underline">Copy image</h2>
-          <button @click="closeModal" class="close-button" aria-label="Close modal">×</button>
-        </div>
-
-        <form @submit.prevent="submitForm">
-          <div class="form-group">
-            <label for="name">Name</label>
-            <input v-model="formData.name" type="text" id="name" required placeholder="Alpine"
-              class="border-b-2 border-gray-300 focus:outline-none" autocomplete="off" />
-          </div>
-
-          <div class="form-group autocomplete">
-            <label for="source-repo">Source Repository</label>
-            <div class="flex items-center justify-center">
-              <input v-model="formData.sourceRepository" type="text" id="source-repo" required
-                placeholder="quay.io/nginx/nginx-ingress" @input="debouncedSearch" @focus="showSuggestions = true"
-                class="border-b-2 border-gray-300 focus:outline-none" autocomplete="off" />
+          <div
+            class="relative z-10 w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-300/40"
+            role="dialog"
+            aria-labelledby="modal-title"
+            aria-modal="true"
+          >
+            <div class="mb-6 flex items-start justify-between gap-4">
               <div>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                  stroke="currentColor" class="size-6">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="m15.75 15.75-2.489-2.489m0 0a3.375 3.375 0 1 0-4.773-4.773 3.375 3.375 0 0 0 4.774 4.774ZM21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                </svg>
+                <h2 id="modal-title" class="text-lg font-semibold text-slate-900">Copy image</h2>
+                <p class="mt-1 text-sm text-slate-500">Sync a container image between registries.</p>
               </div>
+              <button
+                class="rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                aria-label="Close modal"
+                @click="closeModal"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5">
+                  <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
+                </svg>
+              </button>
             </div>
 
-            <ul v-if="showSuggestions && filteredRepositories.length" class="suggestions-dropdown">
-              <li v-for="(repo, index) in filteredRepositories" :key="index" @click="selectRepository(repo)"
-                class="suggestion-item">
-                <div class="flex justify-between">
-                  <div class="flex">
-                    <img v-if="repo.registry === 'Quay.io'" class="mr-2 size-6"
-                      src="https://upload.wikimedia.org/wikipedia/commons/d/d8/Red_Hat_logo.svg" />
-                    <img v-if="repo.registry === 'Amazon ECR'" class="mr-2 size-6"
-                      src="https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg" />
-                    <img v-if="repo.registry === 'DockerHub'" class="mr-2 size-6"
-                      src="https://icon.icepanel.io/Technology/svg/Docker.svg" />
+            <form class="space-y-4" @submit.prevent="submitForm">
+              <div>
+                <label for="name" class="mb-1.5 block text-sm font-medium text-slate-700">Name</label>
+                <input
+                  id="name"
+                  v-model="formData.name"
+                  type="text"
+                  required
+                  placeholder="nginx-alpine"
+                  class="input-field"
+                  autocomplete="off"
+                />
+              </div>
 
-                    <p>
-                      {{ repo.name }}
-                    </p>
-                  </div>
-
-                  <div class="flex">
-                    <p class="mr-1">
-                      {{ repo.downloadCount }}
-                    </p>
-
-                    <svg v-if="repo.isOfficial" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                      stroke-width="1.5" stroke="currentColor" class="text-green-600 size-6">
-                      <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
-                    </svg>
-                  </div>
+              <div class="relative">
+                <label for="source-repo" class="mb-1.5 block text-sm font-medium text-slate-700">Source repository</label>
+                <div class="relative">
+                  <input
+                    id="source-repo"
+                    v-model="formData.sourceRepository"
+                    type="text"
+                    required
+                    placeholder="quay.io/nginx/nginx-ingress"
+                    class="input-field pr-10"
+                    autocomplete="off"
+                    @input="debouncedSearch"
+                    @focus="showSuggestions = true"
+                  />
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                  </svg>
                 </div>
-              </li>
-            </ul>
-          </div>
 
-          <div class="form-group">
-            <label for="source-version">Source Version</label>
-            <input v-model="formData.sourceVersion" type="text" id="source-version" required placeholder="v1.2.3"
-              class="border-b-2 border-gray-300 focus:outline-none" autocomplete="off" />
-          </div>
+                <ul
+                  v-if="showSuggestions && filteredRepositories.length"
+                  class="absolute z-20 mt-1 max-h-56 w-full overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-lg"
+                >
+                  <li
+                    v-for="(repo, index) in filteredRepositories"
+                    :key="index"
+                    class="cursor-pointer border-b border-slate-100 px-3 py-2.5 last:border-0 hover:bg-slate-50"
+                    @click="selectRepository(repo)"
+                  >
+                    <div class="flex items-center justify-between gap-3">
+                      <div class="flex min-w-0 items-center gap-2">
+                        <img
+                          v-if="repo.registry === 'Quay.io'"
+                          class="h-5 w-5 shrink-0"
+                          src="https://upload.wikimedia.org/wikipedia/commons/d/d8/Red_Hat_logo.svg"
+                          alt=""
+                        />
+                        <img
+                          v-if="repo.registry === 'Amazon ECR'"
+                          class="h-5 w-5 shrink-0"
+                          src="https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
+                          alt=""
+                        />
+                        <img
+                          v-if="repo.registry === 'DockerHub'"
+                          class="h-5 w-5 shrink-0"
+                          src="https://icon.icepanel.io/Technology/svg/Docker.svg"
+                          alt=""
+                        />
+                        <span class="truncate text-sm text-slate-800">{{ repo.name }}</span>
+                      </div>
+                      <div class="flex shrink-0 items-center gap-2 text-xs text-slate-500">
+                        <span>{{ repo.downloadCount }}</span>
+                        <svg
+                          v-if="repo.isOfficial"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          class="h-4 w-4 text-emerald-600"
+                        >
+                          <path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-3.497 1.307 4.491 4.491 0 0 1-3.498 1.306 4.49 4.49 0 0 1-3.397 1.549A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.49 4.49 0 0 1-3.498-1.306 4.491 4.491 0 0 1-3.497-1.307A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307c.923-.707 2.04-1.106 3.198-1.149ZM9.748 8.25c.742-.742 1.947-.742 2.689 0l.094.094 3.784 3.784.094.094c.742.742.742 1.947 0 2.689l-.094.094-3.784 3.784-.094.094c-.742.742-1.947.742-2.689 0l-.094-.094-3.784-3.784-.094-.094c-.742-.742-.742-1.947 0-2.689l.094-.094 3.784-3.784.094-.094Z" clip-rule="evenodd" />
+                        </svg>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
 
-          <div class="form-group">
-            <label for="destination-repo">Destination Repository</label>
-            <input v-model="formData.destinationRepository" type="text" id="destination-repo" required
-              placeholder="myregistry.io/nginx/nginx-ingress" class="border-b-2 border-gray-300 focus:outline-none"
-              autocomplete="off" />
-          </div>
+              <div>
+                <label for="source-version" class="mb-1.5 block text-sm font-medium text-slate-700">Source version</label>
+                <input
+                  id="source-version"
+                  v-model="formData.sourceVersion"
+                  type="text"
+                  required
+                  placeholder="3.7-alpine"
+                  class="input-field font-mono"
+                  autocomplete="off"
+                />
+              </div>
 
-          <div class="form-group">
-            <label for="destination-version">Destination Version</label>
-            <input v-model="formData.destinationVersion" type="text" id="destination-version"
-              class="border-b-2 border-gray-300 focus:outline-none" required placeholder="v1.2.3" autocomplete="off" />
-          </div>
+              <div>
+                <label for="destination-repo" class="mb-1.5 block text-sm font-medium text-slate-700">Destination repository</label>
+                <input
+                  id="destination-repo"
+                  v-model="formData.destinationRepository"
+                  type="text"
+                  required
+                  placeholder="myregistry.io/nginx/nginx-ingress"
+                  class="input-field font-mono"
+                  autocomplete="off"
+                />
+              </div>
 
-          <div class="form-group">
-            <label>Mode</label>
-            <select v-model="formData.mode">
-              <option value="OneShot">OneShot</option>
-              <option value="OnceByTag">OnceByTag</option>
-              <option value="Recurrent">Recurrent</option>
-            </select>
-          </div>
+              <div>
+                <label for="destination-version" class="mb-1.5 block text-sm font-medium text-slate-700">Destination version</label>
+                <input
+                  id="destination-version"
+                  v-model="formData.destinationVersion"
+                  type="text"
+                  required
+                  placeholder="3.7-alpine"
+                  class="input-field font-mono"
+                  autocomplete="off"
+                />
+              </div>
 
-          <button type="submit" class="submit-button">Submit</button>
-        </form>
-      </div>
-    </transition>
+              <div>
+                <label for="mode" class="mb-1.5 block text-sm font-medium text-slate-700">Mode</label>
+                <select id="mode" v-model="formData.mode" class="input-field">
+                  <option value="OneShot">OneShot</option>
+                  <option value="OnceByTag">OnceByTag</option>
+                  <option value="Recurrent">Recurrent</option>
+                </select>
+              </div>
+
+              <div class="flex gap-3 pt-2">
+                <button type="button" class="btn-secondary flex-1" @click="closeModal">
+                  Cancel
+                </button>
+                <button type="submit" class="btn-primary flex-1">
+                  Start copy
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
@@ -110,23 +188,7 @@ import { ref, watch } from "vue";
 import { useFetch } from "#app";
 import type { RegistryImage } from "~/server/api/images/search";
 
-type Store = {
-  showModal: boolean;
-  showSuggestions: boolean;
-  repositories: Array<RegistryImage>;
-  filteredRepositories: Array<RegistryImage>;
-  formData: {
-    destinationRepository: string;
-    destinationVersion: string;
-    mode: "OneShot" | "OnceByTag" | "Recurrent",
-    name: string;
-    sourceRepository: string;
-    sourceVersion: string;
-  };
-  timeout?: NodeJS.Timeout,
-}
-
-const emit = defineEmits(["create"])
+const emit = defineEmits(["create"]);
 
 const showModal = ref(false);
 const showSuggestions = ref(false);
@@ -135,9 +197,9 @@ const formData = ref({
   destinationRepository: "",
   destinationVersion: "",
   mode: "OneShot" as "OneShot" | "OnceByTag" | "Recurrent",
-  name:  "",
-  sourceRepository:  "",
-  sourceVersion:  "",
+  name: "",
+  sourceRepository: "",
+  sourceVersion: "",
 });
 let timeout: NodeJS.Timeout | undefined;
 
@@ -161,10 +223,13 @@ const debouncedSearch = () => {
 
 const filterSuggestions = async () => {
   if (formData.value.sourceRepository) {
-    const { data: repos } = await useFetch<Array<RegistryImage>>(`/api/images/search?repo=${formData.value.sourceRepository.toLowerCase()}`);
-    filteredRepositories.value = repos.value?.filter((repo) =>
-      repo.name.toLowerCase().includes(formData.value.sourceRepository.toLowerCase())
-    ) || [];
+    const { data: repos } = await useFetch<Array<RegistryImage>>(
+      `/api/images/search?repo=${formData.value.sourceRepository.toLowerCase()}`
+    );
+    filteredRepositories.value =
+      repos.value?.filter((repo) =>
+        repo.name.toLowerCase().includes(formData.value.sourceRepository.toLowerCase())
+      ) || [];
   } else {
     filteredRepositories.value = [];
   }
@@ -179,107 +244,13 @@ watch(() => formData.value.sourceRepository, () => debouncedSearch());
 </script>
 
 <style scoped>
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.2s ease;
 }
 
-.modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  padding: 20px;
-  width: 90%;
-  max-width: 600px;
-  z-index: 1001;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.close-button {
-  font-size: 1.5rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.form-group input,
-.form-group textarea {
-  width: 100%;
-  padding: 8px;
-  box-sizing: border-box;
-}
-
-.checkbox-group label {
-  font-weight: normal;
-}
-
-.submit-button {
-  background-color: #007bff;
-  color: white;
-  padding: 10px;
-  border: none;
-  cursor: pointer;
-  width: 100%;
-  border-radius: 4px;
-}
-
-.submit-button:hover {
-  background-color: #0056b3;
-}
-
-/* Autocomplete dropdown styling */
-.autocomplete {
-  position: relative;
-}
-
-.suggestions-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: white;
-  border: 2px solid #ddd;
-  border-top: none;
-  box-shadow: inset;
-  max-height: 250px;
-  overflow-y: auto;
-  z-index: 1002;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.suggestion-item {
-  padding: 8px;
-  cursor: pointer;
-}
-
-.suggestion-item:hover {
-  background-color: #f0f0f0;
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
 }
 </style>

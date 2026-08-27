@@ -20,8 +20,8 @@ test:
     -coverprofile=coverage.out \
     internal/controller/skopeo.io
     
-up: 
-  export GRAPHQL_API_ENABLED=true && npx nodemon --watch './**/*.go' --signal SIGTERM --exec go run cmd/main.go
+up:
+  yarn dev
 
 docker:
   curl --head -H "Authorization: Bearer $(curl -s "https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull" | jq -r .token)" https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest

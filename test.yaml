@@ -1,0 +1,13 @@
+apiVersion: skopeo.io/v1alpha1
+kind: Image
+metadata:
+  name: argocd-2-13-rc
+spec:
+  allowCandidateRelease: true
+  mode: OneShot
+  source:
+    name: quay.io/argoproj/argocd
+    version: v2.13.x
+  destination:
+    name: tchoupinax/argoproj/argocd
+    version: v2.13.x

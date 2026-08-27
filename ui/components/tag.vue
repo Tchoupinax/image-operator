@@ -1,34 +1,33 @@
 <template>
-  <span :class="tagClasses" class="inline-flex items-center px-3 py-1 text-sm font-bold rounded-full">
+  <span
+    class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset"
+    :class="variantClasses"
+  >
     {{ text }}
   </span>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   props: {
     text: {
       type: String,
       required: true,
     },
-    color: {
+    variant: {
       type: String,
-      default: "bg-blue-500",
-    },
-    borderColor: {
-      type: String,
-      default: "border-blue-700",
+      default: "sky",
     },
   },
   computed: {
-    tagClasses() {
-      return [
-        this.color,
-        this.borderColor,
-        "border-2 border-solid",
-        "text-white",
-        "mx-1"
-      ];
+    variantClasses(): string {
+      const variants: Record<string, string> = {
+        sky: "bg-sky-50 text-sky-700 ring-sky-200",
+        emerald: "bg-emerald-50 text-emerald-700 ring-emerald-200",
+        violet: "bg-violet-50 text-violet-700 ring-violet-200",
+      };
+
+      return variants[this.variant] || variants.sky;
     },
   },
 };
