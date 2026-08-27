@@ -89,6 +89,13 @@ export default {
     };
   },
   methods: {
+    showArchitecture(architecture: string, target: string) {
+      const normalized = (architecture || "").toLowerCase();
+      if (normalized === "both") {
+        return true;
+      }
+      return normalized === target;
+    },
     showCode(name: string) {
       this.showCodeModalName = name;
     },

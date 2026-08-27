@@ -100,19 +100,15 @@ func Images(p graphql.ResolveParams) (interface{}, error) {
 			img.CreatedAt = name
 		}
 
-		if status, found, _ := unstructured.NestedString(item.Object, "status", "phase"); found {
+		if status, found, _ := unstructured.NestedString(item.Object, "status", "phase"); found && status != "" {
 			img.Status = status
+		} else if histories, hasHistory, _ := unstructured.NestedSlice(item.Object, "status", "history"); hasHistory && len(histories) > 0 {
+			img.Status = "RUNNING"
 		}
 
-		if histories, found, _ := unstructured.NestedSlice(item.Object, "status", "history"); found {
-			img.LastExecution = histories[len(histories)-1].(map[string]interface{})["performedAt"].(string)
-		}
-
-		if _, found, _ := unstructured.NestedString(item.Object, "metadata", "name"); found {
-			img.Destination = v1alpha1.ImageEndpoint{
-				ImageName:    "DD",
-				ImageVersion: "de",
-				UseAwsIRSA:   false,
+		if histories, found, _ := unstructured.NestedSlice(item.Object, "status", "history"); found && len(histories) > 0 {
+			if performedAt, ok := histories[len(histories)-1].(map[string]interface{})["performedAt"].(string); ok {
+				img.LastExecution = performedAt
 			}
 		}
 
