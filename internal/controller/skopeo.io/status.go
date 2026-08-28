@@ -50,7 +50,7 @@ func versionsToMonitor(
 	logger logr.Logger,
 	image *skopeoiov1alpha1.Image,
 ) []string {
-	selectedVersions := helpers.ListVersions(
+	selectedVersions := listVersionsForImage(
 		logger,
 		image.Spec.Source.ImageName,
 		image.Spec.Source.ImageVersion,

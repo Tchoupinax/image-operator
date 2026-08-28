@@ -40,10 +40,23 @@ func warnError(err error) {
 
 // InstallPrometheusOperator installs the prometheus Operator to be used to export the enabled metrics.
 func InstallPrometheusOperator() error {
+	if prometheusOperatorInstalled() {
+		return nil
+	}
+
 	url := fmt.Sprintf(prometheusOperatorURL, prometheusOperatorVersion)
-	cmd := exec.Command("kubectl", "create", "-f", url)
+	cmd := exec.Command("kubectl", "apply", "--server-side", "--force-conflicts", "-f", url)
+	if _, err := Run(cmd); err != nil && !prometheusOperatorInstalled() {
+		return err
+	}
+
+	return nil
+}
+
+func prometheusOperatorInstalled() bool {
+	cmd := exec.Command("kubectl", "get", "deployment", "prometheus-operator")
 	_, err := Run(cmd)
-	return err
+	return err == nil
 }
 
 // Run executes the provided command within this context
@@ -86,13 +99,18 @@ func UninstallCertManager() {
 
 // InstallCertManager installs the cert manager bundle.
 func InstallCertManager() error {
+	if certManagerInstalled() {
+		return nil
+	}
+
+	waitForNamespaceDeleted("cert-manager")
+
 	url := fmt.Sprintf(certmanagerURLTmpl, certmanagerVersion)
 	cmd := exec.Command("kubectl", "apply", "-f", url)
-	if _, err := Run(cmd); err != nil {
+	if _, err := Run(cmd); err != nil && !certManagerInstalled() {
 		return err
 	}
-	// Wait for cert-manager-webhook to be ready, which can take time if cert-manager
-	// was re-installed after uninstalling on a cluster.
+
 	cmd = exec.Command("kubectl", "wait", "deployment.apps/cert-manager-webhook",
 		"--for", "condition=Available",
 		"--namespace", "cert-manager",
@@ -101,6 +119,22 @@ func InstallCertManager() error {
 
 	_, err := Run(cmd)
 	return err
+}
+
+func certManagerInstalled() bool {
+	cmd := exec.Command("kubectl", "get", "deployment", "cert-manager-webhook", "-n", "cert-manager")
+	_, err := Run(cmd)
+	return err == nil
+}
+
+func waitForNamespaceDeleted(name string) {
+	cmd := exec.Command("kubectl", "get", "namespace", name)
+	if _, err := Run(cmd); err != nil {
+		return
+	}
+
+	cmd = exec.Command("kubectl", "wait", "--for=delete", "namespace/"+name, "--timeout=5m")
+	_, _ = Run(cmd)
 }
 
 // LoadImageToKindClusterWithName loads a local docker image to the kind cluster

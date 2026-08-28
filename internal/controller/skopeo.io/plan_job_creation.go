@@ -18,7 +18,7 @@ func planJobCreation(
 	image *skopeoiov1alpha1.Image,
 	logger logr.Logger,
 ) ctrl.Result {
-	selectedVersions := helpers.ListVersions(
+	selectedVersions := listVersionsForImage(
 		logger,
 		image.Spec.Source.ImageName,
 		image.Spec.Source.ImageVersion,
