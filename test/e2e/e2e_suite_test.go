@@ -20,9 +20,16 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/Tchoupinax/image-operator/test/utils"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
+
+var _ = BeforeSuite(func() {
+	if err := utils.EnsureSafeE2ECluster(); err != nil {
+		Skip(err.Error())
+	}
+})
 
 // Run e2e tests using the Ginkgo runner.
 func TestE2E(t *testing.T) {
