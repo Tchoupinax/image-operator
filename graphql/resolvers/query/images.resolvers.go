@@ -71,6 +71,48 @@ var ImageType = graphql.NewObject(graphql.ObjectConfig{
 	},
 })
 
+func ImageFromUnstructuredObject(obj map[string]interface{}) Image {
+	var img Image
+
+	if name, found, _ := unstructured.NestedString(obj, "metadata", "name"); found {
+		img.Name = name
+	}
+
+	if createdAt, found, _ := unstructured.NestedString(obj, "metadata", "creationTimestamp"); found {
+		img.CreatedAt = createdAt
+	}
+
+	if status, found, _ := unstructured.NestedString(obj, "status", "phase"); found && status != "" {
+		img.Status = status
+	} else if histories, hasHistory, _ := unstructured.NestedSlice(obj, "status", "history"); hasHistory && len(histories) > 0 {
+		img.Status = "RUNNING"
+	}
+
+	if histories, found, _ := unstructured.NestedSlice(obj, "status", "history"); found && len(histories) > 0 {
+		if performedAt, ok := histories[len(histories)-1].(map[string]interface{})["performedAt"].(string); ok {
+			img.LastExecution = performedAt
+		}
+	}
+
+	if source, found, _ := unstructured.NestedMap(obj, "spec", "source"); found {
+		img.Source = v1alpha1.ImageEndpoint{
+			ImageName:    source["name"].(string),
+			ImageVersion: source["version"].(string),
+			UseAwsIRSA:   false,
+		}
+	}
+
+	if destination, found, _ := unstructured.NestedMap(obj, "spec", "destination"); found {
+		img.Destination = v1alpha1.ImageEndpoint{
+			ImageName:    destination["name"].(string),
+			ImageVersion: destination["version"].(string),
+			UseAwsIRSA:   false,
+		}
+	}
+
+	return img
+}
+
 func Images(p graphql.ResolveParams) (interface{}, error) {
 	dynamicClient, err := dynamic.NewForConfig(ctrl.GetConfigOrDie())
 	if err != nil {
@@ -90,48 +132,7 @@ func Images(p graphql.ResolveParams) (interface{}, error) {
 
 	var images []Image
 	for _, item := range customResources.Items {
-		var img Image
-
-		if name, found, _ := unstructured.NestedString(item.Object, "metadata", "name"); found {
-			img.Name = name
-		}
-
-		if name, found, _ := unstructured.NestedString(item.Object, "metadata", "creationTimestamp"); found {
-			img.CreatedAt = name
-		}
-
-		if status, found, _ := unstructured.NestedString(item.Object, "status", "phase"); found {
-			img.Status = status
-		}
-
-		if histories, found, _ := unstructured.NestedSlice(item.Object, "status", "history"); found {
-			img.LastExecution = histories[len(histories)-1].(map[string]interface{})["performedAt"].(string)
-		}
-
-		if _, found, _ := unstructured.NestedString(item.Object, "metadata", "name"); found {
-			img.Destination = v1alpha1.ImageEndpoint{
-				ImageName:    "DD",
-				ImageVersion: "de",
-				UseAwsIRSA:   false,
-			}
-		}
-
-		if source, found, _ := unstructured.NestedMap(item.Object, "spec", "source"); found {
-			img.Source = v1alpha1.ImageEndpoint{
-				ImageName:    source["name"].(string),
-				ImageVersion: source["version"].(string),
-				UseAwsIRSA:   false,
-			}
-		}
-
-		if destination, found, _ := unstructured.NestedMap(item.Object, "spec", "destination"); found {
-			img.Destination = v1alpha1.ImageEndpoint{
-				ImageName:    destination["name"].(string),
-				ImageVersion: destination["version"].(string),
-				UseAwsIRSA:   false,
-			}
-		}
-
+		img := ImageFromUnstructuredObject(item.Object)
 		images = append(images, img)
 	}
 

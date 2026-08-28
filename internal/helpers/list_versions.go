@@ -172,13 +172,8 @@ func ListVersions(
 			}
 		}
 
-		regex := GenerateRegex(matchingString, allowCandidateRelease)
-		re := regexp.MustCompile(regex)
-
 		for _, tag := range tags {
-			if re.MatchString(tag) && !contains(matchedTags, tag) {
-				matchedTags = append(matchedTags, tag)
-			}
+			matchedTags = appendMatchingTags(matchedTags, tag, matchingString, allowCandidateRelease)
 		}
 
 		page++
@@ -187,6 +182,35 @@ func ListVersions(
 	logger.Info(fmt.Sprintf("%d images detected", len(matchedTags)))
 	sort.Strings(matchedTags)
 
+	return matchedTags
+}
+
+func appendMatchingTags(
+	matchedTags []string,
+	tag string,
+	matchingString string,
+	allowCandidateRelease bool,
+) []string {
+	regex := GenerateRegex(matchingString, allowCandidateRelease)
+	re := regexp.MustCompile(regex)
+
+	if re.MatchString(tag) && !contains(matchedTags, tag) {
+		matchedTags = append(matchedTags, tag)
+	}
+
+	return matchedTags
+}
+
+func FilterMatchingTags(
+	tags []string,
+	matchingString string,
+	allowCandidateRelease bool,
+) []string {
+	matchedTags := make([]string, 0, len(tags))
+	for _, tag := range tags {
+		matchedTags = appendMatchingTags(matchedTags, tag, matchingString, allowCandidateRelease)
+	}
+	sort.Strings(matchedTags)
 	return matchedTags
 }
 

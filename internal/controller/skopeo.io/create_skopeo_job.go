@@ -14,6 +14,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 
 func CreateSkopeoJob(
@@ -32,6 +33,11 @@ func CreateSkopeoJob(
 		logger,
 		incomingVersion,
 	)
+
+	if err := controllerutil.SetControllerReference(image, &desiredJob, r.Scheme); err != nil {
+		logger.Error(err, "Failed to set controller reference on skopeo job", "image", image.Name)
+		return
+	}
 
 	creationError := r.Create(ctx, &desiredJob)
 	if creationError != nil {
@@ -73,7 +79,7 @@ func GenerateSkopeoJob(
 	if os.Getenv("CREDS_SOURCE_USERNAME") != "" && os.Getenv("CREDS_SOURCE_PASSWORD") != "" {
 		skopeoCommand = append(
 			skopeoCommand,
-			fmt.Sprintf("--dest-creds=%s:%s", os.Getenv("CREDS_SOURCE_USERNAME"), os.Getenv("CREDS_SOURCE_PASSWORD")),
+			fmt.Sprintf("--src-creds=%s:%s", os.Getenv("CREDS_SOURCE_USERNAME"), os.Getenv("CREDS_SOURCE_PASSWORD")),
 		)
 	}
 
@@ -133,11 +139,11 @@ func GenerateSkopeoJob(
 	}
 
 	var deleteJobAfterXSeconds int32
-	numericValue, error := strconv.Atoi(helpers.GetEnv("JOB_DELETION_DELAY_SECONDS", "10"))
-	if error != nil {
-		deleteJobAfterXSeconds = int32(numericValue)
-	} else {
+	numericValue, err := strconv.Atoi(helpers.GetEnv("JOB_DELETION_DELAY_SECONDS", "10"))
+	if err != nil {
 		deleteJobAfterXSeconds = 10
+	} else {
+		deleteJobAfterXSeconds = int32(numericValue)
 	}
 
 	return batchv1.Job{

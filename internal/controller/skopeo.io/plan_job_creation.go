@@ -18,7 +18,7 @@ func planJobCreation(
 	image *skopeoiov1alpha1.Image,
 	logger logr.Logger,
 ) ctrl.Result {
-	selectedVersions := helpers.ListVersions(
+	selectedVersions := listVersionsForImage(
 		logger,
 		image.Spec.Source.ImageName,
 		image.Spec.Source.ImageVersion,
@@ -37,33 +37,24 @@ func planJobCreation(
 		logger.Info("Reload image")
 
 		addHistory(image)
+		image.Status.Phase = phaseRunning
 
 		for _, selectedVersion := range selectedVersions {
 			CreateSkopeoJob(r, ctx, req, image, logger, selectedVersion)
 		}
 
-		if image.Spec.Mode == "OnceByTag" {
-			// This operation should only be done if the job succeeded
-			image.Status.TagAlreadySynced = append(
-				image.Status.TagAlreadySynced,
-				selectedVersions...,
-			)
-		}
-
 		updateError := r.Status().Update(ctx, image)
 		if updateError != nil {
 			logger.Error(updateError, "Failed to update the CRD "+image.Name)
-			// We stop the loop
 			return ctrl.Result{}
 		}
 
-		// We entered in the condition where at least one version is detected
-		// so if the mode is one shot, we do NOT want to loop again
-		// If the mode is not ONE_SHOT, then we will return the Result
-		// at the end
 		if image.Spec.Mode == skopeoiov1alpha1.ONE_SHOT {
-			return ctrl.Result{}
+			return ctrl.Result{Requeue: true, RequeueAfter: 10 * time.Second}
 		}
+	} else if err := persistImageStatus(r, ctx, image); err != nil {
+		logger.Error(err, "Failed to persist image status", "image", image.Name)
+		return ctrl.Result{}
 	}
 
 	return ctrl.Result{

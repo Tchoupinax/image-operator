@@ -1,6 +1,8 @@
 package controller_test
 
 import (
+	"os"
+
 	"github.com/Tchoupinax/image-operator/api/skopeo.io/v1alpha1"
 	controller "github.com/Tchoupinax/image-operator/internal/controller/skopeo.io"
 	"github.com/go-logr/logr"
@@ -86,6 +88,79 @@ var _ = Describe("Create Skopeo job", func() {
 				"-c",
 				"yum install -y awscli &&\n\t\t\taws ecr get-login-password --region eu-west-1 | skopeo login --username AWS --password-stdin repository.destination.com &&\n\t\t\tskopeo copy docker://repository.source.com:v4.5.6 docker://repository.destination.com:v4.5.6-public --all --preserve-digests --src-tls-verify=true --dest-tls-verify=true",
 			}))
+		})
+	})
+
+	Describe("when using registry credentials", func() {
+		It("should pass source and destination credentials to skopeo", func() {
+			GinkgoWriter.Println("setting registry credential env vars")
+			Expect(os.Setenv("CREDS_DESTINATION_USERNAME", "dest-user")).To(Succeed())
+			Expect(os.Setenv("CREDS_DESTINATION_PASSWORD", "dest-pass")).To(Succeed())
+			Expect(os.Setenv("CREDS_SOURCE_USERNAME", "src-user")).To(Succeed())
+			Expect(os.Setenv("CREDS_SOURCE_PASSWORD", "src-pass")).To(Succeed())
+			DeferCleanup(func() {
+				os.Unsetenv("CREDS_DESTINATION_USERNAME")
+				os.Unsetenv("CREDS_DESTINATION_PASSWORD")
+				os.Unsetenv("CREDS_SOURCE_USERNAME")
+				os.Unsetenv("CREDS_SOURCE_PASSWORD")
+			})
+
+			job := controller.GenerateSkopeoJob(
+				&controller.ImageReconciler{},
+				nil,
+				ctrl.Request{},
+				&v1alpha1.Image{
+					Spec: v1alpha1.ImageSpec{
+						Source: v1alpha1.ImageEndpoint{
+							ImageName:  "repository.source.com",
+							UseAwsIRSA: false,
+						},
+						Destination: v1alpha1.ImageEndpoint{
+							ImageName:    "repository.destination.com",
+							ImageVersion: "v4.5.6-public",
+							UseAwsIRSA:   false,
+						},
+					},
+				},
+				logr.Logger{},
+				"v4.5.6",
+			)
+
+			Expect(job.Spec.Template.Spec.Containers[0].Args).To(Equal([]string{
+				"-c",
+				"skopeo copy docker://repository.source.com:v4.5.6 docker://repository.destination.com:v4.5.6-public --all --preserve-digests --dest-creds=dest-user:dest-pass --src-creds=src-user:src-pass --src-tls-verify=true --dest-tls-verify=true",
+			}))
+		})
+	})
+
+	Describe("when configuring job deletion delay", func() {
+		It("should use JOB_DELETION_DELAY_SECONDS when it is valid", func() {
+			Expect(os.Setenv("JOB_DELETION_DELAY_SECONDS", "42")).To(Succeed())
+			DeferCleanup(func() {
+				os.Unsetenv("JOB_DELETION_DELAY_SECONDS")
+			})
+
+			job := controller.GenerateSkopeoJob(
+				&controller.ImageReconciler{},
+				nil,
+				ctrl.Request{},
+				&v1alpha1.Image{
+					Spec: v1alpha1.ImageSpec{
+						Source: v1alpha1.ImageEndpoint{
+							ImageName: "repository.source.com",
+						},
+						Destination: v1alpha1.ImageEndpoint{
+							ImageName:    "repository.destination.com",
+							ImageVersion: "v4.5.6-public",
+						},
+					},
+				},
+				logr.Logger{},
+				"v4.5.6",
+			)
+
+			Expect(job.Spec.TTLSecondsAfterFinished).NotTo(BeNil())
+			Expect(*job.Spec.TTLSecondsAfterFinished).To(Equal(int32(42)))
 		})
 	})
 })
