@@ -50,6 +50,7 @@ func InstallPrometheusOperator() error {
 		return err
 	}
 
+	prometheusInstalledByTests = true
 	return nil
 }
 
@@ -79,8 +80,12 @@ func Run(cmd *exec.Cmd) ([]byte, error) {
 	return output, nil
 }
 
-// UninstallPrometheusOperator uninstalls the prometheus
+// UninstallPrometheusOperator uninstalls the prometheus operator only when this test run installed it.
 func UninstallPrometheusOperator() {
+	if !prometheusInstalledByTests {
+		return
+	}
+
 	url := fmt.Sprintf(prometheusOperatorURL, prometheusOperatorVersion)
 	cmd := exec.Command("kubectl", "delete", "-f", url)
 	if _, err := Run(cmd); err != nil {
@@ -88,8 +93,12 @@ func UninstallPrometheusOperator() {
 	}
 }
 
-// UninstallCertManager uninstalls the cert manager
+// UninstallCertManager uninstalls cert-manager only when this test run installed it.
 func UninstallCertManager() {
+	if !certManagerInstalledByTests {
+		return
+	}
+
 	url := fmt.Sprintf(certmanagerURLTmpl, certmanagerVersion)
 	cmd := exec.Command("kubectl", "delete", "-f", url)
 	if _, err := Run(cmd); err != nil {
@@ -118,7 +127,12 @@ func InstallCertManager() error {
 	)
 
 	_, err := Run(cmd)
-	return err
+	if err != nil {
+		return err
+	}
+
+	certManagerInstalledByTests = true
+	return nil
 }
 
 func certManagerInstalled() bool {
