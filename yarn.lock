@@ -585,10 +585,10 @@
     "@graphql-codegen/plugin-helpers" "^7.1.0"
     tslib "^2.8.0"
 
-"@graphql-codegen/cli@7.4.0":
-  version "7.4.0"
-  resolved "https://registry.yarnpkg.com/@graphql-codegen/cli/-/cli-7.4.0.tgz#4bba3907c5880eb098691c9530e618e71ebfbc18"
-  integrity sha512-yqlvqTt6c2joKZUG2hnho1GsGxwWQIhN/XAeNEi1IgKccxId8pv4VTrLBqYJayEyFqIr5nSKqdPT+Ul3X9B+Ag==
+"@graphql-codegen/cli@7.4.1":
+  version "7.4.1"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/cli/-/cli-7.4.1.tgz#6326e7cbe4b704449b6668570545fa4c0c7da19d"
+  integrity sha512-jDNweI6GC+AwdKn1rXgBI6t2NEk17yEnGCUKeHWa3p8u0zoNNkhGmbL2wEb1XDVqyO3UoCAe8fekR1COhWDf0w==
   dependencies:
     "@babel/generator" "^7.18.13"
     "@babel/template" "^7.18.10"
@@ -597,13 +597,13 @@
     "@graphql-codegen/core" "^6.2.0"
     "@graphql-codegen/plugin-helpers" "^7.3.0"
     "@graphql-tools/apollo-engine-loader" "^8.0.28"
-    "@graphql-tools/code-file-loader" "^8.1.28"
+    "@graphql-tools/code-file-loader" "^8.1.39"
     "@graphql-tools/git-loader" "^8.0.32"
     "@graphql-tools/github-loader" "^9.0.6"
     "@graphql-tools/graphql-file-loader" "^8.1.11"
     "@graphql-tools/json-file-loader" "^8.0.26"
     "@graphql-tools/load" "^8.1.8"
-    "@graphql-tools/merge" "^9.0.6"
+    "@graphql-tools/merge" "^9.2.4"
     "@graphql-tools/url-loader" "^9.0.6"
     "@graphql-tools/utils" "^11.2.0"
     "@inquirer/prompts" "^8.3.2"
@@ -807,7 +807,7 @@
     dataloader "^2.2.3"
     tslib "^2.8.1"
 
-"@graphql-tools/code-file-loader@^8.1.28":
+"@graphql-tools/code-file-loader@^8.1.39":
   version "8.1.39"
   resolved "https://registry.yarnpkg.com/@graphql-tools/code-file-loader/-/code-file-loader-8.1.39.tgz#aaae635efc49cee06c4b58d8bd10343a0067ad63"
   integrity sha512-9hPTdcF1qEkS7C6DJmrSM25G5BiY0yLajTfrtVW7VQppDHqIU8Uyi8DPVwtDDmOZ2o9fYQKwd5tIL1csrjmyBA==
@@ -975,7 +975,7 @@
     p-limit "3.1.0"
     tslib "^2.4.0"
 
-"@graphql-tools/merge@^9.0.0", "@graphql-tools/merge@^9.0.6", "@graphql-tools/merge@^9.2.4":
+"@graphql-tools/merge@^9.0.0", "@graphql-tools/merge@^9.2.4":
   version "9.2.4"
   resolved "https://registry.yarnpkg.com/@graphql-tools/merge/-/merge-9.2.4.tgz#26a192e048eb63ec1d2a453dc903cc8d1394117a"
   integrity sha512-vV+8uWNWn0+OsqT0r22lZuoT0cTe6fBqBtpLHre2rriLjI/ZTrsOHmabLPTUOyzgFnRrS2PzFSYGL3zKL1Wj4Q==
@@ -2052,35 +2052,35 @@
     estraverse "^5.3.0"
     picomatch "^4.0.3"
 
-"@turbo/darwin-64@2.10.12":
-  version "2.10.12"
-  resolved "https://registry.yarnpkg.com/@turbo/darwin-64/-/darwin-64-2.10.12.tgz#719ac12ae47caf7b4be855d672582cdbfde177ea"
-  integrity sha512-9nKgKoF6ZOUsM+or0OtNf+TTJSfGvDNP7ZFv/ZGWVwOSCkumyctQiTeHwB4UNljHTnC41AqylgbunLDHoccNrA==
+"@turbo/darwin-64@2.10.13":
+  version "2.10.13"
+  resolved "https://registry.yarnpkg.com/@turbo/darwin-64/-/darwin-64-2.10.13.tgz#3fdcd6a717cba1c0eda490b45d3c9a5d4760f153"
+  integrity sha512-m5DBcpkxmcKpEJHHFUfqf9GLUjSmw3cDnBJM9nghPW3kjCNb5OyNKmzG7/yT5x5AwzOO+HMwKN+UI4iVKL87YA==
 
-"@turbo/darwin-arm64@2.10.12":
-  version "2.10.12"
-  resolved "https://registry.yarnpkg.com/@turbo/darwin-arm64/-/darwin-arm64-2.10.12.tgz#ac2d3dde3a2407f8359ca2e3152690280cff2714"
-  integrity sha512-H4Elb1jqTZVeIC9bbcNwjSzemZ6RegoTOVHeuV5Osirt2Z8UguTyisMEkvZjPVZgMeN9J4ERZBFad40tFnkb7w==
+"@turbo/darwin-arm64@2.10.13":
+  version "2.10.13"
+  resolved "https://registry.yarnpkg.com/@turbo/darwin-arm64/-/darwin-arm64-2.10.13.tgz#7367bb054e2d8ec8af221e95c674ccf448c5adb5"
+  integrity sha512-vfKPvSuoY8BJGj8M8yN+a7aq1g+CejbEacDSDlJLDkSbPN3J/U1DbYAmPG8Ype5XvImI0SgfvUhIorNnFj67zw==
 
-"@turbo/linux-64@2.10.12":
-  version "2.10.12"
-  resolved "https://registry.yarnpkg.com/@turbo/linux-64/-/linux-64-2.10.12.tgz#264a0ec88a1f69f93cf57dab20be1b4c50bf226c"
-  integrity sha512-lr7KIotukvjZwEXiFSYAeOH3BWzjFVBbSzTbv0fuGFsNukYyH0+g1hB5ecqnJkgkYU+KHEMG1edOhnjiKON1wQ==
+"@turbo/linux-64@2.10.13":
+  version "2.10.13"
+  resolved "https://registry.yarnpkg.com/@turbo/linux-64/-/linux-64-2.10.13.tgz#85b63280305104742988583851150733f0154241"
+  integrity sha512-Zp0N5M6j9iEjJtFLTA2L+52TLuYy0VbXT3zLZzfMeqqdKSUJ7pDo2pA1NhqjoQcF2dIsktZ8xZRW3pGI6T81fw==
 
-"@turbo/linux-arm64@2.10.12":
-  version "2.10.12"
-  resolved "https://registry.yarnpkg.com/@turbo/linux-arm64/-/linux-arm64-2.10.12.tgz#3ee53d1f930d2bb65708e904971be0e765381e37"
-  integrity sha512-f0pZDTtvzB5SuNwuXBaKbZHUCMCukgc8nMlHEuvLmj91Fzec+MEbr3cAvGNor5htEDqZnO6Lxt9N/GPI/77oGA==
+"@turbo/linux-arm64@2.10.13":
+  version "2.10.13"
+  resolved "https://registry.yarnpkg.com/@turbo/linux-arm64/-/linux-arm64-2.10.13.tgz#17b1fecb543323b7c36c197f1e4686ae85e87b4e"
+  integrity sha512-M8XcfWdS2D4EP3wzd5ehUyCANucMIOsRE6gZuV0Mr2NIn+FpsUjXFCh7r9HY7GnNcjXH4tUnT76OsCDg2c0Fng==
 
-"@turbo/windows-64@2.10.12":
-  version "2.10.12"
-  resolved "https://registry.yarnpkg.com/@turbo/windows-64/-/windows-64-2.10.12.tgz#ac0a0b7794f9a541e68e930383f48747f7e648ab"
-  integrity sha512-SDOueJRjS/QcykWf2KCRtTLmIl5YMKsLbXkXQGhDwcTXvKXZiS5ih5lBl/gkwZIpYFjqA/rAlfMzlAFcVHNe0g==
+"@turbo/windows-64@2.10.13":
+  version "2.10.13"
+  resolved "https://registry.yarnpkg.com/@turbo/windows-64/-/windows-64-2.10.13.tgz#df854d1c26d4589f0164f27b7fac573c953210c7"
+  integrity sha512-QFd3KBMpBBCc31TbxMnxgdBivie8lxJXV8EqmanH8fg8l2e1BdCLWpZJbxk48VNvcF4LHUnwO0FJOq+veKN1cw==
 
-"@turbo/windows-arm64@2.10.12":
-  version "2.10.12"
-  resolved "https://registry.yarnpkg.com/@turbo/windows-arm64/-/windows-arm64-2.10.12.tgz#50eb6c20a20d0aab216d2b6aa13cc3100ea44106"
-  integrity sha512-0i0mVUa4kKk+/B3RwEwPMf9CB+T7ul56hn5FFHNA4VUNTOoLBEd6aNf3FaKfCatDNZ6cicCEf6if9QUTVyzzcA==
+"@turbo/windows-arm64@2.10.13":
+  version "2.10.13"
+  resolved "https://registry.yarnpkg.com/@turbo/windows-arm64/-/windows-arm64-2.10.13.tgz#559e3b6c2cab2bdedb10c34346985e555cbba73d"
+  integrity sha512-rM+cFO1P8iAHXdasOdMyK9nDk0UGII7VEFLIA8+jwv/+rh48pnVBbF2OSjJDBOw57pxNLIOEDA0JyKcarTBcIw==
 
 "@tybys/wasm-util@^0.10.3":
   version "0.10.4"
@@ -7722,17 +7722,17 @@ tsscmp@1.0.6:
   resolved "https://registry.yarnpkg.com/tsscmp/-/tsscmp-1.0.6.tgz#85b99583ac3589ec4bfef825b5000aa911d605eb"
   integrity sha512-LxhtAkPDTkVCMQjt2h6eBVY28KCjikZqZfMcC15YBeNjkgUpdCfBu5HoiOTDu86v6smE8yOjyEktJ8hlbANHQA==
 
-turbo@2.10.12:
-  version "2.10.12"
-  resolved "https://registry.yarnpkg.com/turbo/-/turbo-2.10.12.tgz#22f552bd88182d58365960a02e5f45e628fb965b"
-  integrity sha512-AswgMPnpOoaVZHrrSBejETzEbuIA69OVGwfkHwfrY0A23VjWXBANzgq9+OymWOHAIArB7D1+1z498WY8fGg1Jw==
+turbo@2.10.13:
+  version "2.10.13"
+  resolved "https://registry.yarnpkg.com/turbo/-/turbo-2.10.13.tgz#6019bcc63eeaf9aace7b02401e2821c6ac1e19dc"
+  integrity sha512-69MkPbjk+G8oyC7pC2DeBk0rPdbLz51wuH5eAT0Q4BVJkzq/b1XM4kUUidsARbmDjwIELSJwd1ezITULY9kWNw==
   optionalDependencies:
-    "@turbo/darwin-64" "2.10.12"
-    "@turbo/darwin-arm64" "2.10.12"
-    "@turbo/linux-64" "2.10.12"
-    "@turbo/linux-arm64" "2.10.12"
-    "@turbo/windows-64" "2.10.12"
-    "@turbo/windows-arm64" "2.10.12"
+    "@turbo/darwin-64" "2.10.13"
+    "@turbo/darwin-arm64" "2.10.13"
+    "@turbo/linux-64" "2.10.13"
+    "@turbo/linux-arm64" "2.10.13"
+    "@turbo/windows-64" "2.10.13"
+    "@turbo/windows-arm64" "2.10.13"
 
 type-fest@^4.6.0:
   version "4.41.0"
